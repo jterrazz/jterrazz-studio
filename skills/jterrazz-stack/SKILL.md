@@ -11,8 +11,7 @@ The @jterrazz ecosystem is a set of composable packages that define how every pr
 
 | Package | Purpose | npm script |
 |---------|---------|------------|
-| `@jterrazz/typescript` | Build tooling (tsdown) | `typescript build`, `typescript bundle`, `typescript dev`, `typescript start` |
-| `@jterrazz/codestyle` | Linting + formatting (tsgo, oxlint, oxfmt) | `codestyle check`, `codestyle fix` |
+| `@jterrazz/typescript` | Toolchain — build (tsdown) + quality (tsgo, oxlint, oxfmt, knip) + docs | `typescript build`, `typescript bundle`, `typescript dev`, `typescript start`, `typescript check`, `typescript fix`, `typescript docs` |
 | `@jterrazz/test` | Testing framework — conventions, structure, mocking | `vitest --run` |
 | `@jterrazz/logger` | Structured logging (pino) | — |
 | `@jterrazz/intelligence` | AI toolkit (OpenRouter, Langfuse) | — |
@@ -24,8 +23,8 @@ The @jterrazz ecosystem is a set of composable packages that define how every pr
 ```json
 {
   "build": "typescript bundle",
-  "lint": "codestyle check",
-  "lint:fix": "codestyle fix",
+  "lint": "typescript check",
+  "lint:fix": "typescript fix",
   "test": "vitest --run"
 }
 ```
@@ -36,8 +35,8 @@ The @jterrazz ecosystem is a set of composable packages that define how every pr
   "build": "typescript build",
   "start": "typescript start",
   "dev": "typescript dev",
-  "lint": "codestyle check",
-  "lint:fix": "codestyle fix",
+  "lint": "typescript check",
+  "lint:fix": "typescript fix",
   "test": "vitest --run"
 }
 ```
@@ -60,8 +59,8 @@ Roles: `-api`, `-web`, `-mobile`, `-broadcast`, `-blueprint`, `-landing`
 
 Every project must have:
 - `Makefile` with `build`, `lint`, `test` targets
-- `tsconfig.json` extending `@jterrazz/typescript/presets/tsconfig/node`
-- `.oxlintrc.json` extending `node_modules/@jterrazz/codestyle/presets/oxlint/node.json`
+- `tsconfig.json` extending `@jterrazz/typescript/tsconfig/node`
+- `oxlint.config.ts` + `oxfmt.config.ts` importing presets from `@jterrazz/typescript`
 - `.github/workflows/validate.yaml` using shared workflow
 
 ## CI/CD

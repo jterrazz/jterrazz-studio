@@ -31,12 +31,11 @@ npm init -y
   "repository": { "type": "git", "url": "https://github.com/jterrazz/package-{name}" },
   "scripts": {
     "build": "typescript bundle",
-    "lint": "codestyle check",
-    "lint:fix": "codestyle fix",
+    "lint": "typescript check",
+    "lint:fix": "typescript fix",
     "test": "vitest --run"
   },
   "devDependencies": {
-    "@jterrazz/codestyle": "latest",
     "@jterrazz/test": "latest",
     "@jterrazz/typescript": "latest",
     "@types/node": "latest",
@@ -47,12 +46,23 @@ npm init -y
 
 **tsconfig.json:**
 ```json
-{ "extends": "@jterrazz/typescript/presets/tsconfig/node" }
+{ "extends": "@jterrazz/typescript/tsconfig/node" }
 ```
 
-**.oxlintrc.json:**
-```json
-{ "extends": ["node_modules/@jterrazz/codestyle/presets/oxlint/node.json"] }
+**oxlint.config.ts:**
+```ts
+import { oxlint } from '@jterrazz/typescript';
+import { defineConfig } from 'oxlint';
+
+export default defineConfig({ extends: [oxlint.node] });
+```
+
+**oxfmt.config.ts:**
+```ts
+import { oxfmt } from '@jterrazz/typescript';
+import { defineConfig } from 'oxfmt';
+
+export default defineConfig(oxfmt);
 ```
 
 **.gitignore:**
@@ -95,8 +105,8 @@ Same as library but with these differences:
   "build": "typescript build",
   "start": "typescript start",
   "dev": "typescript dev",
-  "lint": "codestyle check",
-  "lint:fix": "codestyle fix",
+  "lint": "typescript check",
+  "lint:fix": "typescript fix",
   "test": "vitest --run"
 }
 ```
