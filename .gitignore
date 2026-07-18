@@ -5,7 +5,7 @@ build/
 bin/
 
 # Test
-tests/e2e/j_test_bin
+specs/cli/j_test_bin
 node_modules/
 
 # IDE

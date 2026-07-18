@@ -1,0 +1,8 @@
+{
+  "self": "testbox",
+  "machines": {
+    "testbox": {
+      "role": "server"
+    }
+  }
+}

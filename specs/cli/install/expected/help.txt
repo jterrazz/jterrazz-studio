@@ -1,0 +1,13 @@
+Install development tools.
+
+Examples:
+  j install homebrew        Install Homebrew
+  j install nvm             Install NVM
+  j install go python node  Install specific tools
+  j install                 List available tools
+
+Usage:
+  j install [tool...] [flags]
+
+Flags:
+  -h, --help   help for install

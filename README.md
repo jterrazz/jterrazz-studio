@@ -241,7 +241,7 @@ src/
     └── presentation/         # TUI views, components, theme
 dotfiles/
 └── applications/             # App configs (ghostty, tmux, zed, zsh)
-tests/e2e/                    # End-to-end tests
+specs/cli/                    # End-to-end specs (@jterrazz/test)
 ```
 
 ## License

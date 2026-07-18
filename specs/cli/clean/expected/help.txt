@@ -1,0 +1,17 @@
+Clean system caches and resources.
+
+Examples:
+  j clean --all              Clean everything
+  j clean brew               Clean Homebrew cache
+  j clean docker             Clean Docker resources
+  j clean multipass          Clean Multipass instances
+  j clean trash              Empty trash
+  j clean brew docker        Clean specific items
+  j clean                    List available clean items
+
+Usage:
+  j clean [item...] [flags]
+
+Flags:
+  -a, --all    Clean everything
+  -h, --help   help for clean
