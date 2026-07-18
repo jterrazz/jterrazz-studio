@@ -63,6 +63,10 @@ Every project must have:
 - `oxlint.config.ts` + `oxfmt.config.ts` importing presets from `@jterrazz/typescript`
 - `.github/workflows/validate.yaml` using shared workflow
 
+## Repo structure
+
+Where knowledge lives — README vitrine, `AGENTS.md` router + `CLAUDE.md` symlink, the `docs/` corpus, and (for packages) the generated `docs/reference/` — is one shared doctrine. Do not restate it here: follow the **`jterrazz-repo-structure`** skill / `package-typescript` `docs/06-repo-structure.md`.
+
 ## CI/CD
 
 Shared workflows from `jterrazz/jterrazz-actions`:

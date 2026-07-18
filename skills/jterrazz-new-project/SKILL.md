@@ -147,8 +147,18 @@ jobs:
     secrets: inherit
 ```
 
+## Repo structure — born structured
+
+A new project starts with the corpus + injection layout, not just code. Do not author layout advice here — follow the **`jterrazz-repo-structure`** skill / `package-typescript` `docs/06-repo-structure.md`:
+
+- `README.md` — the vitrine (what it is, install, a pointer into `docs/`), not a manual.
+- `AGENTS.md` — the agent brief (mental model + routing table into `docs/`); `CLAUDE.md` is a **symlink** to it (`ln -s AGENTS.md CLAUDE.md`).
+- `docs/` — the corpus of numbered chapters; write only real authored knowledge.
+- Packages generate the `docs/reference/` projection with `typescript docs`; applications skip it.
+
 ## Never
 
 - Never use pnpm or yarn
 - Never skip the Makefile
 - Never put business logic in `src/index.ts` — it's only for exports
+- Never author repo-layout advice in a skill — route to `jterrazz-repo-structure`

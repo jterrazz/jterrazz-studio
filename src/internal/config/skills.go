@@ -18,7 +18,7 @@ var StudioSkills = []Skill{
 	{"jterrazz/jterrazz-cli", "jterrazz-new-project"},
 	{"jterrazz/jterrazz-infra", "jterrazz-infra"},
 	{"jterrazz/package-typescript", "jterrazz-typescript"},
-	{"jterrazz/package-codestyle", "jterrazz-codestyle"},
+	{"jterrazz/package-typescript", "jterrazz-repo-structure"},
 	{"jterrazz/package-broadcast", "jterrazz-broadcast"},
 	{"jterrazz/package-test", "jterrazz-test"},
 	{"jterrazz/jterrazz-actions", "jterrazz-actions"},
@@ -44,8 +44,7 @@ var StudioRepos = []SkillRepo{
 	{"jterrazz/jterrazz-cli", "Dev toolkit, conventions, and scaffolding"},
 	{"jterrazz/jterrazz-infra", "Infrastructure and deployment (K3s, Helm, Traefik)"},
 	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
-	{"jterrazz/package-typescript", "TypeScript build tooling (tsdown)"},
-	{"jterrazz/package-codestyle", "Linting and formatting (oxlint, oxfmt, tsgo)"},
+	{"jterrazz/package-typescript", "TypeScript toolchain — build, lint, format, docs"},
 	{"jterrazz/package-broadcast", "Multi-channel announcements (App Store, push)"},
 	{"jterrazz/package-test", "Testing utilities (vitest mocks)"},
 }
