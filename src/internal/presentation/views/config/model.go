@@ -48,9 +48,16 @@ type Model struct {
 	checkCache map[string]config.CheckResult
 
 	// ── Skills tab ───────────────────────────────────────────────────
-	skillSections   []skillSection
-	skillCursor     cursorPos
-	skillsInstalled map[string]bool
+	skillSections []skillSection
+	skillCursor   cursorPos
+
+	// skillStates holds each installed skill's currency state. A skill with
+	// no entry here (zero value) is skillStateNotInstalled. Populated
+	// synchronously (fast, offline) from skill.ListInstalled() +
+	// skill.ReadLock() in refreshSkillSections; skillStateChecking entries
+	// are then resolved to installed/outdated by the async currency-check
+	// tea.Cmd fired from Init and after every install/update/remove.
+	skillStates map[string]skillState
 
 	// ── Cross-tab ────────────────────────────────────────────────────
 	selfAlias string
@@ -174,7 +181,7 @@ func (m Model) installed(s *config.Script) bool {
 
 // Init implements tea.Model.
 func (m Model) Init() tea.Cmd {
-	return tea.WindowSize()
+	return tea.Batch(tea.WindowSize(), m.startSkillCurrencyCheck())
 }
 
 // firstItemCursor returns the position of the first item across all sections,
@@ -260,10 +267,10 @@ type fnExecCommand struct {
 	fn func() error
 }
 
-func (f *fnExecCommand) Run() error           { return f.fn() }
-func (*fnExecCommand) SetStdin(io.Reader)     {}
-func (*fnExecCommand) SetStdout(io.Writer)    {}
-func (*fnExecCommand) SetStderr(io.Writer)    {}
+func (f *fnExecCommand) Run() error        { return f.fn() }
+func (*fnExecCommand) SetStdin(io.Reader)  {}
+func (*fnExecCommand) SetStdout(io.Writer) {}
+func (*fnExecCommand) SetStderr(io.Writer) {}
 
 // actionDoneMsg is dispatched when a tea.Exec'd install/uninstall completes.
 type actionDoneMsg struct {

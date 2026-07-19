@@ -2,10 +2,10 @@ package skill
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
-
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
 // Install installs a skill from a repo globally
@@ -44,43 +44,69 @@ func RemoveAll() error {
 	return nil
 }
 
-// ListInstalled returns the list of globally installed skill names
-func ListInstalled() []string {
-	var installed []string
+// Update updates a single globally installed skill to its latest upstream
+// version via the `skills` CLI.
+func Update(name string) error {
+	cmd := exec.Command("skills", "update", "-g", "-y", name)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		return fmt.Errorf("%s", strings.TrimSpace(string(output)))
+	}
+	return nil
+}
 
-	cmd := exec.Command("skills", "list", "-g")
-	output, err := cmd.Output()
+// skillsDir returns ~/.agents/skills, the directory `skills add -g` installs
+// into. Returns "" if the home directory can't be resolved.
+func skillsDir() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	return filepath.Join(home, ".agents", "skills")
+}
+
+// ListInstalled returns the names of globally installed skills.
+//
+// This reads the filesystem directly — entries of ~/.agents/skills that are
+// directories (or symlinks to directories) containing a SKILL.md — rather
+// than parsing `skills list -g` output. The CLI's list-output format has
+// changed shape across versions (indentation, headers, columns), which made
+// output-parsing fragile; the filesystem is ground truth for what's actually
+// installed. A missing skills directory returns an empty list.
+func ListInstalled() []string {
+	return listInstalledIn(skillsDir())
+}
+
+// listInstalledIn is the testable variant of ListInstalled — takes the
+// skills directory explicitly instead of resolving $HOME.
+func listInstalledIn(dir string) []string {
+	var installed []string
+	if dir == "" {
+		return installed
+	}
+
+	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return installed
 	}
 
-	cleanOutput := tool.StripAnsi(string(output))
-	lines := strings.Split(cleanOutput, "\n")
-	for _, line := range lines {
-		if len(line) > 0 && (line[0] == ' ' || line[0] == '\t') {
+	for _, e := range entries {
+		name := e.Name()
+		if strings.HasPrefix(name, ".") {
 			continue
 		}
 
-		line = strings.TrimSpace(line)
-
-		if line == "" ||
-			strings.Contains(line, "No global skills") ||
-			strings.Contains(line, "Global") ||
-			strings.Contains(line, "Skills") ||
-			strings.HasPrefix(line, "Try ") {
+		// os.Stat (unlike DirEntry.IsDir) follows symlinks, so symlinked
+		// skill folders count too.
+		info, err := os.Stat(filepath.Join(dir, name))
+		if err != nil || !info.IsDir() {
 			continue
 		}
 
-		parts := strings.Fields(line)
-		if len(parts) >= 1 {
-			skillName := parts[0]
-			if !strings.HasPrefix(skillName, "/") &&
-				!strings.HasPrefix(skillName, "~") &&
-				!strings.Contains(skillName, ":") &&
-				len(skillName) > 0 {
-				installed = append(installed, skillName)
-			}
+		if _, err := os.Stat(filepath.Join(dir, name, "SKILL.md")); err != nil {
+			continue
 		}
+
+		installed = append(installed, name)
 	}
 
 	return installed

@@ -7,6 +7,7 @@ import "github.com/charmbracelet/lipgloss"
 var (
 	colorPrimary    = lipgloss.AdaptiveColor{Light: "#005f87", Dark: "#5fafd7"}
 	colorSuccess    = lipgloss.AdaptiveColor{Light: "#2e8540", Dark: "#5fd75f"}
+	colorWarning    = lipgloss.AdaptiveColor{Light: "#a15c00", Dark: "#e5c07b"}
 	colorMuted      = lipgloss.AdaptiveColor{Light: "#666666", Dark: "#7a7a7a"}
 	colorMutedDim   = lipgloss.AdaptiveColor{Light: "#999999", Dark: "#5a5a5a"}
 	colorInverseBg  = lipgloss.AdaptiveColor{Light: "#dadada", Dark: "#3a3a3a"}
@@ -39,6 +40,9 @@ var (
 
 	stateMissingStyle = lipgloss.NewStyle().
 				Foreground(colorMutedDim)
+
+	stateOutdatedStyle = lipgloss.NewStyle().
+				Foreground(colorWarning)
 
 	cursorStyle = lipgloss.NewStyle().
 			Foreground(colorPrimary).

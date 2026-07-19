@@ -56,9 +56,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		// Refresh both caches — actionDoneMsg doesn't carry the tab origin
 		// and the lookups are cheap. Configuration tab's rebuildSections
-		// also clamps its cursor.
+		// also clamps its cursor. refreshSkillSections resets any installed
+		// skill's currency to "checking" (github-sourced) or "installed";
+		// startSkillCurrencyCheck re-runs the async check so the Skills tab
+		// doesn't keep showing a stale outdated/current verdict after an
+		// install, update, or removal.
 		m.rebuildSections()
 		m.refreshSkillSections()
+		return m, m.startSkillCurrencyCheck()
+
+	case skillCurrencyMsg:
+		m.applySkillCurrencyResults(msg.results)
 		return m, nil
 	}
 

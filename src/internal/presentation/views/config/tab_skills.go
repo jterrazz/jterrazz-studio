@@ -3,6 +3,7 @@ package configview
 import (
 	"fmt"
 	"strings"
+	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
@@ -24,12 +25,33 @@ type skillSection struct {
 	Collapsed bool
 }
 
+// skillState is the currency state of one row in the Skills tab. The zero
+// value (skillStateNotInstalled) is what a skill gets when it has no entry
+// in Model.skillStates, so only installed skills need to be populated.
+type skillState int
+
+const (
+	// skillStateNotInstalled: absent from ~/.agents/skills.
+	skillStateNotInstalled skillState = iota
+	// skillStateInstalled: present and (as far as is known) current. Also
+	// used for installed skills whose currency can't be determined (no
+	// github lock entry, or CheckUpToDate returned StatusUnknown) — we
+	// never invent staleness, so "installed" is the safe default.
+	skillStateInstalled
+	// skillStateOutdated: installed, and CheckUpToDate confirmed the local
+	// SKILL.md differs from upstream.
+	skillStateOutdated
+	// skillStateChecking: installed, currency check in flight. Renders the
+	// same as skillStateInstalled (plain ✓) until resolved.
+	skillStateChecking
+)
+
 // installedCount counts how many of the section's skills are currently
-// installed in the user's skills directory.
-func (s skillSection) installedCount(installed map[string]bool) (n, total int) {
+// installed (any state other than skillStateNotInstalled counts).
+func (s skillSection) installedCount(states map[string]skillState) (n, total int) {
 	total = len(s.Items)
 	for _, e := range s.Items {
-		if installed[e.Name] {
+		if states[e.Name] != skillStateNotInstalled {
 			n++
 		}
 	}
@@ -43,20 +65,33 @@ func skillsAvailable() bool {
 	return skill.IsInstalled()
 }
 
-// refreshSkillSections rebuilds skillSections + skillsInstalled from the
-// static favourites list and the live `skills list` output. Called on
-// startup and after each install/uninstall completes.
+// refreshSkillSections rebuilds skillSections + skillStates from the static
+// favourites list and the filesystem/lock-file truth (skill.ListInstalled +
+// skill.ReadLock — fast and offline). Called on startup and after each
+// install/update/uninstall completes.
+//
+// Every installed skill starts in skillStateChecking if it has a github
+// lock entry (eligible for a currency check) or skillStateInstalled
+// otherwise. Callers are responsible for also firing
+// startSkillCurrencyCheck to resolve the checking entries — this method
+// never does network I/O itself.
 func (m *Model) refreshSkillSections() {
 	if !skillsAvailable() {
 		m.skillSections = nil
-		m.skillsInstalled = nil
+		m.skillStates = nil
 		return
 	}
 
 	installed := skill.ListInstalled()
-	m.skillsInstalled = make(map[string]bool, len(installed))
+	lock := skill.ReadLock()
+
+	m.skillStates = make(map[string]skillState, len(installed))
 	for _, name := range installed {
-		m.skillsInstalled[name] = true
+		if entry, ok := lock[name]; ok && entry.SourceType == "github" {
+			m.skillStates[name] = skillStateChecking
+		} else {
+			m.skillStates[name] = skillStateInstalled
+		}
 	}
 
 	m.skillSections = []skillSection{
@@ -100,8 +135,26 @@ func (m Model) currentSkill() (skillEntry, bool) {
 	return sec.Items[m.skillCursor.item], true
 }
 
+// skillInstalled reports whether e is installed, in any currency state
+// (installed, outdated, or still-checking all count).
 func (m Model) skillInstalled(e skillEntry) bool {
-	return m.skillsInstalled[e.Name]
+	return m.skillStates[e.Name] != skillStateNotInstalled
+}
+
+// skillOutdated reports whether e is installed and confirmed outdated.
+func (m Model) skillOutdated(e skillEntry) bool {
+	return m.skillStates[e.Name] == skillStateOutdated
+}
+
+// skillsCheckingUpdates reports whether a currency check is still in flight
+// for any installed skill. Drives the muted footer hint.
+func (m Model) skillsCheckingUpdates() bool {
+	for _, st := range m.skillStates {
+		if st == skillStateChecking {
+			return true
+		}
+	}
+	return false
 }
 
 // clampSkillCursor mirrors clampCursor for the skills tab.
@@ -182,22 +235,41 @@ func (m *Model) toggleCurrentSkillSection() {
 	m.skillSections[m.skillCursor.section].Collapsed = !m.skillSections[m.skillCursor.section].Collapsed
 }
 
-// skillStartInstall queues an install for the current entry. Refuses if the
-// item is already installed or has no repo (Installed-section orphans).
+// skillStartInstall handles the `i` key on the Skills tab. Behaviour depends
+// on the entry's currency state:
+//   - not installed: installs it (no-op if we don't know its repo — an
+//     Installed-section orphan);
+//   - outdated: updates it in place via `skills update`;
+//   - installed / checking: already current as far as we know, no-op.
 func (m Model) skillStartInstall() (tea.Model, tea.Cmd) {
 	e, ok := m.currentSkill()
-	if !ok || e.Repo == "" {
+	if !ok {
 		return m, nil
 	}
-	if m.skillInstalled(e) {
+
+	switch m.skillStates[e.Name] {
+	case skillStateOutdated:
+		m.busy = true
+		m.busyAction = "update " + e.Name
+		m.lastResult = ""
+		m.lastErr = nil
+		name := e.Name
+		return m, runAction(name, "update", func() error { return skill.Update(name) })
+
+	case skillStateNotInstalled:
+		if e.Repo == "" {
+			return m, nil
+		}
+		m.busy = true
+		m.busyAction = "install " + e.Name
+		m.lastResult = ""
+		m.lastErr = nil
+		repo, name := e.Repo, e.Name
+		return m, runAction(name, "install", func() error { return skill.Install(repo, name) })
+
+	default: // skillStateInstalled, skillStateChecking — already current
 		return m, nil
 	}
-	m.busy = true
-	m.busyAction = "install " + e.Name
-	m.lastResult = ""
-	m.lastErr = nil
-	repo, name := e.Repo, e.Name
-	return m, runAction(name, "install", func() error { return skill.Install(repo, name) })
 }
 
 // skillStartUninstall queues an uninstall for the current entry.
@@ -250,7 +322,7 @@ func (m Model) renderSkillSectionHeader(s skillSection) string {
 	if s.Collapsed {
 		caret = "▸"
 	}
-	installed, total := s.installedCount(m.skillsInstalled)
+	installed, total := s.installedCount(m.skillStates)
 	count := fmt.Sprintf("%d/%d", installed, total)
 	return fmt.Sprintf(" %s %s   %s",
 		dividerStyle.Render(caret),
@@ -262,11 +334,19 @@ func (m Model) renderSkillSectionHeader(s skillSection) string {
 func (m Model) renderSkillItem(e skillEntry, sectionIdx, itemIdx int) string {
 	isCursor := m.tabs.Active == tabSkills && m.skillCursor.section == sectionIdx && m.skillCursor.item == itemIdx
 
+	state := m.skillStates[e.Name]
+
 	icon := iconMissing
 	iconStyle := stateMissingStyle
-	if m.busy && isCursor {
+	suffix := ""
+	switch {
+	case m.busy && isCursor:
 		icon = iconBusy
-	} else if m.skillInstalled(e) {
+	case state == skillStateOutdated:
+		icon = iconUpdateAvailable
+		iconStyle = stateOutdatedStyle
+		suffix = "  " + stateOutdatedStyle.Render("update available")
+	case state == skillStateInstalled || state == skillStateChecking:
 		icon = iconInstalled
 		iconStyle = stateInstalledStyle
 	}
@@ -277,17 +357,92 @@ func (m Model) renderSkillItem(e skillEntry, sectionIdx, itemIdx int) string {
 	}
 
 	nameStyle := itemNameStyle
-	if !m.skillInstalled(e) {
+	if state == skillStateNotInstalled {
 		nameStyle = itemNameMutedStyle
 	}
 
-	row := fmt.Sprintf(" %s%s %s",
+	row := fmt.Sprintf(" %s%s %s%s",
 		cursorMark,
 		iconStyle.Render(icon),
 		nameStyle.Render(e.Name),
+		suffix,
 	)
 	if isCursor {
 		row = cursorRowStyle.Render(padToWidth(row, m.contentWidth()))
 	}
 	return row
+}
+
+// skillCurrencyMsg carries the results of an async currency-check fan-out —
+// one skill.UpdateStatus per skill that was checked. Delivered as a single
+// message so Update() only needs one merge point, however many goroutines
+// startSkillCurrencyCheck spawned.
+type skillCurrencyMsg struct {
+	results map[string]skill.UpdateStatus
+}
+
+// startSkillCurrencyCheck returns a tea.Cmd that fans out skill.CheckUpToDate
+// over every skill currently in skillStateChecking, in parallel goroutines,
+// and delivers one skillCurrencyMsg with the results. Returns nil if there's
+// nothing to check (skills CLI unavailable, or no installed skill has a
+// github lock entry) — never blocks the caller, since the actual network
+// calls happen inside the returned tea.Cmd, off the UI goroutine.
+func (m Model) startSkillCurrencyCheck() tea.Cmd {
+	if len(m.skillStates) == 0 {
+		return nil
+	}
+
+	lock := skill.ReadLock()
+	type job struct {
+		name  string
+		entry skill.LockEntry
+	}
+	var jobs []job
+	for name, state := range m.skillStates {
+		if state != skillStateChecking {
+			continue
+		}
+		if entry, ok := lock[name]; ok {
+			jobs = append(jobs, job{name: name, entry: entry})
+		}
+	}
+	if len(jobs) == 0 {
+		return nil
+	}
+
+	return func() tea.Msg {
+		results := make(map[string]skill.UpdateStatus, len(jobs))
+		var mu sync.Mutex
+		var wg sync.WaitGroup
+		wg.Add(len(jobs))
+		for _, j := range jobs {
+			go func(j job) {
+				defer wg.Done()
+				status := skill.CheckUpToDate(j.name, j.entry)
+				mu.Lock()
+				results[j.name] = status
+				mu.Unlock()
+			}(j)
+		}
+		wg.Wait()
+		return skillCurrencyMsg{results: results}
+	}
+}
+
+// applySkillCurrencyResults merges a skillCurrencyMsg into skillStates,
+// resolving each checked skill to skillStateOutdated or skillStateInstalled
+// (StatusUnknown settles to installed — we never invent staleness). Skills
+// not present in results (e.g. removed since the check started) are left
+// untouched.
+func (m *Model) applySkillCurrencyResults(results map[string]skill.UpdateStatus) {
+	for name, status := range results {
+		if _, ok := m.skillStates[name]; !ok {
+			continue
+		}
+		if status == skill.StatusOutdated {
+			m.skillStates[name] = skillStateOutdated
+		} else {
+			m.skillStates[name] = skillStateInstalled
+		}
+	}
 }

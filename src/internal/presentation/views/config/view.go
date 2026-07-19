@@ -11,9 +11,10 @@ import (
 
 // State icons for each item row.
 const (
-	iconInstalled = "✓"
-	iconMissing   = "✗"
-	iconBusy      = "…"
+	iconInstalled       = "✓"
+	iconMissing         = "✗"
+	iconBusy            = "…"
+	iconUpdateAvailable = "⬆"
 )
 
 // View implements tea.Model.
@@ -229,7 +230,9 @@ func (m Model) renderConfigFooter() string {
 }
 
 // renderSkillsFooter shows i/u hints contextual to the skill under the
-// Skills cursor. No detail panel for Skills (rows are simple name+state).
+// Skills cursor and its currency state (install / update / uninstall). No
+// detail panel for Skills (rows are simple name+state). While a currency
+// check is in flight, a muted hint appears on its own line below.
 func (m Model) renderSkillsFooter() string {
 	e, ok := m.currentSkill()
 	if !ok {
@@ -237,15 +240,25 @@ func (m Model) renderSkillsFooter() string {
 	}
 
 	var hints []string
-	if !m.skillInstalled(e) && e.Repo != "" {
-		hints = append(hints, footerKey("i", "install"))
+	switch m.skillStates[e.Name] {
+	case skillStateNotInstalled:
+		if e.Repo != "" {
+			hints = append(hints, footerKey("i", "install"))
+		}
+	case skillStateOutdated:
+		hints = append(hints, footerKey("i", "update"))
 	}
 	if m.skillInstalled(e) {
 		hints = append(hints, footerKey("u", "uninstall"))
 	}
 
 	prefix := footerLabelStyle.Render(" ▶ " + e.Name + "  ")
-	return prefix + strings.Join(hints, footerSepStyle.Render("   "))
+	footer := prefix + strings.Join(hints, footerSepStyle.Render("   "))
+
+	if m.skillsCheckingUpdates() {
+		footer += "\n" + contextStyle.Render(" checking for updates…")
+	}
+	return footer
 }
 
 func (m Model) renderResult() string {

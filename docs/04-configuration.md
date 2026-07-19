@@ -3,7 +3,7 @@
 `j config` is an interactive TUI for configuring the local machine, organised into 3 tabs (`←/→` to cycle, `1..3` to jump directly):
 
 - **Configuration** — installable items grouped by category. Sections are collapsible; items show their current state.
-- **Skills** — install / list / remove AI agent skills (requires the `skills` CLI on PATH — see [Tools and skills](05-tools-and-skills.md)).
+- **Skills** — install / update / remove AI agent skills (requires the `skills` CLI on PATH — see [Tools and skills](05-tools-and-skills.md)). Each row is one of three states: `✓` installed & current, `⬆` update available, or `✗` not installed. Install state comes straight from the filesystem (`~/.agents/skills/`); currency is checked afterwards, offline-safe, by diffing the installed skill's `SKILL.md` against its upstream copy on GitHub (via `~/.agents/.skill-lock.json`) — this never blocks startup, and a muted "checking for updates…" footer hint shows while it's in flight. Press `i` to install a missing skill or update an outdated one; up-to-date skills no-op on `i`.
 - **Remote** — read-only summary of the Tailscale endpoint; press `i` to open a form that rewrites `~/.jterrazz/config.json`.
 
 ```
@@ -49,7 +49,7 @@ Items that need extra inputs (e.g. autologin's password) open a modal form befor
 | `↑` `↓` `j` `k` | navigate |
 | `tab` | collapse/expand current section |
 | `space` | toggle the inline detail panel (Configuration tab) |
-| `i` | install the current item (or open the reconfigure form on the Remote tab) |
+| `i` | install the current item; on the Skills tab, updates it instead if it's outdated (or opens the reconfigure form on the Remote tab) |
 | `u` | uninstall (only for toggleable items that are currently installed) |
 | `q` `esc` | quit |
 
