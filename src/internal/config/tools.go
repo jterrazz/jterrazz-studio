@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/tool"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
 // CheckResult is the unified result type for all check operations
@@ -47,23 +47,24 @@ func NotInstalled() CheckResult {
 type ToolCategory string
 
 const (
-	CategoryPackageManager ToolCategory = "Package Managers"
-	CategoryRuntimes       ToolCategory = "Runtimes"
-	CategoryTerminal       ToolCategory = "Terminal"
-	CategoryGit            ToolCategory = "Git"
-	CategorySystem         ToolCategory = "System"
-	CategoryDeploy         ToolCategory = "Deploy"
-	CategoryAIAgents       ToolCategory = "AI Agents"
-	CategoryAITooling      ToolCategory = "AI Tooling"
-	CategoryDevelopment    ToolCategory = "Development"
-	CategoryCreative       ToolCategory = "Creative"
-	CategoryCommunication  ToolCategory = "Communication"
-	CategoryProductivity   ToolCategory = "Productivity"
-	CategoryAIApps         ToolCategory = "AI Apps"
-	CategorySecurity       ToolCategory = "Security"
-	CategoryBrowse         ToolCategory = "Browse"
-	CategoryEntertainment  ToolCategory = "Entertainment"
-	CategoryUtilities      ToolCategory = "Utilities"
+	CategoryPackageManager  ToolCategory = "Package Managers"
+	CategoryRuntimes        ToolCategory = "Runtimes"
+	CategoryShellTerminal   ToolCategory = "Shell & Terminal"
+	CategoryCLITools        ToolCategory = "CLI Tools"
+	CategoryGit             ToolCategory = "Git"
+	CategoryEditorsIDEs     ToolCategory = "Editors & IDEs"
+	CategoryContainersVMs   ToolCategory = "Containers & VMs"
+	CategoryDeploy          ToolCategory = "Deploy"
+	CategoryAIAgents        ToolCategory = "AI Agents"
+	CategoryAITooling       ToolCategory = "AI Tooling"
+	CategoryAIApps          ToolCategory = "AI Apps"
+	CategoryBrowsers        ToolCategory = "Browsers"
+	CategoryCommunication   ToolCategory = "Communication"
+	CategoryProductivity    ToolCategory = "Productivity"
+	CategoryMedia           ToolCategory = "Media"
+	CategoryRemoteAccess    ToolCategory = "Remote Access"
+	CategorySecurity        ToolCategory = "Security"
+	CategorySystemUtilities ToolCategory = "System Utilities"
 )
 
 // InstallMethod defines how a tool is installed
@@ -110,6 +111,7 @@ type Tool struct {
 	Name        string
 	Description string
 	Category    ToolCategory
+	Replaces    string // The default command or workflow this tool supersedes; drives the toolbelt skill's generated prefer-table.
 
 	// Check - how to verify if installed
 	Command string             // CLI command to check existence

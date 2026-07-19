@@ -1,7 +1,7 @@
 package status
 
 import (
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/components"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
 )
 
 // loadingIndicator returns a spinner while loading, or a static dot after

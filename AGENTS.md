@@ -1,4 +1,4 @@
-# Agent brief — `j` (jterrazz-cli)
+# Agent brief — `j` (jterrazz-studio)
 
 A Go CLI (Cobra + Bubble Tea TUIs) that bootstraps and manages a macOS dev machine. This file **routes**; it does not restate what the corpus already says.
 
@@ -21,8 +21,10 @@ The corpus is `docs/` + `README.md`. Do not duplicate it — link to it.
 | The `j config` TUI, items, categories    | `docs/04-configuration.md`    |
 | Tool + skill registries (`config/`)      | `docs/05-tools-and-skills.md` |
 | Dotfiles (`dotfiles/applications/`)      | `docs/06-dotfiles.md`         |
+| `@jterrazz` stack conventions            | `docs/07-stack.md`            |
+| Repo doctrine (corpus/injection/compiler)| `docs/08-repo-structure.md`   |
 
-Repo doctrine (corpus / injection layers / compiler — where knowledge lives) is the shared `jterrazz-repo-structure` skill / `package-typescript` `docs/06-repo-structure.md`. This is an application: it adopts the corpus + injection layers and never generates a `docs/reference/` projection.
+The repo-structure doctrine is authored **here** (`docs/08-repo-structure.md`) and ships to agents as the `jterrazz-repo-structure` skill. This repo is an application: it adopts the corpus + injection layers and never generates a `docs/reference/` projection. Its one compiler is `make skills` (`src/cmd/skillsgen/`), which projects the config registries into the `jterrazz-toolbelt` skill rosters — see `docs/05-tools-and-skills.md`.
 
 ## Setup & commands
 
@@ -39,6 +41,7 @@ The e2e specs need `@jterrazz/test` (npm) and rebuild `j` via an mtime check —
 
 ```
 src/cmd/j/main.go            # entry point
+src/cmd/skillsgen/           # projects config registries into the toolbelt skill (make skills)
 src/internal/commands/       # Cobra commands
 src/internal/config/         # tool, script, command, and SKILL registries (skills.go)
 src/internal/domain/         # version parsing, status loading, skill install (shells to the `skills` CLI)
@@ -51,6 +54,7 @@ specs/cli/                   # end-to-end specs (@jterrazz/test)
 
 ## Standing rules
 
-- The curated skills list lives in **`src/internal/config/skills.go`** (`StudioSkills` + `StudioRepos`). It is the single source of truth — no lockfile, no golden; a new `{ repo, skill }` entry is all that's needed.
+- The curated skills list lives in **`src/internal/config/skills.go`** (`StudioSkills` + `StudioRepos`). It is the single source of truth — no lockfile; a new `{ repo, skill }` entry is all that's needed.
+- A change to **any registry** in `src/internal/config/` (tools, skills) regenerates the `jterrazz-toolbelt` rosters with `make skills` in the same change — the sync test in `make test` fails otherwise. Never edit the generated sections by hand.
 - A change to product behaviour or a command's output updates the matching `docs/` chapter in the same change, and regenerates any affected `specs/cli/**/expected/*` golden with `TEST_UPDATE=1` (deliberately).
-- Never author repo-layout doctrine here or in a skill — route to `jterrazz-repo-structure`.
+- A change to the doctrine (`docs/08`) or the stack conventions (`docs/07`) updates the matching skill (`jterrazz-repo-structure`, `jterrazz-stack`) in the same change — skills route, they never author.

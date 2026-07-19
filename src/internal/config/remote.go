@@ -107,8 +107,8 @@ type tailscalePeer struct {
 }
 
 type tailscaleStatus struct {
-	BackendState string         `json:"BackendState"`
-	Self         *tailscalePeer `json:"Self"`
+	BackendState string                    `json:"BackendState"`
+	Self         *tailscalePeer            `json:"Self"`
 	Peer         map[string]*tailscalePeer `json:"Peer"`
 }
 

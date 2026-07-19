@@ -8,15 +8,15 @@
 
 ```sh
 xcode-select --install
-curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-cli/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-studio/main/scripts/install.sh | sh
 source ~/.zshrc
 ```
 
 **From source** (requires Go 1.24+):
 
 ```sh
-git clone https://github.com/jterrazz/jterrazz-cli.git ~/Developer/jterrazz-cli
-cd ~/Developer/jterrazz-cli
+git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz/jterrazz-studio
+cd ~/Developer/jterrazz/jterrazz-studio
 make install
 source ~/.zshrc
 ```

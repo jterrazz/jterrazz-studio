@@ -1,4 +1,4 @@
-module github.com/jterrazz/jterrazz-cli
+module github.com/jterrazz/jterrazz-studio
 
 go 1.24.0
 

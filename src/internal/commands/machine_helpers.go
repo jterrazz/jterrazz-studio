@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
 // requireDarwin fails fast on non-macOS hosts. Local-host configuration commands

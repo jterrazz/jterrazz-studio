@@ -3,7 +3,7 @@ package configview
 import (
 	"testing"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
 // fixture builds a small set of scripts spanning categories and roles.

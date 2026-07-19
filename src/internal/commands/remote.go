@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 

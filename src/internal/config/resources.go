@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/tool"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
 // ResourceCheck represents a system resource check (network, disk, cache)
@@ -56,8 +56,8 @@ type DockerImageInfo struct {
 
 // DockerStatus holds the full Docker dashboard data.
 type DockerStatus struct {
-	Containers []ProcessInfo
-	Images     []DockerImageInfo
+	Containers    []ProcessInfo
+	Images        []DockerImageInfo
 	DanglingCount int
 	DanglingSize  string
 	VolumesCount  int

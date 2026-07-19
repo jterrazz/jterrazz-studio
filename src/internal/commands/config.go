@@ -1,7 +1,7 @@
 package commands
 
 import (
-	configview "github.com/jterrazz/jterrazz-cli/src/internal/presentation/views/config"
+	configview "github.com/jterrazz/jterrazz-studio/src/internal/presentation/views/config"
 	"github.com/spf13/cobra"
 )
 

@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/tool"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
 // checkApp returns a CheckFn for a macOS .app bundle, using the plist for version info.
@@ -37,16 +37,8 @@ var Tools = []Tool{
 	// Package Managers
 	// ==========================================================================
 	{
-		Name:         "bun",
-		Command:      "bun",
-		Formula:      "oven-sh/bun/bun",
-		Method:       InstallBrewFormula,
-		Category:     CategoryPackageManager,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("bun", []string{"--version"}, tool.TrimVersion),
-	},
-	{
 		Name:         "uv",
+		Description:  "Fast Python package and project manager",
 		Command:      "uv",
 		Formula:      "uv",
 		Method:       InstallBrewFormula,
@@ -56,6 +48,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "cocoapods",
+		Description:  "Dependency manager for iOS and macOS projects",
 		Command:      "pod",
 		Formula:      "cocoapods",
 		Method:       InstallBrewFormula,
@@ -64,10 +57,11 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("pod", []string{"--version"}, tool.TrimVersion),
 	},
 	{
-		Name:     "homebrew",
-		Command:  "brew",
-		Method:   InstallManual,
-		Category: CategoryPackageManager,
+		Name:        "homebrew",
+		Description: "macOS package manager",
+		Command:     "brew",
+		Method:      InstallManual,
+		Category:    CategoryPackageManager,
 		CheckFn: func() CheckResult {
 			if _, err := exec.LookPath("brew"); err != nil {
 				return CheckResult{}
@@ -103,6 +97,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "npm",
+		Description:  "Node.js package manager",
 		Command:      "npm",
 		Method:       InstallNvm,
 		Category:     CategoryPackageManager,
@@ -128,6 +123,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "nvm",
+		Description:  "Manage multiple installed Node.js versions",
 		Command:      "",
 		Formula:      "nvm",
 		Method:       InstallBrewFormula,
@@ -159,6 +155,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "pnpm",
+		Description:  "Fast, disk space efficient Node package manager",
 		Command:      "pnpm",
 		Formula:      "pnpm",
 		Method:       InstallBrewFormula,
@@ -171,7 +168,18 @@ var Tools = []Tool{
 	// Runtimes
 	// ==========================================================================
 	{
+		Name:         "bun",
+		Description:  "Fast JavaScript runtime and package manager",
+		Command:      "bun",
+		Formula:      "oven-sh/bun/bun",
+		Method:       InstallBrewFormula,
+		Category:     CategoryRuntimes,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("bun", []string{"--version"}, tool.TrimVersion),
+	},
+	{
 		Name:         "go",
+		Description:  "Compiled systems programming language by Google",
 		Command:      "go",
 		Formula:      "go",
 		Method:       InstallBrewFormula,
@@ -181,6 +189,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "node",
+		Description:  "JavaScript runtime built on Chrome's V8 engine",
 		Command:      "node",
 		Method:       InstallNvm,
 		Category:     CategoryRuntimes,
@@ -189,6 +198,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "openjdk",
+		Description:  "Open-source Java Development Kit",
 		Command:      "java",
 		Formula:      "openjdk",
 		Method:       InstallBrewFormula,
@@ -211,6 +221,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "python",
+		Description:  "Python programming language runtime",
 		Command:      "python3",
 		Method:       InstallManual,
 		Category:     CategoryRuntimes,
@@ -222,6 +233,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "rust",
+		Description:  "Systems programming language for safety and speed",
 		Command:      "rustc",
 		Formula:      "rust",
 		Method:       InstallBrewFormula,
@@ -231,10 +243,298 @@ var Tools = []Tool{
 	},
 
 	// ==========================================================================
+	// Shell & Terminal
+	// ==========================================================================
+	{
+		Name:         "ghostty",
+		Description:  "GPU-accelerated terminal emulator",
+		Formula:      "ghostty",
+		Method:       InstallBrewCask,
+		Category:     CategoryShellTerminal,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"ghostty"},
+		CheckFn:      checkAppWithCask("Ghostty", "ghostty"),
+	},
+	{
+		Name:        "ohmyzsh",
+		Description: "Oh My Zsh shell framework",
+		Command:     "",
+		Method:      InstallManual,
+		Category:    CategoryShellTerminal,
+		CheckFn: func() CheckResult {
+			omzPath := os.Getenv("HOME") + "/.oh-my-zsh"
+			if _, err := os.Stat(omzPath); err != nil {
+				return CheckResult{}
+			}
+			cmd := exec.Command("git", "-C", omzPath, "rev-parse", "--short", "HEAD")
+			out, err := cmd.Output()
+			version := ""
+			if err == nil {
+				version = strings.TrimSpace(string(out))
+			}
+			return CheckResult{Installed: true, Version: version}
+		},
+		InstallFn: func() error {
+			cmd := exec.Command("sh", "-c", "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)")
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			cmd.Stdin = os.Stdin
+			return cmd.Run()
+		},
+	},
+	{
+		Name:         "tmux",
+		Description:  "Terminal multiplexer for persistent sessions",
+		Command:      "tmux",
+		Formula:      "tmux",
+		Method:       InstallBrewFormula,
+		Category:     CategoryShellTerminal,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"tmux"},
+		VersionFn:    tool.VersionFromCmd("tmux", []string{"-V"}, tool.ParseTmuxVersion),
+	},
+	{
+		Name:         "starship",
+		Description:  "Cross-shell prompt (path, git branch/status, versions)",
+		Command:      "starship",
+		Formula:      "starship",
+		Method:       InstallBrewFormula,
+		Category:     CategoryShellTerminal,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"starship"},
+		VersionFn:    tool.VersionFromCmd("starship", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "zoxide",
+		Description:  "Smarter cd command",
+		Replaces:     "cd (jumping around)",
+		Command:      "zoxide",
+		Formula:      "zoxide",
+		Method:       InstallBrewFormula,
+		Category:     CategoryShellTerminal,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("zoxide", []string{"--version"}, tool.ParseBrewVersion),
+	},
+
+	// ==========================================================================
+	// CLI Tools
+	// ==========================================================================
+	{
+		Name:         "yazi",
+		Description:  "Terminal file manager",
+		Replaces:     "Finder in the terminal",
+		Command:      "yazi",
+		Formula:      "yazi",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("yazi", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "bat",
+		Description:  "Cat clone with syntax highlighting",
+		Replaces:     "cat (for humans)",
+		Command:      "bat",
+		Formula:      "bat",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("bat", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "dust",
+		Description:  "Intuitive disk usage tool",
+		Replaces:     "du -sh",
+		Command:      "dust",
+		Formula:      "dust",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("dust", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "eza",
+		Description:  "Modern ls replacement",
+		Replaces:     "ls",
+		Command:      "eza",
+		Formula:      "eza",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("eza", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "fd",
+		Description:  "Fast find alternative",
+		Replaces:     "find",
+		Command:      "fd",
+		Formula:      "fd",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("fd", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "ripgrep",
+		Description:  "Fast grep alternative",
+		Replaces:     "grep -r",
+		Command:      "rg",
+		Formula:      "ripgrep",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("rg", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "sd",
+		Description:  "Intuitive sed alternative",
+		Replaces:     "sed (simple replaces)",
+		Command:      "sd",
+		Formula:      "sd",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("sd", []string{"--version"}, tool.ParseBrewVersion),
+	},
+	{
+		Name:         "difftastic",
+		Description:  "Structural diff tool",
+		Replaces:     "diff",
+		Command:      "difft",
+		Formula:      "difftastic",
+		Method:       InstallBrewFormula,
+		Category:     CategoryCLITools,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("difft", []string{"--version"}, tool.ParseBrewVersion),
+	},
+
+	// ==========================================================================
+	// Git
+	// ==========================================================================
+	{
+		Name:         "gpg",
+		Description:  "GNU Privacy Guard for encryption and signing",
+		Command:      "gpg",
+		Formula:      "gnupg",
+		Method:       InstallBrewFormula,
+		Category:     CategoryGit,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"gpg"},
+		VersionFn:    tool.VersionFromBrewFormula("gnupg"),
+	},
+	{
+		Name:         "lazygit",
+		Description:  "Terminal UI for git",
+		Replaces:     "raw git porcelain (interactive)",
+		Command:      "lazygit",
+		Formula:      "lazygit",
+		Method:       InstallBrewFormula,
+		Category:     CategoryGit,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("lazygit", []string{"--version"}, tool.TrimVersion),
+	},
+	{
+		Name:        "git",
+		Description: "Distributed version control system",
+		Command:     "git",
+		Method:      InstallXcode,
+		Category:    CategoryGit,
+		VersionFn:   tool.VersionFromCmd("git", []string{"--version"}, tool.ParseGitVersion),
+	},
+	{
+		Name:         "gh",
+		Description:  "GitHub CLI for repository management",
+		Replaces:     "raw GitHub API / web UI",
+		Command:      "gh",
+		Formula:      "gh",
+		Method:       InstallBrewFormula,
+		Category:     CategoryGit,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"gh"},
+		VersionFn:    tool.VersionFromCmd("gh", []string{"--version"}, tool.ParseGhVersion),
+	},
+
+	// ==========================================================================
+	// Editors & IDEs
+	// ==========================================================================
+	{
+		Name:         "zed",
+		Description:  "Zed code editor",
+		Formula:      "zed",
+		Method:       InstallBrewCask,
+		Category:     CategoryEditorsIDEs,
+		Dependencies: []string{"homebrew"},
+		Scripts:      []string{"zed"},
+		CheckFn:      checkApp("Zed"),
+	},
+	{
+		Name:         "android-studio",
+		Description:  "Android development IDE",
+		Formula:      "android-studio",
+		Method:       InstallBrewCask,
+		Category:     CategoryEditorsIDEs,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkApp("Android Studio"),
+	},
+	{
+		Name:         "cursor",
+		Description:  "AI-powered code editor",
+		Formula:      "cursor",
+		Method:       InstallBrewCask,
+		Category:     CategoryEditorsIDEs,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkApp("Cursor"),
+	},
+	{Name: "xcode", Description: "Apple development IDE", Method: InstallMAS, Category: CategoryEditorsIDEs, CheckFn: checkApp("Xcode")},
+
+	// ==========================================================================
+	// Containers & VMs
+	// ==========================================================================
+	{
+		Name:         "multipass",
+		Description:  "Lightweight Ubuntu VMs on demand",
+		Command:      "multipass",
+		Formula:      "multipass",
+		Method:       InstallBrewFormula,
+		Category:     CategoryContainersVMs,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("multipass", []string{"--version"}, tool.ParseMultipassVersion),
+	},
+	{
+		Name:         "orbstack",
+		Description:  "OrbStack container runtime (provides docker CLI)",
+		Formula:      "orbstack",
+		Method:       InstallBrewCask,
+		Category:     CategoryContainersVMs,
+		Dependencies: []string{"homebrew"},
+		CheckFn: func() CheckResult {
+			if _, err := os.Stat("/Applications/OrbStack.app"); err != nil {
+				return CheckResult{}
+			}
+			version := tool.VersionFromAppPlist("OrbStack")()
+			status := "stopped"
+			if err := exec.Command("docker", "info").Run(); err == nil {
+				status = "running"
+			}
+			return CheckResult{Installed: true, Version: version, Status: status}
+		},
+	},
+	{
+		Name:         "lens",
+		Description:  "Kubernetes IDE for managing clusters",
+		Formula:      "lens",
+		Method:       InstallBrewCask,
+		Category:     CategoryContainersVMs,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkAppWithCask("Lens", "lens"),
+	},
+
+	// ==========================================================================
 	// Deploy
 	// ==========================================================================
 	{
 		Name:         "ansible",
+		Description:  "Agentless IT automation and configuration management",
 		Command:      "ansible",
 		Formula:      "ansible",
 		Method:       InstallBrewFormula,
@@ -244,6 +544,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "eas",
+		Description:  "Expo Application Services CLI for app builds",
 		Command:      "eas",
 		Formula:      "eas-cli",
 		Method:       InstallBun,
@@ -253,6 +554,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "pulumi",
+		Description:  "Infrastructure as code using real programming languages",
 		Command:      "pulumi",
 		Formula:      "pulumi/tap/pulumi",
 		Method:       InstallBrewFormula,
@@ -262,6 +564,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "terraform",
+		Description:  "Infrastructure as code provisioning tool",
 		Command:      "terraform",
 		Formula:      "hashicorp/tap/terraform",
 		Method:       InstallBrewFormula,
@@ -271,36 +574,15 @@ var Tools = []Tool{
 	},
 
 	// ==========================================================================
-	// System
-	// ==========================================================================
-	{
-		Name:         "mole",
-		Command:      "mo",
-		Formula:      "tw93/tap/mole",
-		Method:       InstallBrewFormula,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("mo", []string{"--version"}, tool.ParseMoleVersion),
-	},
-	{
-		Name:         "multipass",
-		Command:      "multipass",
-		Formula:      "multipass",
-		Method:       InstallBrewFormula,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("multipass", []string{"--version"}, tool.ParseMultipassVersion),
-	},
-
-	// ==========================================================================
 	// AI Agents
 	// ==========================================================================
 	{
-		Name:      "claude",
-		Command:   "claude",
-		Method:    InstallManual,
-		Category:  CategoryAIAgents,
-		VersionFn: tool.VersionFromCmd("claude", []string{"--version"}, tool.ParseClaudeVersion),
+		Name:        "claude",
+		Description: "Claude Code CLI for agentic coding",
+		Command:     "claude",
+		Method:      InstallManual,
+		Category:    CategoryAIAgents,
+		VersionFn:   tool.VersionFromCmd("claude", []string{"--version"}, tool.ParseClaudeVersion),
 		InstallFn: func() error {
 			cmd := exec.Command("bash", "-c", "curl -fsSL https://claude.ai/install.sh | bash")
 			cmd.Stdout = os.Stdout
@@ -311,6 +593,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "claude-agent-acp",
+		Description:  "Claude agent bridge for Zed editor",
 		Command:      "claude-agent-acp",
 		Formula:      "@zed-industries/claude-agent-acp",
 		Method:       InstallBun,
@@ -319,6 +602,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "codex",
+		Description:  "OpenAI's CLI coding agent",
 		Command:      "codex",
 		Formula:      "codex",
 		Method:       InstallBun,
@@ -328,6 +612,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "gemini",
+		Description:  "Google's CLI coding agent",
 		Command:      "gemini",
 		Formula:      "gemini-cli",
 		Method:       InstallBrewFormula,
@@ -337,6 +622,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "opencode",
+		Description:  "Open-source AI coding agent CLI",
 		Command:      "opencode",
 		Formula:      "opencode",
 		Method:       InstallBrewFormula,
@@ -345,11 +631,12 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("opencode", []string{"--version"}, tool.TrimVersion),
 	},
 	{
-		Name:      "hermes",
-		Command:   "hermes",
-		Method:    InstallManual,
-		Category:  CategoryAIAgents,
-		VersionFn: tool.VersionFromCmd("hermes", []string{"--version"}, tool.ParseHermesVersion),
+		Name:        "hermes",
+		Description: "Self-improving AI agent with persistent memory",
+		Command:     "hermes",
+		Method:      InstallManual,
+		Category:    CategoryAIAgents,
+		VersionFn:   tool.VersionFromCmd("hermes", []string{"--version"}, tool.ParseHermesVersion),
 		InstallFn: func() error {
 			cmd := exec.Command("bash", "-c", "curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash -s -- --skip-setup")
 			cmd.Stdout = os.Stdout
@@ -358,12 +645,22 @@ var Tools = []Tool{
 			return cmd.Run()
 		},
 	},
+	{
+		Name:         "conductor",
+		Description:  "Runs parallel AI coding agents in git worktrees",
+		Formula:      "conductor",
+		Method:       InstallBrewCask,
+		Category:     CategoryAIAgents,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkAppWithCask("Conductor", "conductor"),
+	},
 
 	// ==========================================================================
 	// AI Tooling
 	// ==========================================================================
 	{
 		Name:         "ollama",
+		Description:  "Run large language models locally",
 		Command:      "ollama",
 		Formula:      "ollama-app",
 		Method:       InstallBrewCask,
@@ -384,6 +681,8 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "qmd",
+		Description:  "Local semantic search over markdown",
+		Replaces:     "grep over markdown notes",
 		Command:      "qmd",
 		Formula:      "https://github.com/tobi/qmd",
 		Method:       InstallBun,
@@ -393,6 +692,8 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "rtk",
+		Description:  "Token-optimized CLI proxy for agents",
+		Replaces:     "raw dev commands (token-heavy output)",
 		Command:      "rtk",
 		Formula:      "rtk",
 		Method:       InstallBrewFormula,
@@ -402,6 +703,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "skills",
+		Description:  "Agent skills package manager",
 		Command:      "skills",
 		Formula:      "skills",
 		Method:       InstallBun,
@@ -411,6 +713,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:          "browser-use",
+		Description:   "AI agent library for browser automation",
 		Command:       "browser-use",
 		Formula:       "browser-use",
 		Method:        InstallUV,
@@ -450,6 +753,7 @@ var Tools = []Tool{
 	},
 	{
 		Name:         "agent-browser",
+		Description:  "Browser automation CLI for AI agents",
 		Command:      "agent-browser",
 		Formula:      "agent-browser",
 		Method:       InstallBun,
@@ -474,154 +778,8 @@ var Tools = []Tool{
 	},
 
 	// ==========================================================================
-	// GUI Apps + Desktop Tooling
+	// AI Apps
 	// ==========================================================================
-	{
-		Name:         "orbstack",
-		Description:  "OrbStack container runtime (provides docker CLI)",
-		Formula:      "orbstack",
-		Method:       InstallBrewCask,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		CheckFn: func() CheckResult {
-			if _, err := os.Stat("/Applications/OrbStack.app"); err != nil {
-				return CheckResult{}
-			}
-			version := tool.VersionFromAppPlist("OrbStack")()
-			status := "stopped"
-			if err := exec.Command("docker", "info").Run(); err == nil {
-				status = "running"
-			}
-			return CheckResult{Installed: true, Version: version, Status: status}
-		},
-	},
-	{
-		Name:         "jump-desktop-connect",
-		Description:  "Remote GUI recovery host service for headless Macs",
-		Formula:      "jump-desktop-connect",
-		Method:       InstallBrewCask,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkAppWithCask("Jump Desktop Connect", "jump-desktop-connect"),
-	},
-	{
-		Name:         "jump-desktop",
-		Description:  "Jump Desktop viewer/client app",
-		Formula:      "jump-desktop",
-		Method:       InstallBrewCask,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkAppWithCask("Jump Desktop", "jump-desktop"),
-	},
-	{
-		Name:         "betterdisplay",
-		Description:  "Flexible HiDPI scaling and display management",
-		Formula:      "betterdisplay",
-		Method:       InstallBrewCask,
-		Category:     CategorySystem,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkAppWithCask("BetterDisplay", "betterdisplay"),
-	},
-	{
-		Name:         "conductor",
-		Formula:      "conductor",
-		Method:       InstallBrewCask,
-		Category:     CategoryAIAgents,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkAppWithCask("Conductor", "conductor"),
-	},
-	{
-		Name:         "ghostty",
-		Formula:      "ghostty",
-		Method:       InstallBrewCask,
-		Category:     CategoryDevelopment,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"ghostty"},
-		CheckFn:      checkAppWithCask("Ghostty", "ghostty"),
-	},
-	{
-		Name:         "gpg",
-		Description:  "GNU Privacy Guard for encryption and signing",
-		Command:      "gpg",
-		Formula:      "gnupg",
-		Method:       InstallBrewFormula,
-		Category:     CategoryGit,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"gpg"},
-		VersionFn:    tool.VersionFromBrewFormula("gnupg"),
-	},
-	{
-		Name:        "ohmyzsh",
-		Description: "Oh My Zsh shell framework",
-		Command:     "",
-		Method:      InstallManual,
-		Category:    CategoryTerminal,
-		CheckFn: func() CheckResult {
-			omzPath := os.Getenv("HOME") + "/.oh-my-zsh"
-			if _, err := os.Stat(omzPath); err != nil {
-				return CheckResult{}
-			}
-			cmd := exec.Command("git", "-C", omzPath, "rev-parse", "--short", "HEAD")
-			out, err := cmd.Output()
-			version := ""
-			if err == nil {
-				version = strings.TrimSpace(string(out))
-			}
-			return CheckResult{Installed: true, Version: version}
-		},
-		InstallFn: func() error {
-			cmd := exec.Command("sh", "-c", "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)")
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			cmd.Stdin = os.Stdin
-			return cmd.Run()
-		},
-	},
-	{
-		Name:         "lens",
-		Formula:      "lens",
-		Method:       InstallBrewCask,
-		Category:     CategoryDevelopment,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkAppWithCask("Lens", "lens"),
-	},
-	{
-		Name:         "zed",
-		Description:  "Zed code editor",
-		Formula:      "zed",
-		Method:       InstallBrewCask,
-		Category:     CategoryDevelopment,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"zed"},
-		CheckFn:      checkApp("Zed"),
-	},
-	{
-		Name:         "android-studio",
-		Description:  "Android development IDE",
-		Formula:      "android-studio",
-		Method:       InstallBrewCask,
-		Category:     CategoryDevelopment,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("Android Studio"),
-	},
-	{
-		Name:         "bitwarden",
-		Description:  "Password manager",
-		Formula:      "bitwarden",
-		Method:       InstallBrewCask,
-		Category:     CategorySecurity,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("Bitwarden"),
-	},
-	{
-		Name:         "brave",
-		Description:  "Privacy-focused web browser",
-		Formula:      "brave-browser",
-		Method:       InstallBrewCask,
-		Category:     CategoryBrowse,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("Brave Browser"),
-	},
 	{
 		Name:         "chatgpt",
 		Description:  "OpenAI ChatGPT desktop app",
@@ -641,21 +799,30 @@ var Tools = []Tool{
 		CheckFn:      checkApp("Claude"),
 	},
 	{
-		Name:         "cursor",
-		Description:  "AI-powered code editor",
-		Formula:      "cursor",
-		Method:       InstallBrewCask,
-		Category:     CategoryDevelopment,
-		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("Cursor"),
-	},
-	{
 		Name:        "typewhisper",
 		Description: "Whisper-based dictation app",
 		Method:      InstallManual,
 		Category:    CategoryAIApps,
 		CheckFn:     checkApp("TypeWhisper"),
 	},
+
+	// ==========================================================================
+	// Browsers
+	// ==========================================================================
+	{
+		Name:         "brave",
+		Description:  "Privacy-focused web browser",
+		Formula:      "brave-browser",
+		Method:       InstallBrewCask,
+		Category:     CategoryBrowsers,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkApp("Brave Browser"),
+	},
+	{Name: "dia", Description: "The Browser Company's AI-first browser", Method: InstallMAS, Category: CategoryBrowsers, CheckFn: checkApp("Dia")},
+
+	// ==========================================================================
+	// Communication
+	// ==========================================================================
 	{
 		Name:         "discord",
 		Description:  "Voice and text chat",
@@ -665,6 +832,29 @@ var Tools = []Tool{
 		Dependencies: []string{"homebrew"},
 		CheckFn:      checkApp("Discord"),
 	},
+	{
+		Name:         "slack",
+		Description:  "Team communication",
+		Formula:      "slack",
+		Method:       InstallBrewCask,
+		Category:     CategoryCommunication,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkApp("Slack"),
+	},
+	{
+		Name:         "whatsapp",
+		Description:  "Messaging app",
+		Formula:      "whatsapp",
+		Method:       InstallBrewCask,
+		Category:     CategoryCommunication,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkApp("WhatsApp"),
+	},
+	{Name: "messenger", Description: "Facebook Messenger", Method: InstallMAS, Category: CategoryCommunication, CheckFn: checkApp("Messenger")},
+
+	// ==========================================================================
+	// Productivity
+	// ==========================================================================
 	{
 		Name:         "linear",
 		Description:  "Project management tool",
@@ -692,14 +882,40 @@ var Tools = []Tool{
 		Dependencies: []string{"homebrew"},
 		CheckFn:      checkApp("Obsidian"),
 	},
+	{Name: "keynote", Description: "Apple presentations", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Keynote")},
+	{Name: "numbers", Description: "Apple spreadsheets", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Numbers")},
+	{Name: "pages", Description: "Apple word processor", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Pages")},
+	{Name: "raindrop", Description: "Bookmark manager", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Save to Raindrop.io")},
+
+	// ==========================================================================
+	// Media
+	// ==========================================================================
+	{Name: "broadcasts", Description: "Internet radio and stream player", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Broadcasts")},
+	{Name: "compressor", Description: "Apple video compression tool", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Compressor")},
+	{Name: "final-cut-pro", Description: "Professional video editor", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Final Cut Pro")},
+	{Name: "lightroom", Description: "Adobe photo editor", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Adobe Lightroom")},
+	{Name: "logic-pro", Description: "Professional music production", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Logic Pro")},
+
+	// ==========================================================================
+	// Remote Access
+	// ==========================================================================
 	{
-		Name:         "slack",
-		Description:  "Team communication",
-		Formula:      "slack",
+		Name:         "jump-desktop-connect",
+		Description:  "Remote GUI recovery host service for headless Macs",
+		Formula:      "jump-desktop-connect",
 		Method:       InstallBrewCask,
-		Category:     CategoryCommunication,
+		Category:     CategoryRemoteAccess,
 		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("Slack"),
+		CheckFn:      checkAppWithCask("Jump Desktop Connect", "jump-desktop-connect"),
+	},
+	{
+		Name:         "jump-desktop",
+		Description:  "Jump Desktop viewer/client app",
+		Formula:      "jump-desktop",
+		Method:       InstallBrewCask,
+		Category:     CategoryRemoteAccess,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkAppWithCask("Jump Desktop", "jump-desktop"),
 	},
 	{
 		Name:         "tailscale",
@@ -707,7 +923,7 @@ var Tools = []Tool{
 		Command:      "tailscale",
 		Formula:      "tailscale",
 		Method:       InstallBrewFormula,
-		Category:     CategorySecurity,
+		Category:     CategoryRemoteAccess,
 		Dependencies: []string{"homebrew"},
 		CheckFn: func() CheckResult {
 			if _, err := exec.LookPath("tailscale"); err == nil {
@@ -727,181 +943,45 @@ var Tools = []Tool{
 			return CheckResult{}
 		},
 	},
+
+	// ==========================================================================
+	// Security
+	// ==========================================================================
 	{
-		Name:         "whatsapp",
-		Description:  "Messaging app",
-		Formula:      "whatsapp",
+		Name:         "bitwarden",
+		Description:  "Password manager",
+		Formula:      "bitwarden",
 		Method:       InstallBrewCask,
-		Category:     CategoryCommunication,
+		Category:     CategorySecurity,
 		Dependencies: []string{"homebrew"},
-		CheckFn:      checkApp("WhatsApp"),
+		CheckFn:      checkApp("Bitwarden"),
 	},
-
-	// ==========================================================================
-	// Terminal
-	// ==========================================================================
-	{
-		Name:         "yazi",
-		Description:  "Terminal file manager",
-		Command:      "yazi",
-		Formula:      "yazi",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("yazi", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "lazygit",
-		Description:  "Terminal UI for git",
-		Command:      "lazygit",
-		Formula:      "lazygit",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("lazygit", []string{"--version"}, tool.TrimVersion),
-	},
-	{
-		Name:         "tmux",
-		Command:      "tmux",
-		Formula:      "tmux",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"tmux"},
-		VersionFn:    tool.VersionFromCmd("tmux", []string{"-V"}, tool.ParseTmuxVersion),
-	},
-	{
-		Name:         "starship",
-		Description:  "Cross-shell prompt (path, git branch/status, versions)",
-		Command:      "starship",
-		Formula:      "starship",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"starship"},
-		VersionFn:    tool.VersionFromCmd("starship", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "bat",
-		Description:  "Cat clone with syntax highlighting",
-		Command:      "bat",
-		Formula:      "bat",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("bat", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "dust",
-		Description:  "Intuitive disk usage tool",
-		Command:      "dust",
-		Formula:      "dust",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("dust", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "eza",
-		Description:  "Modern ls replacement",
-		Command:      "eza",
-		Formula:      "eza",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("eza", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "fd",
-		Description:  "Fast find alternative",
-		Command:      "fd",
-		Formula:      "fd",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("fd", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "ripgrep",
-		Description:  "Fast grep alternative",
-		Command:      "rg",
-		Formula:      "ripgrep",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("rg", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "sd",
-		Description:  "Intuitive sed alternative",
-		Command:      "sd",
-		Formula:      "sd",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("sd", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "zoxide",
-		Description:  "Smarter cd command",
-		Command:      "zoxide",
-		Formula:      "zoxide",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("zoxide", []string{"--version"}, tool.ParseBrewVersion),
-	},
-	{
-		Name:         "difftastic",
-		Description:  "Structural diff tool",
-		Command:      "difft",
-		Formula:      "difftastic",
-		Method:       InstallBrewFormula,
-		Category:     CategoryTerminal,
-		Dependencies: []string{"homebrew"},
-		VersionFn:    tool.VersionFromCmd("difft", []string{"--version"}, tool.ParseBrewVersion),
-	},
-
-	// ==========================================================================
-	// Git
-	// ==========================================================================
-	{
-		Name:      "git",
-		Command:   "git",
-		Method:    InstallXcode,
-		Category:  CategoryGit,
-		VersionFn: tool.VersionFromCmd("git", []string{"--version"}, tool.ParseGitVersion),
-	},
-	{
-		Name:         "gh",
-		Description:  "GitHub CLI for repository management",
-		Command:      "gh",
-		Formula:      "gh",
-		Method:       InstallBrewFormula,
-		Category:     CategoryGit,
-		Dependencies: []string{"homebrew"},
-		Scripts:      []string{"gh"},
-		VersionFn:    tool.VersionFromCmd("gh", []string{"--version"}, tool.ParseGhVersion),
-	},
-
-	// ==========================================================================
-	// Mac App Store (check-only, not auto-installable)
-	// ==========================================================================
 	{Name: "adguard", Description: "Ad blocker for Safari", Method: InstallMAS, Category: CategorySecurity, CheckFn: checkApp("AdGuard for Safari")},
-	{Name: "broadcasts", Method: InstallMAS, Category: CategoryEntertainment, CheckFn: checkApp("Broadcasts")},
-	{Name: "compressor", Description: "Apple video compression tool", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Compressor")},
-	{Name: "dia", Description: "AI assistant by Apple", Method: InstallMAS, Category: CategoryBrowse, CheckFn: checkApp("Dia")},
-	{Name: "final-cut-pro", Description: "Professional video editor", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Final Cut Pro")},
-	{Name: "lightroom", Description: "Adobe photo editor", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Adobe Lightroom")},
-	{Name: "logic-pro", Description: "Professional music production", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Logic Pro")},
-	{Name: "messenger", Description: "Facebook Messenger", Method: InstallMAS, Category: CategoryCommunication, CheckFn: checkApp("Messenger")},
-	{Name: "keynote", Description: "Apple presentations", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Keynote")},
-	{Name: "numbers", Description: "Apple spreadsheets", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Numbers")},
-	{Name: "pages", Description: "Apple word processor", Method: InstallMAS, Category: CategoryCreative, CheckFn: checkApp("Pages")},
 	{Name: "passepartout", Description: "VPN client", Method: InstallMAS, Category: CategorySecurity, CheckFn: checkApp("Passepartout")},
-	{Name: "pipifier", Description: "Picture-in-Picture for Safari", Method: InstallMAS, Category: CategoryUtilities, CheckFn: checkApp("PiPifier")},
-	{Name: "raindrop", Description: "Bookmark manager", Method: InstallMAS, Category: CategoryEntertainment, CheckFn: checkApp("Save to Raindrop.io")},
-	{Name: "snippety", Description: "Code snippet manager", Method: InstallMAS, Category: CategoryUtilities, CheckFn: checkApp("Snippety")},
-	{Name: "speedtest", Description: "Internet speed test", Method: InstallMAS, Category: CategoryUtilities, CheckFn: checkApp("Speedtest")},
-	{Name: "xcode", Description: "Apple development IDE", Method: InstallMAS, Category: CategoryDevelopment, CheckFn: checkApp("Xcode")},
+
+	// ==========================================================================
+	// System Utilities
+	// ==========================================================================
+	{
+		Name:         "mole",
+		Description:  "Clean, uninstall, analyze, and optimize macOS from the terminal",
+		Command:      "mo",
+		Formula:      "tw93/tap/mole",
+		Method:       InstallBrewFormula,
+		Category:     CategorySystemUtilities,
+		Dependencies: []string{"homebrew"},
+		VersionFn:    tool.VersionFromCmd("mo", []string{"--version"}, tool.ParseMoleVersion),
+	},
+	{
+		Name:         "betterdisplay",
+		Description:  "Flexible HiDPI scaling and display management",
+		Formula:      "betterdisplay",
+		Method:       InstallBrewCask,
+		Category:     CategorySystemUtilities,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkAppWithCask("BetterDisplay", "betterdisplay"),
+	},
+	{Name: "pipifier", Description: "Picture-in-Picture for Safari", Method: InstallMAS, Category: CategorySystemUtilities, CheckFn: checkApp("PiPifier")},
+	{Name: "snippety", Description: "Code snippet manager", Method: InstallMAS, Category: CategorySystemUtilities, CheckFn: checkApp("Snippety")},
+	{Name: "speedtest", Description: "Internet speed test", Method: InstallMAS, Category: CategorySystemUtilities, CheckFn: checkApp("Speedtest")},
 }

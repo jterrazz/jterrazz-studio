@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
 // State icons for each item row.

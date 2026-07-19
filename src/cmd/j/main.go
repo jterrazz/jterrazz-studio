@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/commands"
+	"github.com/jterrazz/jterrazz-studio/src/internal/commands"
 )
 
 func main() {

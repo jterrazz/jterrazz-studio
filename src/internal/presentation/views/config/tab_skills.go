@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/skill"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/skill"
 )
 
 // skillEntry is one row in the Skills tab — a (repo, name) pair plus the

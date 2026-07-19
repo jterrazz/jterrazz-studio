@@ -6,8 +6,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
 const (

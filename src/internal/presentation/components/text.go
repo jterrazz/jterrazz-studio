@@ -3,7 +3,7 @@ package components
 import (
 	"strings"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/theme"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 )
 
 // =============================================================================

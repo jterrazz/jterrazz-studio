@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
 // keymap groups every key the model reacts to so the view can render hints

@@ -1,4 +1,4 @@
-.PHONY: build install uninstall check test test-e2e clean fmt vet lint help
+.PHONY: build install uninstall check test test-e2e clean fmt vet lint skills help
 
 # ==============================================================================
 # Configuration
@@ -22,7 +22,7 @@ RESET := \033[0m
 # ==============================================================================
 
 help: ## Show available targets
-	@printf "$(CYAN)jterrazz-cli$(RESET)\n"
+	@printf "$(CYAN)jterrazz-studio$(RESET)\n"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "$(CYAN)%-12s$(RESET) %s\n", $$1, $$2}'
 
@@ -49,7 +49,7 @@ install: build ## Build and install to ~/.jterrazz/bin
 	fi
 	@if [ -f "$$HOME/.zshrc" ]; then \
 		if ! grep -q "$(ZSHRC_SOURCE)" "$$HOME/.zshrc"; then \
-			printf '\n# jterrazz-cli\nsource $(CURDIR)/$(ZSHRC_SOURCE)\n' >> "$$HOME/.zshrc"; \
+			printf '\n# jterrazz-studio\nsource $(CURDIR)/$(ZSHRC_SOURCE)\n' >> "$$HOME/.zshrc"; \
 			printf "$(GREEN)✓$(RESET) Added source to ~/.zshrc\n"; \
 		fi \
 	else \
@@ -103,3 +103,7 @@ lint: ## Run golangci-lint
 clean: ## Remove build artifacts
 	@rm -f $(BINARY)
 	@printf "$(GREEN)✓$(RESET) Cleaned\n"
+
+skills: ## Regenerate the toolbelt skill rosters
+	@go run ./src/cmd/skillsgen
+	@printf "$(GREEN)✓$(RESET) Regenerated skills/jterrazz-toolbelt/SKILL.md\n"

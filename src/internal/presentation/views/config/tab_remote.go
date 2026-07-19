@@ -6,7 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
 // renderRemoteBody renders the Remote tab — a read-only summary of the

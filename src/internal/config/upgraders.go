@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	output "github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	output "github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
 // PackageManager represents an upgradable package manager

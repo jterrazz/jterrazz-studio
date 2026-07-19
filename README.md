@@ -8,7 +8,7 @@ A single CLI to bootstrap and manage a macOS development machine — tools, conf
 
 ```sh
 xcode-select --install
-curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-cli/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-studio/main/scripts/install.sh | sh
 source ~/.zshrc
 ```
 
@@ -35,8 +35,10 @@ The corpus lives in [`docs/`](docs/):
 - [Configuration](docs/04-configuration.md) — the `j config` TUI, items, and categories.
 - [Tools and skills](docs/05-tools-and-skills.md) — the curated tool and skill registries.
 - [Dotfiles](docs/06-dotfiles.md) — the versioned application configs.
+- [The stack](docs/07-stack.md) — how `@jterrazz` projects compose.
+- [Repo structure](docs/08-repo-structure.md) — where knowledge lives in every repo.
 
-Agents start at [`AGENTS.md`](AGENTS.md).
+For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills — `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project`, and `jterrazz-repo-structure`.
 
 ## License
 

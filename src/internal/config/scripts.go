@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/tool"
-	out "github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	out "github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
 const dnsProfileIdentifier = "com.jterrazz.dns.quad9"
@@ -940,6 +940,8 @@ func repoRootCandidates() []string {
 		roots = append(roots, env)
 	}
 	roots = append(roots,
+		home+"/Developer/jterrazz-studio",
+		home+"/Developer/jterrazz/jterrazz-studio",
 		home+"/Developer/jterrazz-cli",
 		home+"/Developer/jterrazz/jterrazz-cli",
 	)

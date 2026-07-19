@@ -10,11 +10,11 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/status"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/components"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/print"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/theme"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/status"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 )
 
 // ProcessRefreshMsg triggers a refresh of process data

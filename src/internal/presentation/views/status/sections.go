@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
-	"github.com/jterrazz/jterrazz-cli/src/internal/domain/status"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/components"
-	"github.com/jterrazz/jterrazz-cli/src/internal/presentation/theme"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/domain/status"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 )
 
 const minColumnWidth = 44

@@ -3,7 +3,7 @@ package configview
 import (
 	"testing"
 
-	"github.com/jterrazz/jterrazz-cli/src/internal/config"
+	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
 // modelWithSections constructs a Model directly from a synthetic section list,

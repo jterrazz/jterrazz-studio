@@ -1,5 +1,5 @@
 {
-  "name": "jterrazz-cli-tests",
+  "name": "jterrazz-studio-tests",
   "private": true,
   "type": "module",
   "scripts": {

@@ -14,14 +14,15 @@ type Skill struct {
 
 // StudioSkills are @jterrazz skills — the foundation of every project
 var StudioSkills = []Skill{
-	{"jterrazz/jterrazz-cli", "jterrazz-stack"},
-	{"jterrazz/jterrazz-cli", "jterrazz-new-project"},
+	{"jterrazz/jterrazz-studio", "jterrazz-toolbelt"},
+	{"jterrazz/jterrazz-studio", "jterrazz-stack"},
+	{"jterrazz/jterrazz-studio", "jterrazz-new-project"},
+	{"jterrazz/jterrazz-studio", "jterrazz-repo-structure"},
 	{"jterrazz/jterrazz-infra", "jterrazz-infra"},
 	{"jterrazz/package-typescript", "jterrazz-typescript"},
-	{"jterrazz/package-typescript", "jterrazz-repo-structure"},
 	{"jterrazz/package-broadcast", "jterrazz-broadcast"},
 	{"jterrazz/package-test", "jterrazz-test"},
-	{"jterrazz/jterrazz-actions", "jterrazz-actions"},
+	{"jterrazz/jterrazz-actions", "jterrazz-workflows"},
 }
 
 // CommunitySkills are third-party skills worth having
@@ -41,7 +42,7 @@ var FavoriteSkills = append(StudioSkills, CommunitySkills...)
 
 // StudioRepos are @jterrazz skill repositories
 var StudioRepos = []SkillRepo{
-	{"jterrazz/jterrazz-cli", "Dev toolkit, conventions, and scaffolding"},
+	{"jterrazz/jterrazz-studio", "The studio — machine CLI, stack conventions, repo doctrine"},
 	{"jterrazz/jterrazz-infra", "Infrastructure and deployment (K3s, Helm, Traefik)"},
 	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
 	{"jterrazz/package-typescript", "TypeScript toolchain — build, lint, format, docs"},
