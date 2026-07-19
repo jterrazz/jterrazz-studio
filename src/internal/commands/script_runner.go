@@ -10,26 +10,24 @@ import (
 // dispatches actions itself (with proper Inputs collection); this helper is
 // the headless fallback and ignores any Inputs the script declares.
 //
-// For toggleable items (UninstallFn != nil), runs UninstallFn when the item is
-// currently installed, InstallFn otherwise.
+// The dispatch logic (install vs. uninstall, toggle convention) lives in
+// config.RunScript, shared with the install TUI's post-install wiring — this
+// wrapper only adds the CLI's print-based reporting on top.
 func runScript(name string) {
-	script := config.GetScriptByName(name)
-	if script == nil {
-		print.Error("Unknown script: " + name)
+	verb, err := config.RunScript(name)
+	if err == nil {
 		return
 	}
-
-	if script.UninstallFn != nil && script.CheckFn != nil && script.CheckFn().Installed {
-		if err := script.UninstallFn(); err != nil {
-			print.Error("Failed to uninstall " + name + ": " + err.Error())
-		}
-		return
-	}
-	if script.InstallFn == nil {
-		print.Error("No runner for script: " + name)
-		return
-	}
-	if err := script.InstallFn(config.InputValues{}); err != nil {
+	switch verb {
+	case "uninstall":
+		print.Error("Failed to uninstall " + name + ": " + err.Error())
+	case "install":
 		print.Error("Failed to install " + name + ": " + err.Error())
+	default:
+		if config.GetScriptByName(name) == nil {
+			print.Error("Unknown script: " + name)
+		} else {
+			print.Error("No runner for script: " + name)
+		}
 	}
 }

@@ -122,6 +122,7 @@ type Tool struct {
 	Formula       string        // Brew formula or npm package name
 	PythonVersion string        // Python version constraint for uv tools (e.g. "3.13")
 	InstallFn     func() error  // Custom install (overrides Method)
+	UninstallFn   func() error  // Custom uninstall (overrides Method); optional
 	Dependencies  []string      // Tool names this depends on
 
 	// Version - how to get version info
@@ -266,6 +267,64 @@ func (t Tool) Install() error {
 		return ExecCommand("uv", "tool", "install", t.Formula)
 	default:
 		return fmt.Errorf("cannot auto-install %s (method: %s)", t.Name, t.Method)
+	}
+}
+
+// Uninstall removes the tool. Custom UninstallFn wins; otherwise dispatches
+// per Method the same way Install does. Methods with no well-defined
+// uninstall (manual, xcode, mas, nvm) return an error — those tools are
+// check-only from the registry's point of view.
+func (t Tool) Uninstall() error {
+	if t.UninstallFn != nil {
+		return t.UninstallFn()
+	}
+
+	switch t.Method {
+	case InstallBrewFormula:
+		return RunBrewCommand("uninstall", t.Formula)
+	case InstallBrewCask:
+		return RunBrewCommand("uninstall", "--cask", t.Formula)
+	case InstallNpm:
+		return ExecCommand("npm", "uninstall", "-g", t.Formula)
+	case InstallBun:
+		return ExecCommand("bun", "remove", "-g", t.Formula)
+	case InstallUV:
+		return ExecCommand("uv", "tool", "uninstall", t.Formula)
+	default:
+		return fmt.Errorf("cannot auto-uninstall %s (method: %s)", t.Name, t.Method)
+	}
+}
+
+// Uninstallable reports whether the tool can be removed automatically —
+// either via a custom UninstallFn or one of the five dispatchable methods
+// (brew formula, brew cask, npm, bun, uv). Manual/xcode/mas/nvm entries
+// (and anything else) are check-only unless they set UninstallFn.
+func (t Tool) Uninstallable() bool {
+	if t.UninstallFn != nil {
+		return true
+	}
+	switch t.Method {
+	case InstallBrewFormula, InstallBrewCask, InstallNpm, InstallBun, InstallUV:
+		return true
+	default:
+		return false
+	}
+}
+
+// Installable reports whether the tool can be installed automatically —
+// either via a custom InstallFn or one of the five dispatchable methods.
+// Mirrors Uninstallable's method set so the TUI can tell "read-only"
+// (neither installable nor uninstallable) registry entries apart from
+// actionable ones.
+func (t Tool) Installable() bool {
+	if t.InstallFn != nil {
+		return true
+	}
+	switch t.Method {
+	case InstallBrewFormula, InstallBrewCask, InstallNpm, InstallBun, InstallUV:
+		return true
+	default:
+		return false
 	}
 }
 

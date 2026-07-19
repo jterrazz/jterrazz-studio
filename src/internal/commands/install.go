@@ -2,24 +2,41 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"sync"
 
+	xterm "github.com/charmbracelet/x/term"
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	installview "github.com/jterrazz/jterrazz-studio/src/internal/presentation/views/install"
 	"github.com/spf13/cobra"
 )
+
+// installListOnly forces the plain-text catalog listing even when stdout is
+// a terminal — the --list escape hatch out of the TUI.
+var installListOnly bool
 
 var installCmd = &cobra.Command{
 	Use:   "install [tool...]",
 	Short: "Install development tools",
 	Long: `Install development tools.
 
+With no arguments and an interactive terminal, opens the install TUI: tools
+are grouped into four pages — Dev, Infra, AI, Apps — each split into family
+sections in registry order. Use arrows/jk to move, tab to fold a section,
+space for details, i to install, u to uninstall (with a confirm prompt),
+1-4 to jump pages, q/esc to quit.
+
+Falls back to the classic plain-text catalog listing when stdout isn't a
+terminal (scripts, CI, piped output) or when --list is passed.
+
 Examples:
+  j install                 Open the interactive install TUI
+  j install --list          Print the plain-text tool catalog instead
   j install homebrew        Install Homebrew
   j install nvm             Install NVM
-  j install go python node  Install specific tools
-  j install                 List available tools`,
+  j install go python node  Install specific tools`,
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		var all []string
 		for _, t := range config.Tools {
@@ -29,6 +46,10 @@ Examples:
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
+			if !installListOnly && xterm.IsTerminal(os.Stdout.Fd()) {
+				installview.RunOrExit()
+				return
+			}
 			listAvailableTools()
 			return
 		}
@@ -42,6 +63,7 @@ Examples:
 }
 
 func init() {
+	installCmd.Flags().BoolVar(&installListOnly, "list", false, "print the plain-text tool catalog instead of opening the TUI")
 	rootCmd.AddCommand(installCmd)
 }
 

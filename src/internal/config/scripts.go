@@ -979,6 +979,40 @@ func GetScriptByName(name string) *Script {
 	return nil
 }
 
+// RunScript executes a single script by name using the same toggle
+// convention as the j config TUI and `j install`'s post-install-scripts
+// loop: uninstall when the script is already installed and declares an
+// UninstallFn, install otherwise. Any Inputs the script declares are ignored
+// (this is the headless / no-modal path). Returns the verb actually
+// attempted ("install" or "uninstall", empty if none could be run) alongside
+// any error, so callers can report contextually — see runScript in
+// commands/script_runner.go (CLI wrapper) and the install TUI's post-install
+// wiring for the two current callers.
+func RunScript(name string) (verb string, err error) {
+	script := GetScriptByName(name)
+	if script == nil {
+		return "", fmt.Errorf("unknown script: %s", name)
+	}
+	if script.UninstallFn != nil && script.CheckFn != nil && script.CheckFn().Installed {
+		return "uninstall", script.UninstallFn()
+	}
+	if script.InstallFn == nil {
+		return "", fmt.Errorf("no runner for script: %s", name)
+	}
+	return "install", script.InstallFn(InputValues{})
+}
+
+// RunScripts runs each named script in order via RunScript, stopping at (and
+// returning) the first error. Used for a Tool's post-install Scripts list.
+func RunScripts(names []string) error {
+	for _, name := range names {
+		if _, err := RunScript(name); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetScriptsByCategory returns scripts filtered by category
 func GetScriptsByCategory(category ScriptCategory) []Script {
 	var result []Script

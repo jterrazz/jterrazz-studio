@@ -15,12 +15,17 @@ Everything loads in parallel with a progress bar; the System tab's live readings
 
 ## `j install [tool...]`
 
+With no arguments in an interactive terminal, opens a full-screen TUI (same architecture as `j config`): the 18 tool families are grouped into 4 pages — **Dev** (Package Managers, Runtimes, Shell & Terminal, CLI Tools, Git, Editors & IDEs), **Infra** (Containers & VMs, Deploy, Remote Access, Security), **AI** (AI Agents, AI Tooling, AI Apps), **Apps** (Browsers, Communication, Productivity, Media, System Utilities) — each split into collapsible family sections, rows in registry order. Press `i` to install, `u` to uninstall (with a Yes/No confirm first), `space` for a detail panel (description, replaces, method, formula, dependencies, post-install scripts), `tab` to fold a section, `←/→`/`1..4` to switch pages. Entries that are neither installable nor uninstallable through the registry (App Store apps, Xcode, and other manual/check-only entries) show a muted `(read-only)` marker instead of `i`/`u` hints. Installing a tool with unmet `Dependencies` refuses with "install `<dep>` first" instead of running.
+
 ```sh
-j install                          # List all tracked tools with status
-j install homebrew go node         # Install specific tools
+j install                 # Open the interactive install TUI (TTY only)
+j install --list          # Print the plain-text tool catalog instead
+j install homebrew go node         # Install specific tools directly
 j install claude codex ollama rtk  # AI tools
 j install ghostty tmux zed         # Terminal + editor
 ```
+
+Falls back to the plain-text catalog listing (the classic `✓`/`✗` table by category) when stdout isn't a terminal — scripts, CI, piped output — or when `--list` is passed. `j install <tool> [tool...]` (the direct, non-interactive form) is unchanged either way.
 
 The tool catalogue and its categories live in [Tools and skills](05-tools-and-skills.md).
 
