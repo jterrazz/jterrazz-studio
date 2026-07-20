@@ -742,6 +742,27 @@ var Tools = []Tool{
 		Dependencies: []string{"node"},
 	},
 	{
+		Name:         "playwright-browsers",
+		Description:  "Chromium runtime for website specs (@jterrazz/test)",
+		Category:     CategoryAITooling,
+		Dependencies: []string{"node"},
+		CheckFn: func() CheckResult {
+			entries, err := os.ReadDir(os.Getenv("HOME") + "/Library/Caches/ms-playwright")
+			if err != nil {
+				return CheckResult{}
+			}
+			for _, entry := range entries {
+				if strings.HasPrefix(entry.Name(), "chromium") {
+					return CheckResult{Installed: true, Version: entry.Name()}
+				}
+			}
+			return CheckResult{}
+		},
+		InstallFn: func() error {
+			return ExecCommand("npx", "playwright", "install", "chromium")
+		},
+	},
+	{
 		Name:         "inferrs",
 		Description:  "TurboQuant LLM inference server",
 		Command:      "inferrs",

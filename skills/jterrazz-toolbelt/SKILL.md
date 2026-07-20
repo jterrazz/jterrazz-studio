@@ -108,6 +108,7 @@ Modern replacements are on every machine — prefer them over the defaults:
 - **browser-use** — AI agent library for browser automation
 - **markitdown** — Convert files to Markdown for LLMs
 - **playwright-mcp** — Browser automation for AI agents via MCP
+- **playwright-browsers** — Chromium runtime for website specs (@jterrazz/test)
 - **inferrs** — TurboQuant LLM inference server
 - **agent-browser** — Browser automation CLI for AI agents
 - **plannotator** — Review AI agent plans and code before committing
