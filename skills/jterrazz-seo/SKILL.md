@@ -56,7 +56,7 @@ Per-page: one clear primary keyword, no two pages targeting the same one (cannib
 
 - `app/sitemap.ts`, `app/robots.ts`, and the Metadata API are the canonical mechanisms — no third-party SEO packages.
 - **Caveat:** `alternates.languages` does not auto-add the self-referencing hreflang for the current locale — add it explicitly.
-- Reference implementation: `jterrazz-web` → `src/infrastructure/seo/` (`build-metadata.ts`, `json-ld.ts`), `src/app/sitemap.ts`, `src/app/robots.ts`.
+- Reference implementation: `jterrazz-web` → `reach.config.ts` (the single source of truth) projected by `@jterrazz/reach` (`packages/reach`): sitemap/robots/llms.txt are one-liner routes, the identity JSON-LD is a projected `@graph`, and `specs/website/` runs the `conformance(website, site)` rule pack against the built site via `specification.website()` (`@jterrazz/test`). Prefer wiring a site into reach over hand-rolling these surfaces.
 
 ## Deep checklists
 
