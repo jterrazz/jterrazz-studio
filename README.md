@@ -38,7 +38,7 @@ The corpus lives in [`docs/`](docs/):
 - [The stack](docs/07-stack.md) — how `@jterrazz` projects compose.
 - [Repo structure](docs/08-repo-structure.md) — where knowledge lives in every repo.
 
-For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills — `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project`, `jterrazz-repo-structure`, and the reach pack: `jterrazz-seo`, `jterrazz-geo`, `jterrazz-structured-data`, `jterrazz-content-reach`.
+For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills — `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project`, `jterrazz-repo-structure` — the reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
 
 ## License
 

@@ -10,7 +10,7 @@
 
 The curated Claude Code / agent skills live in `src/internal/config/skills.go`, split into two lists:
 
-- **StudioSkills** — the `@jterrazz` skills, the foundation of every project (toolbelt, stack, new-project, repo-structure, seo, geo, structured-data, content-reach, infra, typescript, broadcast, test, workflows).
+- **StudioSkills** — the `@jterrazz` skills, the foundation of every project (toolbelt, stack, new-project, repo-structure, reach + its seo/geo/structured-data/content-reach domain skills, infra, typescript, broadcast, test, workflows).
 - **CommunitySkills** — third-party skills worth having.
 
 Each entry is a `{ repo, skill }` pair; `StudioRepos` / `CommunityRepos` carry the human-readable repo descriptions shown in the UI. `skills.go` is the single source of truth — adding an entry there is all it takes (plus a `make skills` to refresh the projected roster below); there is no lockfile.

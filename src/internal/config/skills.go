@@ -18,10 +18,11 @@ var StudioSkills = []Skill{
 	{"jterrazz/jterrazz-studio", "jterrazz-stack"},
 	{"jterrazz/jterrazz-studio", "jterrazz-new-project"},
 	{"jterrazz/jterrazz-studio", "jterrazz-repo-structure"},
-	{"jterrazz/jterrazz-studio", "jterrazz-seo"},
-	{"jterrazz/jterrazz-studio", "jterrazz-geo"},
-	{"jterrazz/jterrazz-studio", "jterrazz-structured-data"},
-	{"jterrazz/jterrazz-studio", "jterrazz-content-reach"},
+	{"jterrazz/package-reach", "jterrazz-reach"},
+	{"jterrazz/package-reach", "jterrazz-seo"},
+	{"jterrazz/package-reach", "jterrazz-geo"},
+	{"jterrazz/package-reach", "jterrazz-structured-data"},
+	{"jterrazz/package-reach", "jterrazz-content-reach"},
 	{"jterrazz/jterrazz-infra", "jterrazz-infra"},
 	{"jterrazz/package-typescript", "jterrazz-typescript"},
 	{"jterrazz/package-broadcast", "jterrazz-broadcast"},
@@ -51,6 +52,7 @@ var StudioRepos = []SkillRepo{
 	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
 	{"jterrazz/package-typescript", "TypeScript toolchain — build, lint, format, docs"},
 	{"jterrazz/package-broadcast", "Multi-channel announcements (App Store, push)"},
+	{"jterrazz/package-reach", "Site reach — SEO/GEO surfaces, projections, conformance"},
 	{"jterrazz/package-test", "Testing utilities (vitest mocks)"},
 }
 
