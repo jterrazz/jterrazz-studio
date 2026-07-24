@@ -528,6 +528,15 @@ var Tools = []Tool{
 		Dependencies: []string{"homebrew"},
 		CheckFn:      checkAppWithCask("Lens", "lens"),
 	},
+	{
+		Name:         "utm",
+		Description:  "Virtual machines for macOS (QEMU + Apple Virtualization)",
+		Formula:      "utm",
+		Method:       InstallBrewCask,
+		Category:     CategoryContainersVMs,
+		Dependencies: []string{"homebrew"},
+		CheckFn:      checkAppWithCask("UTM", "utm"),
+	},
 
 	// ==========================================================================
 	// Deploy

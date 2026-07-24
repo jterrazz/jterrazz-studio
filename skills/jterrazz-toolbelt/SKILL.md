@@ -84,6 +84,7 @@ Modern replacements are on every machine — prefer them over the defaults:
 - **multipass** — Lightweight Ubuntu VMs on demand
 - **orbstack** — OrbStack container runtime (provides docker CLI)
 - **lens** — Kubernetes IDE for managing clusters
+- **utm** — Virtual machines for macOS (QEMU + Apple Virtualization)
 
 ### Deploy
 - **ansible** — Agentless IT automation and configuration management
