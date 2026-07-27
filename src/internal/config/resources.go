@@ -647,9 +647,9 @@ func scanRepo(repoPath, relPath string) RepoInfo {
 // ScanAllRepos scans all git repos under ~/Developer (up to scanRepoMaxDepth
 // levels deep) and groups them by project. Grouping rules:
 //   - depth-1 repo (e.g. ~/Developer/x): prefix = portion before the first
-//     dash in the name (existing convention, keeps "jterrazz-cli" grouped
+//     dash in the name (existing convention, keeps "jterrazz-studio" grouped
 //     under "jterrazz" if you have flat repos).
-//   - deeper repo (e.g. ~/Developer/jterrazz/jterrazz-cli): prefix = the
+//   - deeper repo (e.g. ~/Developer/jterrazz/jterrazz-studio): prefix = the
 //     containing directory name. Natural since organisations cluster repos
 //     under one folder.
 //

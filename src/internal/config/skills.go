@@ -23,7 +23,7 @@ var StudioSkills = []Skill{
 	{"jterrazz/package-reach", "jterrazz-geo"},
 	{"jterrazz/package-reach", "jterrazz-structured-data"},
 	{"jterrazz/package-reach", "jterrazz-content-reach"},
-	{"jterrazz/jterrazz-infra", "jterrazz-infra"},
+	{"jterrazz/jterrazz-infrastructure", "jterrazz-infra"},
 	{"jterrazz/package-typescript", "jterrazz-typescript"},
 	{"jterrazz/package-attestation", "jterrazz-attestation"},
 	{"jterrazz/package-broadcast", "jterrazz-broadcast"},
@@ -49,7 +49,7 @@ var FavoriteSkills = append(StudioSkills, CommunitySkills...)
 // StudioRepos are @jterrazz skill repositories
 var StudioRepos = []SkillRepo{
 	{"jterrazz/jterrazz-studio", "The studio — machine CLI, stack conventions, repo doctrine"},
-	{"jterrazz/jterrazz-infra", "Infrastructure and deployment (K3s, Helm, Traefik)"},
+	{"jterrazz/jterrazz-infrastructure", "Infrastructure and deployment (K3s, Helm, Traefik)"},
 	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
 	{"jterrazz/package-typescript", "TypeScript toolchain — build, lint, format, docs"},
 	{"jterrazz/package-attestation", "Article attestation — EIP-712 + OpenTimestamps"},

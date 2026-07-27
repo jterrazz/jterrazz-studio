@@ -9,7 +9,7 @@ The map of the `@jterrazz` ecosystem: composable packages, one set of convention
 
 ## Mental model
 
-- **Five shared packages, one concern each** — `@jterrazz/typescript` (toolchain), `@jterrazz/test` (testing), `@jterrazz/logger`, `@jterrazz/intelligence`, `@jterrazz/broadcast`. CI/CD is shared workflows from `jterrazz-actions`; infra is `jterrazz-infra`.
+- **Five shared packages, one concern each** — `@jterrazz/typescript` (toolchain), `@jterrazz/test` (testing), `@jterrazz/logger`, `@jterrazz/intelligence`, `@jterrazz/broadcast`. CI/CD is shared workflows from `jterrazz-actions`; infra is `jterrazz-infrastructure`.
 - **Two project shapes** — libraries (`package-*`, published `@jterrazz/*`, ports & adapters) and applications (`{product}-{role}`, hexagonal). Both build/lint/test through `@jterrazz/typescript` and `@jterrazz/test`.
 - **Same required files everywhere** — Makefile (`build`/`lint`/`test`), tsconfig + lint configs extending the shared presets, the validate workflow, and the root files the repo-structure doctrine mandates.
 

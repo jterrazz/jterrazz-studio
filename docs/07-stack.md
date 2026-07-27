@@ -12,7 +12,7 @@ How every `@jterrazz` project composes: the shared packages, the naming scheme, 
 | `@jterrazz/intelligence` | AI toolkit (OpenRouter, Langfuse)                           | `package-intelligence`        |
 | `@jterrazz/broadcast`    | Multi-channel announcements (App Store, push)               | `package-broadcast/docs/`     |
 
-Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/jterrazz-infra` (K3s, Helm, Traefik).
+Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/jterrazz-infrastructure` (K3s, Helm, Traefik).
 
 ## Project types and naming
 
