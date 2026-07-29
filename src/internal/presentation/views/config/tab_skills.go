@@ -38,8 +38,9 @@ const (
 	// github lock entry, or CheckUpToDate returned StatusUnknown) — we
 	// never invent staleness, so "installed" is the safe default.
 	skillStateInstalled
-	// skillStateOutdated: installed, and CheckUpToDate confirmed the local
-	// SKILL.md differs from upstream.
+	// skillStateOutdated: installed, and CheckUpToDate confirmed the skill's
+	// upstream folder moved on since it was installed — i.e. the `skills`
+	// CLI has an update to apply.
 	skillStateOutdated
 	// skillStateChecking: installed, currency check in flight. Renders the
 	// same as skillStateInstalled (plain ✓) until resolved.
@@ -387,6 +388,10 @@ type skillCurrencyMsg struct {
 // nothing to check (skills CLI unavailable, or no installed skill has a
 // github lock entry) — never blocks the caller, since the actual network
 // calls happen inside the returned tea.Cmd, off the UI goroutine.
+//
+// The fan-out is wider than the request count: CheckUpToDate shares one
+// GitHub directory listing per source repo across all its skills, so N
+// goroutines collapse to one request per distinct repo.
 func (m Model) startSkillCurrencyCheck() tea.Cmd {
 	if len(m.skillStates) == 0 {
 		return nil

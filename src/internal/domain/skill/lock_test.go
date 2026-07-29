@@ -5,6 +5,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -63,31 +65,74 @@ func TestReadLockFromParsesFixture(t *testing.T) {
 		Source:     "jterrazz/jterrazz-studio",
 		SourceType: "github",
 		SkillPath:  "skills/jterrazz-stack/SKILL.md",
+		FolderHash: "abc123",
 	}
 	if entry != want {
 		t.Errorf("entry = %+v, want %+v", entry, want)
 	}
 }
 
-// withTestServer points rawContentBaseURL at a local httptest server for the
+// withTestServer points apiBaseURL at a local httptest server for the
 // duration of fn, restoring it afterwards — CheckUpToDate must never hit the
-// real network in tests.
+// real network in tests. Also stubs the token source (no shelling to `gh`)
+// and clears the directory cache on both sides, so tests don't leak listings
+// into one another.
 func withTestServer(t *testing.T, handler http.HandlerFunc, fn func()) {
 	t.Helper()
 	srv := httptest.NewServer(handler)
 	defer srv.Close()
 
-	prevBase := rawContentBaseURL
-	rawContentBaseURL = srv.URL
-	defer func() { rawContentBaseURL = prevBase }()
+	prevBase, prevToken := apiBaseURL, githubToken
+	apiBaseURL = srv.URL
+	githubToken = func() string { return "" }
+	resetDirCache()
+	defer func() {
+		apiBaseURL, githubToken = prevBase, prevToken
+		resetDirCache()
+	}()
 
 	fn()
 }
 
+// contentsHandler serves a GitHub contents-API listing of `skills` with one
+// child folder `s` at the given tree SHA.
+func contentsHandler(sha string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/repos/owner/repo/contents/skills" {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`[{"name":"s","sha":"` + sha + `","type":"dir"}]`))
+	}
+}
+
+// mkSkill creates <dir>/<name>/SKILL.md so the local-presence guard passes.
+func mkSkill(t *testing.T, dir, name string) {
+	t.Helper()
+	if err := os.MkdirAll(filepath.Join(dir, name), 0o755); err != nil {
+		t.Fatalf("mkdir: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, name, "SKILL.md"), []byte("# Skill\n"), 0o644); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+}
+
 func TestCheckUpToDateInSkipsNonGithubSource(t *testing.T) {
 	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", true)
-	entry := LockEntry{Source: "s", SourceType: "local", SkillPath: "skills/s/SKILL.md"}
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "s", SourceType: "local", SkillPath: "skills/s/SKILL.md", FolderHash: "abc"}
+	if got := checkUpToDateIn(dir, "s", entry); got != StatusUnknown {
+		t.Errorf("got %v, want StatusUnknown", got)
+	}
+}
+
+// A lock entry with no skillFolderHash predates the field (or was written by
+// a CLI that doesn't record it). Nothing to compare — never a false badge.
+func TestCheckUpToDateInSkipsMissingFolderHash(t *testing.T) {
+	dir := t.TempDir()
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
 	if got := checkUpToDateIn(dir, "s", entry); got != StatusUnknown {
 		t.Errorf("got %v, want StatusUnknown", got)
 	}
@@ -95,76 +140,56 @@ func TestCheckUpToDateInSkipsNonGithubSource(t *testing.T) {
 
 func TestCheckUpToDateInSkipsMissingLocalFile(t *testing.T) {
 	dir := t.TempDir()
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "abc"}
 	if got := checkUpToDateIn(dir, "missing", entry); got != StatusUnknown {
 		t.Errorf("got %v, want StatusUnknown", got)
 	}
 }
 
-func TestCheckUpToDateInMatchesUpToDate(t *testing.T) {
+func TestCheckUpToDateInMatchingFolderHashIsUpToDate(t *testing.T) {
 	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", false)
-	content := "# Skill\n\nSame content.\n"
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte(content), 0o644); err != nil {
-		t.Fatalf("write: %v", err)
-	}
-
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
-	withTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte(content))
-	}, func() {
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "deadbeef"}
+	withTestServer(t, contentsHandler("deadbeef"), func() {
 		if got := checkUpToDateIn(dir, "s", entry); got != StatusUpToDate {
 			t.Errorf("got %v, want StatusUpToDate", got)
 		}
 	})
 }
 
-func TestCheckUpToDateInIgnoresTrailingWhitespaceDiffs(t *testing.T) {
-	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", false)
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("line one \nline two\n\n"), 0o644); err != nil {
-		t.Fatalf("write: %v", err)
-	}
-
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
-	withTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("line one\nline two"))
-	}, func() {
-		if got := checkUpToDateIn(dir, "s", entry); got != StatusUpToDate {
-			t.Errorf("got %v, want StatusUpToDate (trailing whitespace should be ignored)", got)
-		}
-	})
-}
-
 func TestCheckUpToDateInDetectsOutdated(t *testing.T) {
 	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", false)
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("old content\n"), 0o644); err != nil {
-		t.Fatalf("write: %v", err)
-	}
-
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
-	withTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("new content\n"))
-	}, func() {
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "oldhash"}
+	withTestServer(t, contentsHandler("newhash"), func() {
 		if got := checkUpToDateIn(dir, "s", entry); got != StatusOutdated {
 			t.Errorf("got %v, want StatusOutdated", got)
 		}
 	})
 }
 
-func TestCheckUpToDateInUnknownOn404(t *testing.T) {
+// Local SKILL.md content is irrelevant now — only the recorded folder hash
+// counts. This is the regression that made the Skills tab offer updates
+// `skills update` would then refuse to apply.
+func TestCheckUpToDateInIgnoresLocalContentDrift(t *testing.T) {
 	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", false)
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("content\n"), 0o644); err != nil {
+	mkSkill(t, dir, "s")
+	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("locally edited\n"), 0o644); err != nil {
 		t.Fatalf("write: %v", err)
 	}
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "samehash"}
+	withTestServer(t, contentsHandler("samehash"), func() {
+		if got := checkUpToDateIn(dir, "s", entry); got != StatusUpToDate {
+			t.Errorf("got %v, want StatusUpToDate (folder hash is the oracle, not file contents)", got)
+		}
+	})
+}
 
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
-	withTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+func TestCheckUpToDateInUnknownOn404(t *testing.T) {
+	dir := t.TempDir()
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "abc"}
+	withTestServer(t, func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 	}, func() {
 		if got := checkUpToDateIn(dir, "s", entry); got != StatusUnknown {
@@ -173,27 +198,84 @@ func TestCheckUpToDateInUnknownOn404(t *testing.T) {
 	})
 }
 
-func TestCheckUpToDateInFallsBackToMainRef(t *testing.T) {
+// Deleted upstream: the parent listing resolves but the skill's folder isn't
+// in it. Inconclusive, not stale.
+func TestCheckUpToDateInUnknownWhenFolderGoneUpstream(t *testing.T) {
 	dir := t.TempDir()
-	mkSkillDir(t, dir, "s", false)
-	content := "content\n"
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte(content), 0o644); err != nil {
-		t.Fatalf("write: %v", err)
-	}
+	mkSkill(t, dir, "s")
+	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "abc"}
+	withTestServer(t, func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`[{"name":"other","sha":"x","type":"dir"}]`))
+	}, func() {
+		if got := checkUpToDateIn(dir, "s", entry); got != StatusUnknown {
+			t.Errorf("got %v, want StatusUnknown", got)
+		}
+	})
+}
 
-	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md"}
-	withTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		// Only succeed for the "main" ref, simulating a source where HEAD
-		// doesn't resolve on raw.githubusercontent.com.
-		if r.URL.Path == "/owner/repo/main/skills/s/SKILL.md" {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(content))
+// Every skill from one repo shares a single parent-directory fetch, so a
+// twenty-skill machine spends one request per source repo, not per skill.
+func TestUpstreamFolderSHACachesPerParentDirectory(t *testing.T) {
+	dir := t.TempDir()
+	var hits int32
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		atomic.AddInt32(&hits, 1)
+		if r.URL.Path != "/repos/owner/repo/contents/skills" {
+			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		w.WriteHeader(http.StatusNotFound)
-	}, func() {
-		if got := checkUpToDateIn(dir, "s", entry); got != StatusUpToDate {
-			t.Errorf("got %v, want StatusUpToDate via main-ref fallback", got)
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`[{"name":"a","sha":"h1","type":"dir"},{"name":"b","sha":"h2","type":"dir"}]`))
+	}
+
+	withTestServer(t, handler, func() {
+		mkSkill(t, dir, "a")
+		mkSkill(t, dir, "b")
+		a := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/a/SKILL.md", FolderHash: "h1"}
+		b := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/b/SKILL.md", FolderHash: "stale"}
+
+		if got := checkUpToDateIn(dir, "a", a); got != StatusUpToDate {
+			t.Errorf("a: got %v, want StatusUpToDate", got)
+		}
+		if got := checkUpToDateIn(dir, "b", b); got != StatusOutdated {
+			t.Errorf("b: got %v, want StatusOutdated", got)
+		}
+		if n := atomic.LoadInt32(&hits); n != 1 {
+			t.Errorf("server hits = %d, want 1 (both skills share one listing)", n)
+		}
+	})
+}
+
+// The TUI fans the check out over goroutines; concurrent callers must share
+// one fetch rather than stampede the API. Run with -race.
+func TestUpstreamFolderSHADedupesConcurrentFetches(t *testing.T) {
+	dir := t.TempDir()
+	var hits int32
+	handler := func(w http.ResponseWriter, _ *http.Request) {
+		atomic.AddInt32(&hits, 1)
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(`[{"name":"s","sha":"h","type":"dir"}]`))
+	}
+
+	withTestServer(t, handler, func() {
+		mkSkill(t, dir, "s")
+		entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "h"}
+
+		var wg sync.WaitGroup
+		for range 10 {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				if got := checkUpToDateIn(dir, "s", entry); got != StatusUpToDate {
+					t.Errorf("got %v, want StatusUpToDate", got)
+				}
+			}()
+		}
+		wg.Wait()
+
+		if n := atomic.LoadInt32(&hits); n != 1 {
+			t.Errorf("server hits = %d, want 1 (concurrent callers share one fetch)", n)
 		}
 	})
 }
