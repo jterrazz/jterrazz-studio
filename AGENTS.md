@@ -11,7 +11,7 @@ A Go CLI (Cobra + Bubble Tea TUIs) that bootstraps and manages a macOS dev machi
 
 ## Where knowledge lives (route here first)
 
-The corpus is `docs/` + `README.md`. Do not duplicate it — link to it.
+The corpus is `docs/` + `README.md`, mapped by `docs/README.md`. Do not duplicate it — link to it.
 
 | Working on…                              | Read                          |
 | ---------------------------------------- | ----------------------------- |

@@ -27,16 +27,7 @@ j run         # git + docker shortcuts
 
 ## Documentation
 
-The corpus lives in [`docs/`](docs/):
-
-- [Getting started](docs/01-getting-started.md) — install, user data, development.
-- [Commands](docs/02-commands.md) — status, install, upgrade, clean, run, shortcuts.
-- [Machines](docs/03-machines.md) — the machine registry & `config.json` model, remote.
-- [Configuration](docs/04-configuration.md) — the `j config` TUI, items, and categories.
-- [Tools and skills](docs/05-tools-and-skills.md) — the curated tool and skill registries.
-- [Dotfiles](docs/06-dotfiles.md) — the versioned application configs.
-- [The stack](docs/07-stack.md) — how `@jterrazz` projects compose.
-- [Repo structure](docs/08-repo-structure.md) — where knowledge lives in every repo.
+The corpus lives in [`docs/`](docs/README.md) — start at its map, which lists every chapter.
 
 For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills — `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project`, `jterrazz-repo-structure` — the reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
 
