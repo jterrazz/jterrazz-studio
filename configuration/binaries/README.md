@@ -30,6 +30,14 @@ j dock add-spacer  # Add spacer to macOS Dock
 j dock reset       # Reset dock to defaults
 ```
 
+**Finder:**
+
+```shell
+j finder format ~/Documents            # Format with icon view (default)
+j finder format ~/Downloads --view list # Format with list view
+j finder reset ~/Desktop               # Reset to system defaults
+```
+
 **Git:**
 
 ```shell
@@ -59,6 +67,7 @@ j system clean     # Clean system (Homebrew, Docker, Multipass, trash)
 j help             # Show all categories
 j docker help      # Show docker commands
 j dock help        # Show dock commands
+j finder help      # Show finder commands
 j git help         # Show git commands
 j system help      # Show system commands
 ```
@@ -77,6 +86,8 @@ configuration/binaries/
 │   │   └── commands.sh    # Docker module
 │   ├── dock/
 │   │   └── commands.sh    # Dock module
+│   ├── finder/
+│   │   └── commands.sh    # Finder module
 │   ├── git/
 │   │   └── commands.sh    # Git module
 │   └── system/
@@ -97,12 +108,13 @@ configuration/binaries/
 The system includes full zsh autocomplete support for all commands and nested subcommands:
 
 ```shell
-j <TAB>                    # Shows: docker dock git system help
+j <TAB>                    # Shows: docker dock finder git system help
 j system <TAB>             # Shows: update install clean help
 j system install <TAB>     # Shows: brew ohmyzsh nvm git-ssh all help
 j git <TAB>                # Shows: feat fix chore push sync wip unwip status log branches help
 j docker <TAB>             # Shows: rm rmi clean reset ps images help
 j dock <TAB>               # Shows: add-spacer reset help
+j finder <TAB>             # Shows: format reset help
 ```
 
 ### Setup
