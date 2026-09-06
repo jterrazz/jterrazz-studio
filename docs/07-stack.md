@@ -38,7 +38,7 @@ Every project carries:
 
 ## Testing
 
-The convention is defined by `@jterrazz/test`, and every project follows it: colocated `*.test.ts` units (no I/O), `*.integration.test.ts` against testcontainers, `*.e2e.test.ts` against a real compose stack, with data colocated per test. The full convention lives in `package-test`'s corpus — route there, don't restate it.
+The convention is defined by `@jterrazz/test`, and every project follows it: colocated `*.test.ts` units (no I/O), `*.integration.test.ts` against testcontainers, `*.e2e.test.ts` against a real compose stack, with data colocated per test. What a spec stands on — `_fixtures/`, `_expected/`, `_requests/`, `_seeds/` — carries a leading underscore; a spec's own folder never does. The full convention lives in `package-test`'s corpus — route there, don't restate it.
 
 ## Architecture
 
