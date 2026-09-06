@@ -35,6 +35,8 @@ var StudioSkills = []Skill{
 var CommunitySkills = []Skill{
 	{"anthropics/skills", "frontend-design"},
 	{"expo/skills", "upgrading-expo"},
+	{"GoogleChrome/modern-web-guidance", "modern-web-guidance"},
+	{"GoogleChrome/modern-web-guidance", "chrome-extensions"},
 	{"jakubkrehel/skills", "better-interface"},
 	{"jakubkrehel/skills", "better-accessibility"},
 	{"jakubkrehel/skills", "better-layout"},
@@ -73,6 +75,7 @@ var CommunityRepos = []SkillRepo{
 	{"coreyhaines31/marketingskills", "Marketing and SEO skills"},
 	{"expo/skills", "Expo and React Native mobile development"},
 	{"firecrawl/cli", "Web content extraction for AI agents"},
+	{"GoogleChrome/modern-web-guidance", "Chrome's current web platform guidance, and extension authoring"},
 	{"jakubkrehel/skills", "Interface craft — UI polish, typography, color, a11y, layout, copy"},
 	{"shadcn-ui/ui", "Official shadcn/ui components and patterns"},
 	{"obra/superpowers", "Development workflow and productivity skills"},
