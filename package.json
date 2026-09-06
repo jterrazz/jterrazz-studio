@@ -7,7 +7,7 @@
     "test:e2e": "vitest --run"
   },
   "devDependencies": {
-    "@jterrazz/test": "^13.0.1",
+    "@jterrazz/test": "^14.0.0",
     "@types/node": "^25.5.0",
     "oxlint": "^1.74.0",
     "typescript": "^5.7.0",
