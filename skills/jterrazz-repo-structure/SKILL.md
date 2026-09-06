@@ -15,6 +15,8 @@ A repo is three distinct roles — conflating them is the failure mode this skil
 2. **The injection layers** — `AGENTS.md`/`CLAUDE.md` (agent brief), `skills/` entries. They **route**, they never author.
 3. **The compiler** — a repo-specific projector, when there is a source layer worth projecting: `typescript docs` → `docs/reference/` in TypeScript packages, `make skills` → the toolbelt rosters in jterrazz-studio. No source layer, no compiler.
 
+The corpus belongs to the repository: anything a change in this repo would make false — its architecture, its conventions, its runbook, its quirks, the decisions it alone took — is authored in its `docs/`. An outside corpus (the OS wiki) keeps only a pointer to the repo and the contracts between repos. A decision this repo alone took goes to `docs/decisions/NNN-title.md`; one that spans several repos is recorded by the corpus that spans them and linked from here.
+
 Scope: an API-reference projection applies to **packages** (a public API surface to project). An **application** adopts roles 1–2 in full and never generates `docs/reference/` — though it may run its own compiler over another source layer. Non-TypeScript repos: same doctrine, the compiler half substitutes the language's own generator or is absent.
 
 Three golden rules, compressed:
@@ -25,17 +27,20 @@ Three golden rules, compressed:
 
 Projection vs presentation — the line is which layers a derived file spans. A **projection crosses a layer** (source code → docs): it is **committed** and sync-checked, diffable and agent-readable from the tree. A **presentation re-packages within the docs layer** (an `llms.txt` concatenation, a rendered HTML site): it authors nothing new, is never committed, and is built in CI only if a delivery target exists — with none, no presentation is produced and the corpus is read directly.
 
-## Canonical root-file layout
+## Canonical layout
 
-| File           | Role                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------- |
-| `README.md`    | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.        |
-| `AGENTS.md`    | The agent brief — mental model + routing table into `docs/`. Routes, does not retell. |
-| `CLAUDE.md`    | A symlink to `AGENTS.md`.                                                             |
-| `CHANGELOG.md` | The release history.                                                                  |
-| `TODO.md`      | The working backlog, when one is kept.                                                |
-| `docs/`        | The corpus: numbered chapters, plus any committed projections.                        |
-| `skills/`      | Injection layer for agents — one skill per capability, routes into `docs/`.           |
+| Path              | Role                                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------- |
+| `README.md`       | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.        |
+| `AGENTS.md`       | The agent brief — mental model + routing table into `docs/`. Routes, does not retell. |
+| `CLAUDE.md`       | A symlink to `AGENTS.md`.                                                             |
+| `TODO.md`         | The working backlog, when one is kept.                                                |
+| `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                   |
+| `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.             |
+| `docs/decisions/` | The repo-local decision records, `NNN-title.md`.                                      |
+| `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.           |
+
+The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. `docs/README.md` is the one file an outside corpus points at, so chapters can be renumbered without breaking an outside link.
 
 ## Where to look
 
