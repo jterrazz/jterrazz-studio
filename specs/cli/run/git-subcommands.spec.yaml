@@ -1,0 +1,26 @@
+description: lists the git workflow subcommands under --help
+runs:
+    - command: run git --help
+      exit: 0
+      stdout: |
+          Git workflow shortcuts
+
+          Usage:
+            j run git [command]
+
+          Available Commands:
+            branches    List local branches
+            chore       Add all and commit with 'chore:' prefix
+            feat        Add all and commit with 'feat:' prefix
+            fix         Add all and commit with 'fix:' prefix
+            log         Show recent commits
+            push        Push current branch to origin
+            status      Show git status
+            sync        Fetch and pull from remote
+            unwip       Undo last commit and unstage
+            wip         Add all and commit as 'WIP'
+
+          Flags:
+            -h, --help   help for git
+
+          Use "j run git [command] --help" for more information about a command.

@@ -63,6 +63,25 @@ make test-e2e  # npm install + rebuild j + vitest --run
 
 The runner rebuilds `j` whenever any `src/**/*.go` is newer than the test binary (an mtime check), so editing the CLI and re-running the suite always exercises the change. See [`specs/cli/cli.specification.ts`](../specs/cli/cli.specification.ts).
 
+### A scenario is a document
+
+Almost every spec here is a terminal session — a command, its exit code, what it printed — so it is written as one: a `<case>.spec.yaml` beside the command's folder, in the literate format of `@jterrazz/test`. The file IS the test; `description:` is its title in the runner, and each entry of `runs:` states the command, its `exit:` and its `stdout:`/`stderr:` byte-exact.
+
+```yaml
+# specs/cli/status/help-surface.spec.yaml
+description: documents the status command under --help
+runs:
+    - command: status --help
+      exit: 0
+      stdout: |
+          Show comprehensive system status
+          …
+```
+
+`TEST_UPDATE=1 make test-e2e` rewrites the `exit:` and the streams of every document from what the binary actually printed — deliberately, after a change to a command's output, and never as a way to make a red suite go green. Nothing else in the file is touched.
+
+A spec stays a `*.test.ts` only when the document cannot say it. Here that is one thing: output whose text comes from the HOST — the `✓`/`✗` install-state column, the machine-status verdicts — which a byte-exact stream cannot promise. Those specs probe the rows the binary always emits (`specs/cli/install/`, `specs/cli/machine/`). The full grammar, and the rest of the reasons to reach for code, are `@jterrazz/test`'s [`docs/04-cli.md`](https://github.com/jterrazz/package-test/blob/main/docs/04-cli.md).
+
 ### Releasing
 
 Push a version tag to build and publish binaries via GitHub Actions:

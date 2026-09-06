@@ -1,0 +1,12 @@
+description: documents the status command under --help
+runs:
+    - command: status --help
+      exit: 0
+      stdout: |
+          Show comprehensive system status
+
+          Usage:
+            j status [flags]
+
+          Flags:
+            -h, --help   help for status

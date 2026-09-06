@@ -8,7 +8,7 @@ This corpus is where that knowledge is authored. `AGENTS.md` and the `skills/` e
 
 | Chapter                                          | Covers                                                                                       |
 | ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| [01 — Getting started](01-getting-started.md)    | Install, user data under `~/.jterrazz/`, development and release, the repo layout            |
+| [01 — Getting started](01-getting-started.md)    | Install, user data under `~/.jterrazz/`, development, the spec documents, release, the layout |
 | [02 — Commands](02-commands.md)                  | `status`, `install`, `upgrade`, `clean`, `run`, and the shell shortcuts                      |
 | [03 — Machines](03-machines.md)                  | The machine registry, the `config.json` model, roles, remote access                          |
 | [04 — Configuration](04-configuration.md)        | The `j config` TUI: items, categories, and what each one writes                              |
