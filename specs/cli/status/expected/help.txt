@@ -1,7 +1,0 @@
-Show comprehensive system status
-
-Usage:
-  j status [flags]
-
-Flags:
-  -h, --help   help for status

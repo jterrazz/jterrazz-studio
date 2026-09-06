@@ -1,0 +1,20 @@
+description: lists the docker workflow subcommands under --help
+runs:
+    - command: run docker --help
+      exit: 0
+      stdout: |
+          Docker container and image management
+
+          Usage:
+            j run docker [command]
+
+          Available Commands:
+            clean       Clean up Docker system (prune)
+            reset       Remove all containers and images
+            rm          Remove all containers
+            rmi         Remove all images
+
+          Flags:
+            -h, --help   help for docker
+
+          Use "j run docker [command] --help" for more information about a command.
