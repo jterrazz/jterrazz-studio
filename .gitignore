@@ -1,11 +1,7 @@
-# Build
-/j
-dist/
-build/
-bin/
+# Build, test and lint artefacts — one root, one `rm -rf`.
+.artifacts/
 
-# Test
-specs/cli/j_test_bin
+# Dependencies
 node_modules/
 
 # IDE

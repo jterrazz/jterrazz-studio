@@ -29,7 +29,7 @@ The repo-structure doctrine is authored **here** (`docs/08-repo-structure.md`) a
 ## Setup & commands
 
 ```bash
-make build     # Build ./j
+make build     # Build .artifacts/go/j
 make test      # Go unit tests
 make test-e2e  # npm install + rebuild j + vitest --run (the specs/cli suite)
 make lint      # golangci-lint

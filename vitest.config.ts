@@ -1,13 +1,10 @@
-import { literate } from "@jterrazz/test/vitest";
-import { defineConfig } from "vitest/config";
+import { defineSpecConfig } from "@jterrazz/test/vitest";
 
-export default defineConfig({
+export default defineSpecConfig({
   // Every `<case>.spec.yaml` under specs/ becomes a one-test module driving the
   // runner this file names — stated, never guessed.
-  plugins: [literate({ specification: "./specs/cli/cli.specification.ts" })],
+  literate: { specification: "./specs/cli/cli.specification.ts" },
   test: {
     include: ["specs/**/*.test.ts"],
-    testTimeout: 30_000,
-    hookTimeout: 30_000,
   },
 });
