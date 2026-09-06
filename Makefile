@@ -5,6 +5,7 @@
 # ==============================================================================
 
 BINARY          := j
+BUILD_PATH      := .artifacts/go/$(BINARY)
 JTERRAZZ_DIR    := $(HOME)/.jterrazz
 BIN_DIR         := $(JTERRAZZ_DIR)/bin
 INSTALL_PATH    := $(BIN_DIR)/$(BINARY)
@@ -27,14 +28,13 @@ help: ## Show available targets
 		awk 'BEGIN {FS = ":.*?## "}; {printf "$(CYAN)%-12s$(RESET) %s\n", $$1, $$2}'
 
 build: ## Build the binary
-	@go build -o $(BINARY) ./src/cmd/j
-	@printf "$(GREEN)✓$(RESET) Built ./$(BINARY)\n"
+	@go build -o $(BUILD_PATH) ./src/cmd/j
+	@printf "$(GREEN)✓$(RESET) Built $(BUILD_PATH)\n"
 
 install: build ## Build and install to ~/.jterrazz/bin
 	@mkdir -p $(BIN_DIR)
-	@cp $(BINARY) $(INSTALL_PATH)
+	@cp $(BUILD_PATH) $(INSTALL_PATH)
 	@chmod +x $(INSTALL_PATH)
-	@rm $(BINARY)
 	@printf "$(GREEN)✓$(RESET) Installed $(INSTALL_PATH)\n"
 	@if [ -f "$(OLD_INSTALL)" ]; then \
 		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL) — run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
@@ -101,7 +101,7 @@ lint: ## Run golangci-lint
 	@printf "$(GREEN)✓$(RESET) Lint passed\n"
 
 clean: ## Remove build artifacts
-	@rm -f $(BINARY)
+	@rm -rf .artifacts
 	@printf "$(GREEN)✓$(RESET) Cleaned\n"
 
 skills: ## Regenerate the toolbelt skill rosters

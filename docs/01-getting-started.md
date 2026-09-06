@@ -49,7 +49,7 @@ The `config.json` schema and its role as the single source of truth are covered 
 ## Development
 
 ```sh
-make build     # Build ./j
+make build     # Build .artifacts/go/j
 make test      # Run Go unit tests
 make install   # Build + install to ~/.jterrazz/bin
 make check     # Verify installation

@@ -6,7 +6,7 @@ import { specification } from "@jterrazz/test";
 import { afterAll } from "vitest";
 
 const REPO_ROOT = resolve(import.meta.dirname, "../..");
-const J_BIN = resolve(REPO_ROOT, "specs/cli/j_test_bin");
+const J_BIN = resolve(REPO_ROOT, ".artifacts/go/j-test");
 const GO_SRC = resolve(REPO_ROOT, "src");
 
 // A stale binary silently tests old behaviour. Rebuild when it is missing, when
