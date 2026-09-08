@@ -16,4 +16,4 @@ The relevant `j config` items (Terminal, Editor categories) point at these files
 ## Related
 
 - [Configuration](07-configuration.md) — the items that install these configs.
-- [Developing](02-developing.md) — how `zshrc.sh` gets sourced.
+- [Operating](04-operating.md) — how `zshrc.sh` gets sourced onto a machine.

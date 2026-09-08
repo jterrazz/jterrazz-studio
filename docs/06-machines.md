@@ -55,5 +55,5 @@ Supports `auto`/`userspace` mode and `oauth`/`authkey` authentication. Daemon st
 
 ## Related
 
-- [Developing](02-developing.md) — `~/.jterrazz/` layout.
+- [Operating](04-operating.md) — the `~/.jterrazz/` footprint and how `j` gets installed.
 - [Configuration](07-configuration.md) — role-gated `j config` items.

@@ -1,117 +1,68 @@
 # Developing
 
-`j` is a single CLI to bootstrap and manage a macOS development machine — tools, configs, templates, and remote access. No sudo required.
+How to work on `j` itself: build it, run it from the checkout, and know which file a change belongs in.
 
-## Install
+| Section              | Answers                                              |
+| -------------------- | ----------------------------------------------------- |
+| Working from source  | The clone, Go 1.24+, and the loop                    |
+| The make targets     | Every gesture the Makefile offers                    |
+| Where a change goes  | Which file to open for which kind of change          |
+| What a change owes   | What must land in the same commit                    |
 
-**Fresh machine** (no Go needed):
-
-```sh
-xcode-select --install
-curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-studio/main/scripts/install.sh | sh
-source ~/.zshrc
-```
-
-**From source** (requires Go 1.24+):
+## Working from source
 
 ```sh
 git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz/jterrazz-studio
 cd ~/Developer/jterrazz/jterrazz-studio
-make install
-source ~/.zshrc
+make build                # .artifacts/go/j
+./.artifacts/go/j status  # run the build without installing it
 ```
 
-The binary lives at `~/.jterrazz/bin/j`. All user data goes under `~/.jterrazz/` — see [Machines](06-machines.md) for the config model.
+Go 1.24+ is the only requirement for the Go half; the end-to-end specs additionally need npm ([Testing](03-testing.md)). `make install` puts the build on the machine as the real `j` — that gesture, and everything else about a machine that has `j` on it, is [Operating](04-operating.md)'s.
 
-## First steps
+## The make targets
 
-```sh
-j machine init     # Bootstrap THIS machine (interactive)
-j status           # Full-screen dashboard
-j install          # List tracked tools with status
-j config           # Configure the local machine (TUI)
-```
+| Target           | Does                                                              |
+| ---------------- | ------------------------------------------------------------------ |
+| `make build`     | Build `.artifacts/go/j`                                            |
+| `make test`      | `go test ./src/...`                                                |
+| `make test-e2e`  | npm install, rebuild the test binary, run the `specs/cli` suite    |
+| `make fmt`       | `gofmt -w ./src/`                                                  |
+| `make vet`       | `go vet ./src/...`                                                 |
+| `make lint`      | `golangci-lint run ./src/...`, installing it first if it is absent |
+| `make skills`    | Regenerate the toolbelt skill's rosters from the registries        |
+| `make install`   | Build and install to `~/.jterrazz/bin`                             |
+| `make uninstall` | Remove the installed binary                                        |
+| `make check`     | Verify the installation                                            |
+| `make clean`     | Remove `.artifacts/`                                               |
 
-## User data
+## Where a change goes
 
-Everything lives under `~/.jterrazz/`:
+Most changes are a registry entry, not new code — that is the shape [Architecture](01-architecture.md) describes. The file to open:
 
-```
-~/.jterrazz/
-├── bin/           # CLI binary
-├── config.json    # Runtime config (remote/Tailscale, machine registry)
-├── tailscale/     # Userspace daemon state
-└── dns/           # Generated DNS profiles
-```
+| Change                                      | File                                                       |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| A tool `j install` offers                   | `src/internal/config/tools_catalog.go`                       |
+| A `j config` item                           | `src/internal/config/scripts.go` (server items: `server_*.go` beside the command) |
+| A `j run` shortcut                          | `src/internal/config/commands.go`                            |
+| Something `j clean` reclaims                | `src/internal/config/cleanables.go`                          |
+| A package manager `j upgrade` knows         | `src/internal/config/upgraders.go`                           |
+| A curated agent skill                       | `src/internal/config/skills.go`                              |
+| A new verb                                  | A file under `src/internal/commands/`, registering itself in `init()` |
+| What a TUI shows                            | `src/internal/presentation/views/<view>/`                    |
+| A shell shortcut or an app's dotfile        | `dotfiles/applications/`                                     |
 
-The `config.json` schema and its role as the single source of truth are covered in [Machines](06-machines.md).
+## What a change owes
 
-## Development
+Four things land in the same commit as the change that makes them true:
 
-```sh
-make build     # Build .artifacts/go/j
-make test      # Run Go unit tests
-make install   # Build + install to ~/.jterrazz/bin
-make check     # Verify installation
-```
-
-End-to-end specs (written with `@jterrazz/test`) drive the built binary:
-
-```sh
-make test-e2e  # npm install + rebuild j + vitest --run
-```
-
-The runner rebuilds `j` whenever any `src/**/*.go` is newer than the test binary (an mtime check), so editing the CLI and re-running the suite always exercises the change. See [`specs/cli/cli.specification.ts`](../specs/cli/cli.specification.ts).
-
-### A scenario is a document
-
-Almost every spec here is a terminal session — a command, its exit code, what it printed — so it is written as one: a `<case>.spec.yaml` beside the command's folder, in the literate format of `@jterrazz/test`. The file IS the test; `description:` is its title in the runner, and each entry of `runs:` states the command, its `exit:` and its `stdout:`/`stderr:` byte-exact.
-
-```yaml
-# specs/cli/status/help-surface.spec.yaml
-description: documents the status command under --help
-runs:
-    - command: status --help
-      exit: 0
-      stdout: |
-          Show comprehensive system status
-          …
-```
-
-`TEST_UPDATE=1 make test-e2e` rewrites the `exit:` and the streams of every document from what the binary actually printed — deliberately, after a change to a command's output, and never as a way to make a red suite go green. Nothing else in the file is touched.
-
-A spec stays a `*.test.ts` only when the document cannot say it. Here that is one thing: output whose text comes from the HOST — the `✓`/`✗` install-state column, the machine-status verdicts — which a byte-exact stream cannot promise. Those specs probe the rows the binary always emits (`specs/cli/install/`, `specs/cli/machine/`). The full grammar, and the rest of the reasons to reach for code, are `@jterrazz/test`'s [`docs/04-cli.md`](https://github.com/jterrazz/package-test/blob/main/docs/04-cli.md).
-
-### Releasing
-
-Push a version tag to build and publish binaries via GitHub Actions:
-
-```sh
-git tag v1.0.0
-git push --tags
-```
-
-Builds for `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`.
-
-## Project structure
-
-```
-src/
-├── cmd/j/main.go             # Entry point
-└── internal/
-    ├── commands/             # CLI commands (Cobra)
-    ├── config/               # Tool, script, command, and skill registries
-    ├── domain/               # Version parsing, status loading, skills
-    └── presentation/         # TUI views, components, theme
-dotfiles/
-└── applications/             # App configs (ghostty, starship, tmux, vscode, zed, zsh)
-docs/                         # This corpus
-skills/                       # Claude Code skills for the @jterrazz workflow
-specs/cli/                    # End-to-end specs (@jterrazz/test)
-```
+- **A registry change regenerates the projection.** Run `make skills`; the sync test in `make test` fails otherwise, and the sections between the `GENERATED` markers are never edited by hand ([Tools and skills](08-tools-and-skills.md)).
+- **A change to a command's output regenerates the specs.** `TEST_UPDATE=1 make test-e2e` rewrites the `exit:` and the streams of the affected documents, and nothing else ([Testing](03-testing.md)).
+- **A change to behaviour updates its chapter.** The corpus is where this repository's knowledge is authored; a page left saying what is no longer true is a bug that shipped.
+- **A change to a doctrine chapter updates its skill.** [The stack](10-stack.md) ships as `jterrazz-stack` and [Repo structure](11-repo-structure.md) as `jterrazz-repo-structure`; skills route, they never author.
 
 ## Related
 
-- [Commands](05-commands.md) — the everyday verbs.
-- [Machines](06-machines.md) — the registry & config model.
-- [Tools and skills](08-tools-and-skills.md) — the curated registries `install`/`config` draw from.
+- [Architecture](01-architecture.md) — the shape a change lands in.
+- [Testing](03-testing.md) — the two suites, and the document form of a spec.
+- [Operating](04-operating.md) — installing, and the tagged release.
