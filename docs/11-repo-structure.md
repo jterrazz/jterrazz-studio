@@ -39,16 +39,37 @@ The dividing line is which layers a derived file spans:
 | `TODO.md`         | The working backlog, when one is kept.                                                    |
 | `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                       |
 | `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.                 |
-| `docs/decisions/` | The repo-local decision records, `NNN-title.md`.                                          |
+| `docs/decisions/` | The repo-local decision records, `NNN-title.md`, beside the `_template.md` they are cut from. |
+| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                      |
+| `docs/_assets/`   | Files a chapter embeds. Underscored, because it is ground rather than a subject.           |
 | `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.               |
 
-The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`.
+The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. Those three subfolders are exhaustive too — a fourth folder under `docs/` means a subject is hiding from the numbering.
 
 `docs/README.md` is the one file an outside corpus points at. It is the entry every reader lands on, so a chapter can be renumbered or split without breaking a link held somewhere else.
 
+### The spine
+
+Every repository's `docs/` opens on the same four numbers, whatever the language and whatever the product. A reader landing on an unfamiliar repository knows where the shape is before opening a file, and so does an agent.
+
+| Chapter               | Owns                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `01-architecture.md`  | The shape of the thing — its parts, their boundaries, and why the lines are drawn there.          |
+| `02-developing.md`    | How a change is made — the toolchain, the loop, which file a change opens, what it owes.          |
+| `03-testing.md`       | What proves a change — the suites, the ground they stand on, how a golden is regenerated.         |
+| `04-operating.md`     | How it ships and how it runs — the release or the deploy, and the footprint it leaves.            |
+
+The repository's own subjects follow, numbered contiguously from `05`: one subject per chapter, in whatever order the repository reads best. A chapter's name is a subject, never a moment — `exploration`, `review`, `notes`, `draft`, `wip` name a date rather than a thing, and what happened on a date is a decision record or git's history, not a chapter.
+
+`01`, `02` and `03` are required of every repository: everything has a shape, a way of being changed, and something that proves the change — a repository that cannot fill one of them has found a real hole, not an exemption.
+
+`04-operating.md` is required when the repository ships something that runs — an image it deploys, a package it publishes, a binary it releases, a platform it provisions. The rule only ever requires it; it never forbids it. Whether a repository ships is not reliably readable from its tree — a tagged release or a deploy workflow lives in `.github/`, in a dialect a checker has no business parsing — so a repository that ships that way writes its `04` and nothing has to ask it to, and a library that writes a hollow one gets a review comment, not a red gate.
+
+This chapter owns the spine. Where a checker holds part of it mechanically, the rule ids and the sentence each one prints belong to that checker, so that the message and the rule cannot drift apart — this page never lists them.
+
 ## Decision records
 
-A decision this repository alone took is recorded in `docs/decisions/NNN-title.md`, numbered in the order the decisions were taken. A record carries a status and a date, then three sections: the context that forced the decision, what was decided, and the consequences that follow.
+A decision this repository alone took is recorded in `docs/decisions/NNN-title.md`, numbered in the order the decisions were taken. A record carries a status and a date, then three sections: the context that forced the decision, what was decided, and the consequences that follow. The mold sits where the record is written — `docs/decisions/_template.md`, copied for each new record.
 
 The status is `Proposed` until the repository's owner accepts it. A record that replaces an earlier one says so, and the record it replaces is marked superseded by it — the link closes both ways, so a reader who lands on the old one is told where the live decision is.
 
@@ -64,5 +85,5 @@ The doctrine applies in full to every repo: a written corpus, thin routing layer
 
 ## Related
 
-- [The stack](07-stack.md) — how `@jterrazz` projects compose.
-- [Tools and skills](05-tools-and-skills.md) — this repo's own compiler, `make skills`.
+- [The stack](10-stack.md) — how `@jterrazz` projects compose.
+- [Tools and skills](08-tools-and-skills.md) — this repo's own compiler, `make skills`.

@@ -17,7 +17,7 @@ Every machine has an alias, a role (`client` or `server`), and an optional SSH e
 }
 ```
 
-The role decides what `j machine status` reports and which items `j config` exposes for this box (see [Configuration](04-configuration.md)).
+The role decides what `j machine status` reports and which items `j config` exposes for this box (see [Configuration](07-configuration.md)).
 
 ```sh
 j machine init                                                 # Bootstrap THIS machine (interactive)
@@ -55,5 +55,5 @@ Supports `auto`/`userspace` mode and `oauth`/`authkey` authentication. Daemon st
 
 ## Related
 
-- [Getting started](01-getting-started.md) — `~/.jterrazz/` layout.
-- [Configuration](04-configuration.md) — role-gated `j config` items.
+- [Operating](04-operating.md) — the `~/.jterrazz/` footprint and how `j` gets installed.
+- [Configuration](07-configuration.md) — role-gated `j config` items.

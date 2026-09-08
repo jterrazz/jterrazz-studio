@@ -5,7 +5,7 @@ description: Overview of the @jterrazz ecosystem — shared npm packages, projec
 
 # @jterrazz Stack
 
-The map of the `@jterrazz` ecosystem: composable packages, one set of conventions, interchangeable repos. Canonical home: `jterrazz-studio` `docs/07-stack.md`.
+The map of the `@jterrazz` ecosystem: composable packages, one set of conventions, interchangeable repos. Canonical home: `jterrazz-studio` `docs/10-stack.md`.
 
 ## Mental model
 
@@ -17,7 +17,7 @@ The map of the `@jterrazz` ecosystem: composable packages, one set of convention
 
 | Task                                                | Read                                            |
 | --------------------------------------------------- | ----------------------------------------------- |
-| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/07-stack.md`            |
+| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/10-stack.md`            |
 | Build / lint / format / API docs                    | `jterrazz-typescript` skill                     |
 | Testing conventions and structure                   | `jterrazz-test` skill                           |
 | Scaffolding a new project                           | `jterrazz-new-project` skill                    |

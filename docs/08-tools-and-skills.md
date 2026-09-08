@@ -4,7 +4,7 @@
 
 ## The tools registry
 
-92 tools across 18 families — package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](02-commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
+92 tools across 18 families — package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](05-commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
 
 ## The skills registry
 
@@ -41,5 +41,5 @@ This is the repo's one compiler in the sense of the repo-structure doctrine: the
 
 ## Related
 
-- [Commands](02-commands.md) — `j install` / `j upgrade` / `j clean`.
-- [Configuration](04-configuration.md) — the Skills tab.
+- [Commands](05-commands.md) — `j install` / `j upgrade` / `j clean`.
+- [Configuration](07-configuration.md) — the Skills tab.

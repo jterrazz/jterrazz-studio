@@ -1,11 +1,11 @@
 ---
 name: jterrazz-repo-structure
-description: Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs — where knowledge lives, what gets committed, corpus vs injection layers vs compiler, projections vs presentations.
+description: Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs — where knowledge lives, the four-chapter spine every docs/ opens on, what gets committed, corpus vs injection layers vs compiler, projections vs presentations.
 ---
 
 # Repo structure
 
-The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/08-repo-structure.md`.
+The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/11-repo-structure.md`.
 
 ## Mental model
 
@@ -37,18 +37,32 @@ Projection vs presentation — the line is which layers a derived file spans. A 
 | `TODO.md`         | The working backlog, when one is kept.                                                |
 | `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                   |
 | `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.             |
-| `docs/decisions/` | The repo-local decision records, `NNN-title.md`.                                      |
+| `docs/decisions/` | The repo-local decision records, `NNN-title.md`, beside their `_template.md`.         |
+| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                  |
+| `docs/_assets/`   | Files a chapter embeds.                                                               |
 | `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.           |
 
-The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. `docs/README.md` is the one file an outside corpus points at, so chapters can be renumbered without breaking an outside link.
+The list is exhaustive for the root, and those three are the only subfolders `docs/` carries: a file or folder that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. `docs/README.md` is the one file an outside corpus points at, so chapters can be renumbered without breaking an outside link.
+
+## The spine
+
+Every `docs/` opens on the same four numbers, whatever the language:
+
+- `01-architecture.md` — the shape: the parts, their boundaries, why the lines are drawn there.
+- `02-developing.md` — how a change is made: toolchain, loop, which file a change opens.
+- `03-testing.md` — what proves a change: the suites and the ground they stand on.
+- `04-operating.md` — how it ships and runs: the release or the deploy, and the footprint.
+
+The repository's own subjects are numbered contiguously from `05`, one subject each, named for a subject and never for a moment (`exploration`, `review`, `notes`, `draft`, `wip` name a date — that is an ADR or git's history). `01`–`03` are required of every repository; `04` is required when the repository ships something that runs, and never forbidden when it does not. The full rule, and why the forbidding half is a reviewer's rather than a gate's, is the doctrine chapter.
 
 ## Where to look
 
 | Task                                                              | Read                                              |
 | ----------------------------------------------------------------- | ------------------------------------------------- |
-| The doctrine itself (three roles, golden rules, layout)           | `jterrazz-studio` `docs/08-repo-structure.md`     |
+| The doctrine itself (three roles, golden rules, layout)           | `jterrazz-studio` `docs/11-repo-structure.md`     |
+| The spine — the four fixed chapters, and when `04` is required    | `jterrazz-studio` `docs/11-repo-structure.md`     |
 | TypeScript compiler mechanics (`typescript docs`, sync-checking)  | `package-typescript` `docs/05-docs-pipeline.md`   |
-| The studio's own compiler (`make skills`, the toolbelt rosters)   | `jterrazz-studio` `docs/05-tools-and-skills.md`   |
+| The studio's own compiler (`make skills`, the toolbelt rosters)   | `jterrazz-studio` `docs/08-tools-and-skills.md`   |
 
 How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
 
@@ -58,3 +72,4 @@ How `@jterrazz` projects compose (packages, naming, CI) is a separate capability
 - Never hand-edit a projection — regenerate it (`typescript docs`, `make skills`).
 - Regenerate a projection in the same change that touches its source, so the sync check stays green.
 - One skill per capability, split by genuinely distinct trigger conditions — not one skill restating two chapters.
+- Never renumber a chapter without moving every inbound link in the same change — the map, the cross-links, `AGENTS.md`, and the skills.

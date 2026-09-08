@@ -170,8 +170,8 @@ Modern replacements are on every machine — prefer them over the defaults:
 
 | Question                                  | Read (in jterrazz-studio)     |
 | ----------------------------------------- | ----------------------------- |
-| How the registries work, adding a tool    | `docs/05-tools-and-skills.md` |
-| Install / upgrade / status commands       | `docs/02-commands.md`         |
+| How the registries work, adding a tool    | `docs/08-tools-and-skills.md` |
+| Install / upgrade / status commands       | `docs/05-commands.md`         |
 | What is actually installed on this machine | run `j status`               |
 
 ## Always
