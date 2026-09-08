@@ -64,5 +64,5 @@ The doctrine applies in full to every repo: a written corpus, thin routing layer
 
 ## Related
 
-- [The stack](07-stack.md) — how `@jterrazz` projects compose.
-- [Tools and skills](05-tools-and-skills.md) — this repo's own compiler, `make skills`.
+- [The stack](10-stack.md) — how `@jterrazz` projects compose.
+- [Tools and skills](08-tools-and-skills.md) — this repo's own compiler, `make skills`.

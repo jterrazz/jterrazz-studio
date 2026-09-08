@@ -7,7 +7,7 @@ A Go CLI (Cobra + Bubble Tea TUIs) that bootstraps and manages a macOS dev machi
 - **Registry-driven.** The tools it installs, the config items, and the curated agent skills are declared as data in `src/internal/config/` — the same catalogue powers `j install`, `j status`, and `j config`. Add to the registry, not to bespoke command code.
 - **The machine registry is the source of truth.** `~/.jterrazz/config.json` (aliases, roles, ssh) drives everything; adding a machine also writes a managed `~/.ssh/config` block. Role (`client`/`server`) gates what `status` reports and which `config` items appear.
 - **Dotfiles are versioned.** `dotfiles/applications/*` are installed onto the machine by `j config`.
-- **Specs drive the real binary.** `specs/cli/` uses `@jterrazz/test` (`specification.cli`) against a freshly built `j`; the runner rebuilds when any `src/**/*.go` is newer than the test binary. A scenario is a `<case>.spec.yaml` document, not code — see `docs/01-getting-started.md`.
+- **Specs drive the real binary.** `specs/cli/` uses `@jterrazz/test` (`specification.cli`) against a freshly built `j`; the runner rebuilds when any `src/**/*.go` is newer than the test binary. A scenario is a `<case>.spec.yaml` document, not code — see `docs/02-developing.md`.
 
 ## Where knowledge lives (route here first)
 
@@ -15,16 +15,16 @@ The corpus is `docs/` + `README.md`, mapped by `docs/README.md`. Do not duplicat
 
 | Working on…                              | Read                          |
 | ---------------------------------------- | ----------------------------- |
-| Install, user data, dev/specs/release    | `docs/01-getting-started.md`  |
-| status / install / upgrade / clean / run | `docs/02-commands.md`         |
-| Machine registry, `config.json`, remote  | `docs/03-machines.md`         |
-| The `j config` TUI, items, categories    | `docs/04-configuration.md`    |
-| Tool + skill registries (`config/`)      | `docs/05-tools-and-skills.md` |
-| Dotfiles (`dotfiles/applications/`)      | `docs/06-dotfiles.md`         |
-| `@jterrazz` stack conventions            | `docs/07-stack.md`            |
-| Repo doctrine (corpus/injection/compiler)| `docs/08-repo-structure.md`   |
+| Install, user data, dev/specs/release    | `docs/02-developing.md`       |
+| status / install / upgrade / clean / run | `docs/05-commands.md`         |
+| Machine registry, `config.json`, remote  | `docs/06-machines.md`         |
+| The `j config` TUI, items, categories    | `docs/07-configuration.md`    |
+| Tool + skill registries (`config/`)      | `docs/08-tools-and-skills.md` |
+| Dotfiles (`dotfiles/applications/`)      | `docs/09-dotfiles.md`         |
+| `@jterrazz` stack conventions            | `docs/10-stack.md`            |
+| Repo doctrine (corpus/injection/compiler)| `docs/11-repo-structure.md`   |
 
-The repo-structure doctrine is authored **here** (`docs/08-repo-structure.md`) and ships to agents as the `jterrazz-repo-structure` skill. This repo is an application: it adopts the corpus + injection layers and never generates a `docs/reference/` projection. Its one compiler is `make skills` (`src/cmd/skillsgen/`), which projects the config registries into the `jterrazz-toolbelt` skill rosters — see `docs/05-tools-and-skills.md`.
+The repo-structure doctrine is authored **here** (`docs/11-repo-structure.md`) and ships to agents as the `jterrazz-repo-structure` skill. This repo is an application: it adopts the corpus + injection layers and never generates a `docs/reference/` projection. Its one compiler is `make skills` (`src/cmd/skillsgen/`), which projects the config registries into the `jterrazz-toolbelt` skill rosters — see `docs/08-tools-and-skills.md`.
 
 ## Setup & commands
 
@@ -57,4 +57,4 @@ specs/cli/                   # end-to-end specs (@jterrazz/test)
 - The curated skills list lives in **`src/internal/config/skills.go`** (`StudioSkills` + `StudioRepos`). It is the single source of truth — no lockfile; a new `{ repo, skill }` entry is all that's needed.
 - A change to **any registry** in `src/internal/config/` (tools, skills) regenerates the `jterrazz-toolbelt` rosters with `make skills` in the same change — the sync test in `make test` fails otherwise. Never edit the generated sections by hand.
 - A change to product behaviour or a command's output updates the matching `docs/` chapter in the same change, and regenerates the affected `specs/cli/**/*.spec.yaml` documents with `TEST_UPDATE=1 make test-e2e` (deliberately — it rewrites `exit:` and the streams, nothing else).
-- A change to the doctrine (`docs/08`) or the stack conventions (`docs/07`) updates the matching skill (`jterrazz-repo-structure`, `jterrazz-stack`) in the same change — skills route, they never author.
+- A change to the doctrine (`docs/11`) or the stack conventions (`docs/10`) updates the matching skill (`jterrazz-repo-structure`, `jterrazz-stack`) in the same change — skills route, they never author.

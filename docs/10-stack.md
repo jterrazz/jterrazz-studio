@@ -34,7 +34,7 @@ Every project carries:
 - `tsconfig.json` extending `@jterrazz/typescript/tsconfig/node`.
 - `oxlint.config.ts` + `oxfmt.config.ts` importing the `@jterrazz/typescript` presets.
 - `.github/workflows/validate.yaml` using the shared workflow (runs `make build`, `make lint`, `make test`).
-- The root files mandated by the [repo-structure doctrine](08-repo-structure.md): README vitrine, `AGENTS.md` (+ `CLAUDE.md` symlink), a `docs/` corpus.
+- The root files mandated by the [repo-structure doctrine](11-repo-structure.md): README vitrine, `AGENTS.md` (+ `CLAUDE.md` symlink), a `docs/` corpus.
 
 ## Testing
 
@@ -52,5 +52,5 @@ Libraries use **ports & adapters** (`src/ports/` interfaces, `src/adapters/` imp
 
 ## Related
 
-- [Repo structure](08-repo-structure.md) — where knowledge lives in every repo.
-- [Tools and skills](05-tools-and-skills.md) — the machine-side registries that distribute the skills.
+- [Repo structure](11-repo-structure.md) — where knowledge lives in every repo.
+- [Tools and skills](08-tools-and-skills.md) — the machine-side registries that distribute the skills.

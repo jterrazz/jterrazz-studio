@@ -12,7 +12,7 @@ curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-studio/main/scrip
 source ~/.zshrc
 ```
 
-The binary lives at `~/.jterrazz/bin/j`; all user data goes under `~/.jterrazz/`. From-source install and the full setup are in [Getting started](docs/01-getting-started.md).
+The binary lives at `~/.jterrazz/bin/j`; all user data goes under `~/.jterrazz/`. From-source install and the full setup are in [Developing](docs/02-developing.md).
 
 ## What it does
 

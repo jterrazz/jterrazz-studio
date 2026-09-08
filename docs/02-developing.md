@@ -1,4 +1,4 @@
-# Getting started
+# Developing
 
 `j` is a single CLI to bootstrap and manage a macOS development machine — tools, configs, templates, and remote access. No sudo required.
 
@@ -21,7 +21,7 @@ make install
 source ~/.zshrc
 ```
 
-The binary lives at `~/.jterrazz/bin/j`. All user data goes under `~/.jterrazz/` — see [Machines](03-machines.md) for the config model.
+The binary lives at `~/.jterrazz/bin/j`. All user data goes under `~/.jterrazz/` — see [Machines](06-machines.md) for the config model.
 
 ## First steps
 
@@ -44,7 +44,7 @@ Everything lives under `~/.jterrazz/`:
 └── dns/           # Generated DNS profiles
 ```
 
-The `config.json` schema and its role as the single source of truth are covered in [Machines](03-machines.md).
+The `config.json` schema and its role as the single source of truth are covered in [Machines](06-machines.md).
 
 ## Development
 
@@ -112,6 +112,6 @@ specs/cli/                    # End-to-end specs (@jterrazz/test)
 
 ## Related
 
-- [Commands](02-commands.md) — the everyday verbs.
-- [Machines](03-machines.md) — the registry & config model.
-- [Tools and skills](05-tools-and-skills.md) — the curated registries `install`/`config` draw from.
+- [Commands](05-commands.md) — the everyday verbs.
+- [Machines](06-machines.md) — the registry & config model.
+- [Tools and skills](08-tools-and-skills.md) — the curated registries `install`/`config` draw from.

@@ -1,6 +1,6 @@
 # Commands
 
-The everyday verbs. Machine management is in [Machines](03-machines.md); the interactive configurator in [Configuration](04-configuration.md).
+The everyday verbs. Machine management is in [Machines](06-machines.md); the interactive configurator in [Configuration](07-configuration.md).
 
 ## `j status`
 
@@ -27,7 +27,7 @@ j install ghostty tmux zed         # Terminal + editor
 
 Falls back to the plain-text catalog listing (the classic `✓`/`✗` table by category) when stdout isn't a terminal — scripts, CI, piped output — or when `--list` is passed. `j install <tool> [tool...]` (the direct, non-interactive form) is unchanged either way.
 
-The tool catalogue and its categories live in [Tools and skills](05-tools-and-skills.md).
+The tool catalogue and its categories live in [Tools and skills](08-tools-and-skills.md).
 
 ## `j upgrade [package...]`
 
@@ -59,7 +59,7 @@ j run docker clean          # System prune
 
 ## Shell shortcuts
 
-Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](06-dotfiles.md)):
+Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](09-dotfiles.md)):
 
 | Command | Action |
 |---------|--------|
@@ -70,6 +70,6 @@ Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](06-dotfiles.md)
 
 ## Related
 
-- [Machines](03-machines.md) — `j machine` and `j remote`.
-- [Configuration](04-configuration.md) — `j config`.
-- [Tools and skills](05-tools-and-skills.md) — what `install`/`upgrade`/`clean` act on.
+- [Machines](06-machines.md) — `j machine` and `j remote`.
+- [Configuration](07-configuration.md) — `j config`.
+- [Tools and skills](08-tools-and-skills.md) — what `install`/`upgrade`/`clean` act on.

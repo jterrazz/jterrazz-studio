@@ -5,7 +5,7 @@ description: Use when organizing or restructuring a repository's documentation, 
 
 # Repo structure
 
-The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/08-repo-structure.md`.
+The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/11-repo-structure.md`.
 
 ## Mental model
 
@@ -46,9 +46,9 @@ The list is exhaustive for the root: a file that is not on it does not belong th
 
 | Task                                                              | Read                                              |
 | ----------------------------------------------------------------- | ------------------------------------------------- |
-| The doctrine itself (three roles, golden rules, layout)           | `jterrazz-studio` `docs/08-repo-structure.md`     |
+| The doctrine itself (three roles, golden rules, layout)           | `jterrazz-studio` `docs/11-repo-structure.md`     |
 | TypeScript compiler mechanics (`typescript docs`, sync-checking)  | `package-typescript` `docs/05-docs-pipeline.md`   |
-| The studio's own compiler (`make skills`, the toolbelt rosters)   | `jterrazz-studio` `docs/05-tools-and-skills.md`   |
+| The studio's own compiler (`make skills`, the toolbelt rosters)   | `jterrazz-studio` `docs/08-tools-and-skills.md`   |
 
 How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
 
