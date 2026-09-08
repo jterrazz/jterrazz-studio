@@ -1,6 +1,6 @@
 ---
 name: jterrazz-toolbelt
-description: The exact tool roster provisioned on a jterrazz machine — modern CLI replacements (fd, ripgrep, eza, bat, sd, dust, zoxide, difftastic), AI tooling (rtk, qmd, ollama, skills), dev apps and services (gh, lazygit, docker/orbstack, linear, notion). Activates at the start of shell work, when searching or listing files, processing text, diffing, or checking whether a tool or capability is available on this machine.
+description: The exact tool roster provisioned on a jterrazz machine — modern CLI replacements (fd, ripgrep, tgrep, eza, bat, sd, dust, zoxide, difftastic), AI tooling (rtk, qmd, ollama, skills), dev apps and services (gh, lazygit, docker/orbstack, linear, notion). Activates at the start of shell work, when searching or listing files, processing text, diffing, or checking whether a tool or capability is available on this machine.
 ---
 
 # Machine toolbelt
@@ -21,7 +21,8 @@ Modern replacements are on every machine — prefer them over the defaults:
 | du -sh | `dust` — Intuitive disk usage tool |
 | ls | `eza` — Modern ls replacement |
 | find | `fd` — Fast find alternative |
-| grep -r | `ripgrep` — Fast grep alternative |
+| grep (what agent and editor tools call) | `ripgrep` — Fast grep, the rg agents and editors shell out to |
+| grep -r | `tgrep` — Trigram-indexed grep for large codebases |
 | sed (simple replaces) | `sd` — Intuitive sed alternative |
 | diff | `difftastic` — Structural diff tool |
 | raw git porcelain (interactive) | `lazygit` — Terminal UI for git |
@@ -64,7 +65,8 @@ Modern replacements are on every machine — prefer them over the defaults:
 - **dust** — Intuitive disk usage tool
 - **eza** — Modern ls replacement
 - **fd** — Fast find alternative
-- **ripgrep** — Fast grep alternative
+- **ripgrep** — Fast grep, the rg agents and editors shell out to
+- **tgrep** — Trigram-indexed grep for large codebases
 - **sd** — Intuitive sed alternative
 - **difftastic** — Structural diff tool
 
