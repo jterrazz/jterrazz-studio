@@ -1,6 +1,6 @@
 description: shows the full help banner when no command is given
 runs:
-    - command: ""
+    - command: ''
       exit: 0
       stdout: |
           A unified CLI tool for development workflow automation.

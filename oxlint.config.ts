@@ -1,8 +1,16 @@
-// Conventions enforcement, standalone (docs/10 — "Standalone — without
-// @jterrazz/typescript"). This repo is a Go CLI with a thin TS test suite and
-// keeps its OWN formatting (2-space indent, double quotes) — so it adopts only
-// the `testing` fragment (the whole jterrazz/* catalogue + the A4 overrides)
-// and does NOT pull in @jterrazz/typescript's formatting/base preset.
-import { testing } from "@jterrazz/test/oxlint";
+import { testing } from '@jterrazz/test/oxlint';
+import { compose, defineConfig, node, type OxlintConfig } from '@jterrazz/typescript/oxlint';
 
-export default testing;
+/*
+ * The `node` profile is the rulebook for a command-line tool, and `testing` adds
+ * the spec conventions that ship with @jterrazz/test. Nothing local: this repo's
+ * TypeScript is the e2e harness under `specs/`, which the shared rules already
+ * describe.
+ *
+ * @jterrazz/test 15 declares `testing` with widened property types — its
+ * override's level is `string` where oxlint takes a closed union — so the
+ * fragment does not structurally satisfy `OxlintConfig`. The assertion names
+ * what the fragment is until the declaration ships narrowed upstream.
+ */
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- the widened upstream declaration above
+export default defineConfig(compose(node, testing as OxlintConfig));

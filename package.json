@@ -1,16 +1,15 @@
 {
-  "name": "jterrazz-studio-tests",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "oxlint && node node_modules/@jterrazz/test/dist/checker.js specs",
-    "test:e2e": "vitest --run"
-  },
-  "devDependencies": {
-    "@jterrazz/test": "^14.1.0",
-    "@types/node": "^25.5.0",
-    "oxlint": "^1.74.0",
-    "typescript": "^5.7.0",
-    "vitest": "^4.1.10"
-  }
+    "name": "jterrazz-studio-tests",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "typescript check",
+        "lint:fix": "typescript fix",
+        "test:e2e": "vitest --run"
+    },
+    "devDependencies": {
+        "@jterrazz/test": "^15.0.0",
+        "@jterrazz/typescript": "^10.0.0",
+        "@types/node": "^25.5.0"
+    }
 }

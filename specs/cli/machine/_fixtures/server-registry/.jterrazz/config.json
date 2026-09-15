@@ -1,8 +1,8 @@
 {
-  "self": "testbox",
-  "machines": {
-    "testbox": {
-      "role": "server"
+    "self": "testbox",
+    "machines": {
+        "testbox": {
+            "role": "server"
+        }
     }
-  }
 }

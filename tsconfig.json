@@ -1,16 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": false,
-    "isolatedModules": true,
-    "types": ["node"]
-  },
-  "include": ["specs/**/*.ts", "vitest.config.ts"]
+    "extends": "@jterrazz/typescript/tsconfig/node",
+    "include": ["specs/**/*.ts", "*.config.ts"]
 }
