@@ -13,6 +13,11 @@ ZSHRC_SOURCE    := dotfiles/applications/zsh/zshrc.sh
 OLD_CONFIG_DIR  := $(HOME)/.config/jterrazz
 OLD_INSTALL     := /usr/local/bin/$(BINARY)
 
+# The linter is pinned: an unpinned `@latest` makes a green run a fact about the
+# day it ran. Bump this line, read what the new release finds, land both together.
+GOLANGCI_VERSION := v2.13.2
+GOLANGCI         := $(shell go env GOPATH)/bin/golangci-lint
+
 CYAN  := \033[36m
 GREEN := \033[32m
 DIM   := \033[2m
@@ -83,8 +88,7 @@ check: ## Verify installation
 test: ## Run Go unit tests
 	@go test ./src/...
 
-test-e2e: ## Run end-to-end tests (requires npm)
-	@npm install --silent
+test-e2e: node_modules/.install ## Run end-to-end tests (requires npm)
 	@J_FORCE_REBUILD=1 npx vitest --run
 
 fmt: ## Format Go source files
@@ -95,10 +99,16 @@ vet: ## Run go vet
 	@go vet ./src/...
 	@printf "$(GREEN)✓$(RESET) Vet passed\n"
 
-lint: ## Run golangci-lint
-	@which golangci-lint > /dev/null 2>&1 || go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@golangci-lint run ./src/... || echo "Lint warnings found (non-blocking)"
-	@printf "$(GREEN)✓$(RESET) Lint passed\n"
+node_modules/.install: package.json package-lock.json
+	@npm install --silent
+	@touch node_modules/.install
+
+lint: node_modules/.install ## Lint both halves: golangci-lint over Go, `typescript check` over the harness
+	@$(GOLANGCI) --version 2>/dev/null | grep -q "$(GOLANGCI_VERSION:v%=%)" || \
+		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_VERSION)
+	@$(GOLANGCI) run ./src/...
+	@printf "$(GREEN)✓$(RESET) Go lint passed\n"
+	@npm run --silent lint
 
 clean: ## Remove build artifacts
 	@rm -rf .artifacts

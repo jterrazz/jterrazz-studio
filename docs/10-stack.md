@@ -4,13 +4,13 @@ How every `@jterrazz` project composes: the shared packages, the naming scheme, 
 
 ## Shared packages
 
-| Package                  | Owns                                                        | Corpus                        |
-| ------------------------ | ----------------------------------------------------------- | ----------------------------- |
-| `@jterrazz/typescript`   | Toolchain — build, quality checks, lint presets, API docs   | `package-typescript/docs/`    |
-| `@jterrazz/test`         | Testing — conventions, structure, mocking, service factories | `package-test/docs/`          |
-| `@jterrazz/logger`       | Structured logging (pino)                                   | `package-logger`              |
-| `@jterrazz/intelligence` | AI toolkit (OpenRouter, Langfuse)                           | `package-intelligence`        |
-| `@jterrazz/broadcast`    | Multi-channel announcements (App Store, push)               | `package-broadcast/docs/`     |
+| Package                  | Owns                                                         | Corpus                     |
+| ------------------------ | ------------------------------------------------------------ | -------------------------- |
+| `@jterrazz/typescript`   | Toolchain — build, quality checks, lint presets, API docs    | `package-typescript/docs/` |
+| `@jterrazz/test`         | Testing — conventions, structure, mocking, service factories | `package-test/docs/`       |
+| `@jterrazz/logger`       | Structured logging (pino)                                    | `package-logger`           |
+| `@jterrazz/intelligence` | AI toolkit (OpenRouter, Langfuse)                            | `package-intelligence`     |
+| `@jterrazz/broadcast`    | Multi-channel announcements (App Store, push)                | `package-broadcast/docs/`  |
 
 Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/jterrazz-infrastructure` (K3s, Helm, Traefik).
 
@@ -36,13 +36,15 @@ Every project carries:
 - `.github/workflows/validate.yaml` using the shared workflow (runs `make build`, `make lint`, `make test`).
 - The root files mandated by the [repo-structure doctrine](11-repo-structure.md): README vitrine, `AGENTS.md` (+ `CLAUDE.md` symlink), a `docs/` corpus.
 
+A repository whose product is not TypeScript carries them all the same, for the half that is: `j` is a Go binary with an end-to-end harness under `specs/`, and that harness names the `node` profile composed with `@jterrazz/test`'s `testing` fragment like any other project. Its own language answers to its own linter — `.golangci.yml`, at the pinned version the Makefile names — and `make lint` runs both, in that order.
+
 ## Testing
 
 The convention is defined by `@jterrazz/test`, and every project follows it: colocated `*.test.ts` units (no I/O), `*.integration.test.ts` against testcontainers, `*.e2e.test.ts` against a real compose stack, with data colocated per test. What a spec stands on — `_fixtures/`, `_expected/`, `_requests/`, `_seeds/` — carries a leading underscore; a spec's own folder never does. The full convention lives in `package-test`'s corpus — route there, don't restate it.
 
 ## Architecture
 
-Libraries use **ports & adapters** (`src/ports/` interfaces, `src/adapters/` implementations, `src/index.ts` barrel). Applications use **hexagonal** (`src/domain/`, `src/application/`, `src/infrastructure/`) — enforced by the `hexagonal` oxlint preset, documented in `package-typescript/docs/04-lint-presets.md`.
+Libraries use **ports & adapters** (`src/ports/` interfaces, `src/adapters/` implementations, `src/index.ts` barrel). Applications use **hexagonal** (`src/domain/`, `src/application/`, `src/infrastructure/`) — enforced by the `hexagonal` oxlint preset, documented in `package-typescript/docs/07-lint-presets.md`.
 
 ## Standing conventions
 

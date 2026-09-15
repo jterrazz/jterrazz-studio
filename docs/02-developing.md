@@ -2,12 +2,12 @@
 
 How to work on `j` itself: build it, run it from the checkout, and know which file a change belongs in.
 
-| Section              | Answers                                              |
-| -------------------- | ----------------------------------------------------- |
-| Working from source  | The clone, Go 1.24+, and the loop                    |
-| The make targets     | Every gesture the Makefile offers                    |
-| Where a change goes  | Which file to open for which kind of change          |
-| What a change owes   | What must land in the same commit                    |
+| Section             | Answers                                     |
+| ------------------- | ------------------------------------------- |
+| Working from source | The clone, Go 1.24+, and the loop           |
+| The make targets    | Every gesture the Makefile offers           |
+| Where a change goes | Which file to open for which kind of change |
+| What a change owes  | What must land in the same commit           |
 
 ## Working from source
 
@@ -22,35 +22,37 @@ Go 1.24+ is the only requirement for the Go half; the end-to-end specs additiona
 
 ## The make targets
 
-| Target           | Does                                                              |
-| ---------------- | ------------------------------------------------------------------ |
-| `make build`     | Build `.artifacts/go/j`                                            |
-| `make test`      | `go test ./src/...`                                                |
-| `make test-e2e`  | npm install, rebuild the test binary, run the `specs/cli` suite    |
-| `make fmt`       | `gofmt -w ./src/`                                                  |
-| `make vet`       | `go vet ./src/...`                                                 |
-| `make lint`      | `golangci-lint run ./src/...`, installing it first if it is absent |
-| `make skills`    | Regenerate the toolbelt skill's rosters from the registries        |
-| `make install`   | Build and install to `~/.jterrazz/bin`                             |
-| `make uninstall` | Remove the installed binary                                        |
-| `make check`     | Verify the installation                                            |
-| `make clean`     | Remove `.artifacts/`                                               |
+| Target           | Does                                                                |
+| ---------------- | ------------------------------------------------------------------- |
+| `make build`     | Build `.artifacts/go/j`                                             |
+| `make test`      | `go test ./src/...`                                                 |
+| `make test-e2e`  | npm install, rebuild the test binary, run the `specs/cli` suite     |
+| `make fmt`       | `gofmt -w ./src/`                                                   |
+| `make vet`       | `go vet ./src/...`                                                  |
+| `make lint`      | Both halves: `golangci-lint run ./src/...`, then `typescript check` |
+| `make skills`    | Regenerate the toolbelt skill's rosters from the registries         |
+| `make install`   | Build and install to `~/.jterrazz/bin`                              |
+| `make uninstall` | Remove the installed binary                                         |
+| `make check`     | Verify the installation                                             |
+| `make clean`     | Remove `.artifacts/`                                                |
+
+`make lint` is the whole gate, and it fails on the first finding of either half. The Go half runs the `golangci-lint` version the Makefile PINS — it installs that exact one when it is missing, because a linter resolved at `@latest` makes a green run a fact about the day it ran. Which linters judge the Go sources, and the four exclusions that carry a reason, are `.golangci.yml`. The TypeScript half is `typescript check` from `@jterrazz/typescript`, whose passes are the toolchain's own [Quality checks](https://github.com/jterrazz/package-typescript/blob/main/docs/06-quality-checks.md).
 
 ## Where a change goes
 
 Most changes are a registry entry, not new code — that is the shape [Architecture](01-architecture.md) describes. The file to open:
 
-| Change                                      | File                                                       |
-| ------------------------------------------- | ------------------------------------------------------------ |
-| A tool `j install` offers                   | `src/internal/config/tools_catalog.go`                       |
-| A `j config` item                           | `src/internal/config/scripts.go` (server items: `server_*.go` beside the command) |
-| A `j run` shortcut                          | `src/internal/config/commands.go`                            |
-| Something `j clean` reclaims                | `src/internal/config/cleanables.go`                          |
-| A package manager `j upgrade` knows         | `src/internal/config/upgraders.go`                           |
-| A curated agent skill                       | `src/internal/config/skills.go`                              |
-| A new verb                                  | A file under `src/internal/commands/`, registering itself in `init()` |
-| What a TUI shows                            | `src/internal/presentation/views/<view>/`                    |
-| A shell shortcut or an app's dotfile        | `dotfiles/applications/`                                     |
+| Change                               | File                                                                              |
+| ------------------------------------ | --------------------------------------------------------------------------------- |
+| A tool `j install` offers            | `src/internal/config/tools_catalog.go`                                            |
+| A `j config` item                    | `src/internal/config/scripts.go` (server items: `server_*.go` beside the command) |
+| A `j run` shortcut                   | `src/internal/config/commands.go`                                                 |
+| Something `j clean` reclaims         | `src/internal/config/cleanables.go`                                               |
+| A package manager `j upgrade` knows  | `src/internal/config/upgraders.go`                                                |
+| A curated agent skill                | `src/internal/config/skills.go`                                                   |
+| A new verb                           | A file under `src/internal/commands/`, registering itself in `init()`             |
+| What a TUI shows                     | `src/internal/presentation/views/<view>/`                                         |
+| A shell shortcut or an app's dotfile | `dotfiles/applications/`                                                          |
 
 ## What a change owes
 

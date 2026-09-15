@@ -2,12 +2,12 @@
 
 Two suites prove a change: Go unit tests over the packages, and end-to-end specs that drive the real `j` binary and state what it printed.
 
-| Section              | Answers                                                    |
-| -------------------- | ----------------------------------------------------------- |
-| The two suites       | What `make test` and `make test-e2e` each run               |
-| A scenario is a document | The `<case>.spec.yaml` form and how it is regenerated   |
-| When a spec stays code   | The one reason to write TypeScript instead              |
-| What CI runs         | The gate a pull request passes                              |
+| Section                  | Answers                                               |
+| ------------------------ | ----------------------------------------------------- |
+| The two suites           | What `make test` and `make test-e2e` each run         |
+| A scenario is a document | The `<case>.spec.yaml` form and how it is regenerated |
+| When a spec stays code   | The one reason to write TypeScript instead            |
+| What CI runs             | The gate a pull request passes                        |
 
 ## The two suites
 
@@ -53,7 +53,7 @@ The full grammar, and the rest of the reasons to reach for code, are `@jterrazz/
 
 `.github/workflows/validate.yaml` calls the shared `jterrazz-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](10-stack.md)'s. Locally the same gate is `make build`, `make lint`, `make test`, `make test-e2e`.
 
-The npm half of the repo has its own linter: `npm run lint` is `oxlint` plus `@jterrazz/test`'s checker over `specs/`.
+The npm half is linted by the same toolchain as every other repository: `npm run lint` is `typescript check`, and `make lint` runs it after the Go half ([Developing](02-developing.md)).
 
 ## Related
 
