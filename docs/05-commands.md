@@ -61,12 +61,12 @@ j run docker clean          # System prune
 
 Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](09-dotfiles.md)):
 
-| Command | Action |
-|---------|--------|
-| `jj` | Attach tmux session `main` |
-| `jc` | Open Claude in tmux |
-| `jo` | Open Codex in tmux |
-| `jg` | Open Gemini in tmux |
+| Command | Action                     |
+| ------- | -------------------------- |
+| `jj`    | Attach tmux session `main` |
+| `jc`    | Open Claude in tmux        |
+| `jo`    | Open Codex in tmux         |
+| `jg`    | Open Gemini in tmux        |
 
 ## Related
 

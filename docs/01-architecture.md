@@ -2,13 +2,13 @@
 
 `j` is one Go binary whose behaviour is declared as data: a registry of tools, configuration items, run shortcuts and curated skills, read by a thin Cobra command layer and rendered by Bubble Tea views.
 
-| Section                         | Answers                                                  |
-| ------------------------------- | -------------------------------------------------------- |
-| The binary                      | What runs when you type `j`                              |
-| The four packages               | Where each kind of code lives                            |
-| Registry-driven                 | Why a feature is usually a data entry, not a new command |
-| The two sources of truth        | The registry in the repo, the config on the machine      |
-| The compiler                    | The one source layer this repo projects                  |
+| Section                  | Answers                                                  |
+| ------------------------ | -------------------------------------------------------- |
+| The binary               | What runs when you type `j`                              |
+| The four packages        | Where each kind of code lives                            |
+| Registry-driven          | Why a feature is usually a data entry, not a new command |
+| The two sources of truth | The registry in the repo, the config on the machine      |
+| The compiler             | The one source layer this repo projects                  |
 
 ## The binary
 
@@ -20,12 +20,12 @@ Two commands ship as a second binary each: `src/cmd/skillsgen/` is the projectio
 
 ## The four packages
 
-| Package                        | Holds                                                                                                  |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `src/internal/commands/`       | One Cobra command per file, plus the server-side actions `j config` items call (`server_*.go`)          |
-| `src/internal/config/`         | The registries — tools, scripts, run commands, cleanables, upgraders, skills — and the machine registry |
-| `src/internal/domain/`         | Behaviour that is not a registry entry: version parsing, status loading, the `skills` CLI integration   |
-| `src/internal/presentation/`   | Bubble Tea views (`views/status`, `views/install`, `views/config`), shared `components/`, `theme/`, and `print/` for plain output |
+| Package                      | Holds                                                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `src/internal/commands/`     | One Cobra command per file, plus the server-side actions `j config` items call (`server_*.go`)                                    |
+| `src/internal/config/`       | The registries — tools, scripts, run commands, cleanables, upgraders, skills — and the machine registry                           |
+| `src/internal/domain/`       | Behaviour that is not a registry entry: version parsing, status loading, the `skills` CLI integration                             |
+| `src/internal/presentation/` | Bubble Tea views (`views/status`, `views/install`, `views/config`), shared `components/`, `theme/`, and `print/` for plain output |
 
 The registry package is the centre rather than a bottom layer: `commands`, `domain/status` and the views all import `config`, and `config` reaches back into `presentation/print` for the lines its install actions emit. Only `domain/tool` — version detection and command probing — is imported by others without importing anything of its own.
 

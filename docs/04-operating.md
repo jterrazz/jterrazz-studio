@@ -2,12 +2,12 @@
 
 This repository ships one artefact — the `j` binary — and it reaches a machine two ways: a tagged GitHub release, or a build from a checkout.
 
-| Section              | Answers                                                     |
-| -------------------- | ------------------------------------------------------------ |
-| The tagged release   | What a `v*` tag builds and publishes                         |
-| How a machine installs it | The one-line install, and what it leaves behind         |
-| From a checkout      | `make install`, `make check`, `make uninstall`               |
-| The footprint        | Everything `j` writes outside the repository                 |
+| Section                   | Answers                                         |
+| ------------------------- | ----------------------------------------------- |
+| The tagged release        | What a `v*` tag builds and publishes            |
+| How a machine installs it | The one-line install, and what it leaves behind |
+| From a checkout           | `make install`, `make check`, `make uninstall`  |
+| The footprint             | Everything `j` writes outside the repository    |
 
 ## The tagged release
 

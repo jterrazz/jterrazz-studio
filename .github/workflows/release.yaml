@@ -1,18 +1,18 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+    push:
+        tags:
+            - 'v*'
 
 permissions:
-  contents: write
+    contents: write
 
 jobs:
-  release:
-    uses: jterrazz/jterrazz-actions/.github/workflows/release-go.yaml@main
-    with:
-      binary-name: j
-      build-path: ./src/cmd/j
-      go-version: '1.24'
-      targets: 'darwin/arm64,darwin/amd64,linux/arm64,linux/amd64'
+    release:
+        uses: jterrazz/jterrazz-actions/.github/workflows/release-go.yaml@main
+        with:
+            binary-name: j
+            build-path: ./src/cmd/j
+            go-version: '1.24'
+            targets: 'darwin/arm64,darwin/amd64,linux/arm64,linux/amd64'

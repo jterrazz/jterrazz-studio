@@ -31,18 +31,18 @@ The dividing line is which layers a derived file spans:
 
 ## Canonical layout
 
-| Path              | Role                                                                                     |
-| ----------------- | ---------------------------------------------------------------------------------------- |
-| `README.md`       | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.            |
-| `AGENTS.md`       | The agent brief — mental model + routing table into `docs/`. Routes, does not retell.     |
-| `CLAUDE.md`       | A symlink to `AGENTS.md`.                                                                 |
-| `TODO.md`         | The working backlog, when one is kept.                                                    |
-| `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                       |
-| `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.                 |
+| Path              | Role                                                                                          |
+| ----------------- | --------------------------------------------------------------------------------------------- |
+| `README.md`       | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.                |
+| `AGENTS.md`       | The agent brief — mental model + routing table into `docs/`. Routes, does not retell.         |
+| `CLAUDE.md`       | A symlink to `AGENTS.md`.                                                                     |
+| `TODO.md`         | The working backlog, when one is kept.                                                        |
+| `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                           |
+| `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.                     |
 | `docs/decisions/` | The repo-local decision records, `NNN-title.md`, beside the `_template.md` they are cut from. |
-| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                      |
-| `docs/_assets/`   | Files a chapter embeds. Underscored, because it is ground rather than a subject.           |
-| `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.               |
+| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                          |
+| `docs/_assets/`   | Files a chapter embeds. Underscored, because it is ground rather than a subject.              |
+| `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.                   |
 
 The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. Those three subfolders are exhaustive too — a fourth folder under `docs/` means a subject is hiding from the numbering.
 
@@ -52,12 +52,12 @@ The list is exhaustive for the root: a file that is not on it does not belong th
 
 Every repository's `docs/` opens on the same four numbers, whatever the language and whatever the product. A reader landing on an unfamiliar repository knows where the shape is before opening a file, and so does an agent.
 
-| Chapter               | Owns                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------ |
-| `01-architecture.md`  | The shape of the thing — its parts, their boundaries, and why the lines are drawn there.          |
-| `02-developing.md`    | How a change is made — the toolchain, the loop, which file a change opens, what it owes.          |
-| `03-testing.md`       | What proves a change — the suites, the ground they stand on, how a golden is regenerated.         |
-| `04-operating.md`     | How it ships and how it runs — the release or the deploy, and the footprint it leaves.            |
+| Chapter              | Owns                                                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| `01-architecture.md` | The shape of the thing — its parts, their boundaries, and why the lines are drawn there.  |
+| `02-developing.md`   | How a change is made — the toolchain, the loop, which file a change opens, what it owes.  |
+| `03-testing.md`      | What proves a change — the suites, the ground they stand on, how a golden is regenerated. |
+| `04-operating.md`    | How it ships and how it runs — the release or the deploy, and the footprint it leaves.    |
 
 The repository's own subjects follow, numbered contiguously from `05`: one subject per chapter, in whatever order the repository reads best. A chapter's name is a subject, never a moment — `exploration`, `review`, `notes`, `draft`, `wip` name a date rather than a thing, and what happened on a date is a decision record or git's history, not a chapter.
 

@@ -7,398 +7,398 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
-  // "project_panel": {
-  //   "dock": "right"
-  // },
-  // "outline_panel": {
-  //   "dock": "right"
-  // },
-  // "collaboration_panel": {
-  //   "dock": "right"
-  // },
-  // "git_panel": {
-  //   "dock": "right"
-  // },
-  // "agent": {
-  //   "dock": "left",
-  //   "tool_permissions": {
-  //     "default": "allow"
-  //   },
-  //   "model_parameters": []
-  // },
-  "semantic_tokens": "combined",
-  "outline_panel": {
-    "dock": "right"
-  },
-  "agent": {
-    "sidebar_side": "right",
-    "dock": "right"
-  },
-  "git_panel": {
-    "dock": "left"
-  },
-  "collaboration_panel": {
-    "dock": "left",
-    "button": true
-  },
-  "project_panel": {
-    "dock": "left"
-  },
-  "agent_ui_font_size": 15.6,
-  "autosave": "on_focus_change",
-  "auto_indent_on_paste": true,
-  "minimap": {
-    "show": "auto"
-  },
-  "terminal": {
-    "font_size": 13.0
-  },
-  "base_keymap": "VSCode",
-  "icon_theme": {
-    "mode": "dark",
-    "light": "Base Charmed Icons",
-    "dark": "Base Charmed Icons"
-  },
-  "tab_size": 4,
-  "ui_font_size": 15.4,
-  "buffer_font_size": 13,
-  "theme": {
-    "mode": "dark",
-    "light": "Polar",
-    "dark": "Catppuccin Mocha (Blur) [Light]"
-  },
-  "theme_overrides": {
-    "Polar": {
-      "background": "#D7DBE3",
-      "editor.background": "#EAEDF3",
-      "terminal.background": "#EAEDF3",
-      "elevated_surface.background": "#F4F6FA",
-      "element.background": "#CDD3DE",
-      "title_bar.background": "#D7DBE3",
-      "status_bar.background": "#D7DBE3",
-      "toolbar.background": "#EAEDF3",
-      "tab_bar.background": "#D7DBE3",
-      "tab.inactive_background": "#D7DBE3",
-      "tab.active_background": "#EAEDF3",
-      "panel.background": "#DEE2E9",
-      "scrollbar.track.background": "#EAEDF3",
-      "editor.gutter.background": "#EAEDF3",
-      "editor.subheader.background": "#D7DBE3",
-      "editor.active_line.background": "#DFE3EB",
-      "editor.highlighted_line.background": "#DFE3EB"
+    // "project_panel": {
+    //   "dock": "right"
+    // },
+    // "outline_panel": {
+    //   "dock": "right"
+    // },
+    // "collaboration_panel": {
+    //   "dock": "right"
+    // },
+    // "git_panel": {
+    //   "dock": "right"
+    // },
+    // "agent": {
+    //   "dock": "left",
+    //   "tool_permissions": {
+    //     "default": "allow"
+    //   },
+    //   "model_parameters": []
+    // },
+    "semantic_tokens": "combined",
+    "outline_panel": {
+        "dock": "right"
     },
-    "Sequoia Moonlight": {
-      "background": "#06070A",
-      "editor.background": "#06070A",
-      "terminal.background": "#06070A",
-      "surface.background": "#101319",
-      "elevated_surface.background": "#161922",
-      "drop_target.background": "#161922",
-      "title_bar.background": "#0C0E13",
-      "status_bar.background": "#0C0E13",
-      "toolbar.background": "#06070A",
-      "panel.background": "#0C0E13",
-      "scrollbar.track.background": "#06070A",
-      "editor.gutter.background": "#06070A",
-      "editor.active_line.background": "#817c9c1f",
-      "tab.active_background": "#817c9c24"
-    }
-  },
-  "auto_install_extensions": {
-    "ansible": true,
-    "bearded-icon-theme": true,
-    "catppuccin": true,
-    "catppuccin-blur": true,
-    "charmed-icons": true,
-    "dockerfile": true,
-    "git-firefly": true,
-    "graphql": true,
-    "html": true,
-    "java": true,
-    "make": true,
-    "nord": true,
-    "nvim-nightfox": true,
-    "opencode": true,
-    "oxc": true,
-    "prisma": true,
-    "scss": true,
-    "serendipity": true,
-    "sql": true,
-    "swift": true,
-    "terraform": true,
-    "tokyo-night": true,
-    "toml": true,
-    "vesper": true,
-    "vue": true,
-    "xml": true,
-    "zig": true
-  },
-  "agent_servers": {
-    "opencode": {
-      "type": "registry"
+    "agent": {
+        "sidebar_side": "right",
+        "dock": "right"
     },
-    "codex-acp": {
-      "type": "registry"
+    "git_panel": {
+        "dock": "left"
     },
-    "claude-acp": {
-      "type": "registry",
-      "default_mode": "bypassPermissions",
-      "default_model": "default",
-      "favorite_config_option_values": {
-        "mode": ["bypassPermissions"]
-      }
+    "collaboration_panel": {
+        "dock": "left",
+        "button": true
     },
-    "gemini-custom": {
-      "type": "custom",
-      "command": "gemini"
-    }
-  },
-  "lsp": {
-    "oxlint": {
-      "initialization_options": {
-        "settings": {
-          "configPath": null,
-          "run": "onType",
-          "disableNestedConfig": false,
-          "fixKind": "safe_fix",
-          "typeAware": true,
-          "unusedDisableDirectives": "deny"
-        }
-      }
+    "project_panel": {
+        "dock": "left"
     },
-    "oxfmt": {
-      "initialization_options": {
-        "settings": {
-          "configPath": null,
-          "run": "onSave"
-        }
-      }
-    }
-  },
-  "languages": {
-    "CSS": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
+    "agent_ui_font_size": 15.6,
+    "autosave": "on_focus_change",
+    "auto_indent_on_paste": true,
+    "minimap": {
+        "show": "auto"
     },
-    "GraphQL": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
+    "terminal": {
+        "font_size": 13.0
     },
-    "Handlebars": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
+    "base_keymap": "VSCode",
+    "icon_theme": {
+        "mode": "dark",
+        "light": "Base Charmed Icons",
+        "dark": "Base Charmed Icons"
     },
-    "HTML": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
+    "tab_size": 4,
+    "ui_font_size": 15.4,
+    "buffer_font_size": 13,
+    "theme": {
+        "mode": "dark",
+        "light": "Polar",
+        "dark": "Catppuccin Mocha (Blur) [Light]"
     },
-    "JavaScript": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
+    "theme_overrides": {
+        "Polar": {
+            "background": "#D7DBE3",
+            "editor.background": "#EAEDF3",
+            "terminal.background": "#EAEDF3",
+            "elevated_surface.background": "#F4F6FA",
+            "element.background": "#CDD3DE",
+            "title_bar.background": "#D7DBE3",
+            "status_bar.background": "#D7DBE3",
+            "toolbar.background": "#EAEDF3",
+            "tab_bar.background": "#D7DBE3",
+            "tab.inactive_background": "#D7DBE3",
+            "tab.active_background": "#EAEDF3",
+            "panel.background": "#DEE2E9",
+            "scrollbar.track.background": "#EAEDF3",
+            "editor.gutter.background": "#EAEDF3",
+            "editor.subheader.background": "#D7DBE3",
+            "editor.active_line.background": "#DFE3EB",
+            "editor.highlighted_line.background": "#DFE3EB"
         },
-        {
-          "code_action": "source.fixAll.oxc"
+        "Sequoia Moonlight": {
+            "background": "#06070A",
+            "editor.background": "#06070A",
+            "terminal.background": "#06070A",
+            "surface.background": "#101319",
+            "elevated_surface.background": "#161922",
+            "drop_target.background": "#161922",
+            "title_bar.background": "#0C0E13",
+            "status_bar.background": "#0C0E13",
+            "toolbar.background": "#06070A",
+            "panel.background": "#0C0E13",
+            "scrollbar.track.background": "#06070A",
+            "editor.gutter.background": "#06070A",
+            "editor.active_line.background": "#817c9c1f",
+            "tab.active_background": "#817c9c24"
         }
-      ]
     },
-    "JSX": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
+    "auto_install_extensions": {
+        "ansible": true,
+        "bearded-icon-theme": true,
+        "catppuccin": true,
+        "catppuccin-blur": true,
+        "charmed-icons": true,
+        "dockerfile": true,
+        "git-firefly": true,
+        "graphql": true,
+        "html": true,
+        "java": true,
+        "make": true,
+        "nord": true,
+        "nvim-nightfox": true,
+        "opencode": true,
+        "oxc": true,
+        "prisma": true,
+        "scss": true,
+        "serendipity": true,
+        "sql": true,
+        "swift": true,
+        "terraform": true,
+        "tokyo-night": true,
+        "toml": true,
+        "vesper": true,
+        "vue": true,
+        "xml": true,
+        "zig": true
     },
-    "JSON": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
+    "agent_servers": {
+        "opencode": {
+            "type": "registry"
+        },
+        "codex-acp": {
+            "type": "registry"
+        },
+        "claude-acp": {
+            "type": "registry",
+            "default_mode": "bypassPermissions",
+            "default_model": "default",
+            "favorite_config_option_values": {
+                "mode": ["bypassPermissions"]
+            }
+        },
+        "gemini-custom": {
+            "type": "custom",
+            "command": "gemini"
         }
-      ]
     },
-    "JSON5": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
+    "lsp": {
+        "oxlint": {
+            "initialization_options": {
+                "settings": {
+                    "configPath": null,
+                    "run": "onType",
+                    "disableNestedConfig": false,
+                    "fixKind": "safe_fix",
+                    "typeAware": true,
+                    "unusedDisableDirectives": "deny"
+                }
+            }
+        },
+        "oxfmt": {
+            "initialization_options": {
+                "settings": {
+                    "configPath": null,
+                    "run": "onSave"
+                }
+            }
         }
-      ]
     },
-    "JSONC": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
+    "languages": {
+        "CSS": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "GraphQL": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "Handlebars": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "HTML": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "JavaScript": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                },
+                {
+                    "code_action": "source.fixAll.oxc"
+                }
+            ]
+        },
+        "JSX": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "JSON": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "JSON5": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "JSONC": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "Less": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "Markdown": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "MDX": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "SCSS": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "TypeScript": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "TSX": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "Vue.js": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
+        },
+        "YAML": {
+            "format_on_save": "on",
+            "prettier": {
+                "allowed": false
+            },
+            "formatter": [
+                {
+                    "language_server": {
+                        "name": "oxfmt"
+                    }
+                }
+            ]
         }
-      ]
-    },
-    "Less": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "Markdown": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "MDX": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "SCSS": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "TypeScript": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "TSX": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "Vue.js": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
-    },
-    "YAML": {
-      "format_on_save": "on",
-      "prettier": {
-        "allowed": false
-      },
-      "formatter": [
-        {
-          "language_server": {
-            "name": "oxfmt"
-          }
-        }
-      ]
     }
-  }
 }

@@ -8,12 +8,12 @@ Every machine has an alias, a role (`client` or `server`), and an optional SSH e
 
 ```jsonc
 {
-  "remote":    { "mode": "userspace", "auth_method": "oauth" },
-  "self":      "macbook",
-  "machines": {
-    "macbook":  { "role": "client" },
-    "mac-mini": { "role": "server", "ssh": "agent@192.168.1.106" }
-  }
+    "remote": { "mode": "userspace", "auth_method": "oauth" },
+    "self": "macbook",
+    "machines": {
+        "macbook": { "role": "client" },
+        "mac-mini": { "role": "server", "ssh": "agent@192.168.1.106" },
+    },
 }
 ```
 

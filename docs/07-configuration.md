@@ -43,15 +43,15 @@ Items that need extra inputs (e.g. autologin's password) open a modal form befor
 
 ## Keys
 
-| Key | Action |
-|---|---|
-| `←` `→` `1..3` | switch tab |
-| `↑` `↓` `j` `k` | navigate |
-| `tab` | collapse/expand current section |
-| `space` | toggle the inline detail panel (Configuration tab) |
-| `i` | install the current item; on the Skills tab, updates it instead if it's outdated (or opens the reconfigure form on the Remote tab) |
-| `u` | uninstall (only for toggleable items that are currently installed) |
-| `q` `esc` | quit |
+| Key             | Action                                                                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `←` `→` `1..3`  | switch tab                                                                                                                         |
+| `↑` `↓` `j` `k` | navigate                                                                                                                           |
+| `tab`           | collapse/expand current section                                                                                                    |
+| `space`         | toggle the inline detail panel (Configuration tab)                                                                                 |
+| `i`             | install the current item; on the Skills tab, updates it instead if it's outdated (or opens the reconfigure form on the Remote tab) |
+| `u`             | uninstall (only for toggleable items that are currently installed)                                                                 |
+| `q` `esc`       | quit                                                                                                                               |
 
 ## Related
 

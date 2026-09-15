@@ -15,15 +15,15 @@ The map of the `@jterrazz` ecosystem: composable packages, one set of convention
 
 ## Where to look
 
-| Task                                                | Read                                            |
-| --------------------------------------------------- | ----------------------------------------------- |
-| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/10-stack.md`            |
-| Build / lint / format / API docs                    | `jterrazz-typescript` skill                     |
-| Testing conventions and structure                   | `jterrazz-test` skill                           |
-| Scaffolding a new project                           | `jterrazz-new-project` skill                    |
-| CI/CD workflows                                     | `jterrazz-workflows` skill                      |
-| Where knowledge lives in a repo                     | `jterrazz-repo-structure` skill                 |
-| What is installed on the machine                    | `jterrazz-toolbelt` skill                       |
+| Task                                                | Read                                 |
+| --------------------------------------------------- | ------------------------------------ |
+| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/10-stack.md` |
+| Build / lint / format / API docs                    | `jterrazz-typescript` skill          |
+| Testing conventions and structure                   | `jterrazz-test` skill                |
+| Scaffolding a new project                           | `jterrazz-new-project` skill         |
+| CI/CD workflows                                     | `jterrazz-workflows` skill           |
+| Where knowledge lives in a repo                     | `jterrazz-repo-structure` skill      |
+| What is installed on the machine                    | `jterrazz-toolbelt` skill            |
 
 ## Always
 

@@ -57,12 +57,12 @@ The repository's own subjects are numbered contiguously from `05`, one subject e
 
 ## Where to look
 
-| Task                                                              | Read                                              |
-| ----------------------------------------------------------------- | ------------------------------------------------- |
-| The doctrine itself (three roles, golden rules, layout)           | `jterrazz-studio` `docs/11-repo-structure.md`     |
-| The spine — the four fixed chapters, and when `04` is required    | `jterrazz-studio` `docs/11-repo-structure.md`     |
-| TypeScript compiler mechanics (`typescript docs`, sync-checking)  | `package-typescript` `docs/05-docs-pipeline.md`   |
-| The studio's own compiler (`make skills`, the toolbelt rosters)   | `jterrazz-studio` `docs/08-tools-and-skills.md`   |
+| Task                                                             | Read                                            |
+| ---------------------------------------------------------------- | ----------------------------------------------- |
+| The doctrine itself (three roles, golden rules, layout)          | `jterrazz-studio` `docs/11-repo-structure.md`   |
+| The spine — the four fixed chapters, and when `04` is required   | `jterrazz-studio` `docs/11-repo-structure.md`   |
+| TypeScript compiler mechanics (`typescript docs`, sync-checking) | `package-typescript` `docs/05-docs-pipeline.md` |
+| The studio's own compiler (`make skills`, the toolbelt rosters)  | `jterrazz-studio` `docs/08-tools-and-skills.md` |
 
 How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
 
