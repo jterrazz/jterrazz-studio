@@ -37,18 +37,19 @@ func installLockAfterLogin() error {
 	dumpLockAfterLoginState()
 	print.Empty()
 
-	if err := os.Chmod(lockAfterLoginScript, 0o755); err != nil {
+	// launchd executes this script: the x bit is the point.
+	if err := os.Chmod(lockAfterLoginScript, 0o755); err != nil { //nolint:gosec // see above
 		return err
 	}
-	if err := os.MkdirAll(lockAfterLoginLogDir, 0o755); err != nil {
+	if err := os.MkdirAll(lockAfterLoginLogDir, 0o750); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(lockAfterLoginPlist), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(lockAfterLoginPlist), 0o750); err != nil {
 		return err
 	}
 
 	plist := buildLockAfterLoginPlist()
-	if err := os.WriteFile(lockAfterLoginPlist, []byte(plist), 0o644); err != nil {
+	if err := os.WriteFile(lockAfterLoginPlist, []byte(plist), 0o600); err != nil {
 		return err
 	}
 
@@ -168,7 +169,7 @@ func buildLockAfterLoginPlist() string {
 	}, "\n")
 }
 
-func lookupTargetUserIDs(username string) (int, int) {
+func lookupTargetUserIDs(username string) (uid, gid int) {
 	uidStr, err := runQuiet("/usr/bin/id", "-u", username)
 	if err != nil {
 		return -1, -1
@@ -177,11 +178,11 @@ func lookupTargetUserIDs(username string) (int, int) {
 	if err != nil {
 		return -1, -1
 	}
-	uid, err := strconv.Atoi(strings.TrimSpace(uidStr))
+	uid, err = strconv.Atoi(strings.TrimSpace(uidStr))
 	if err != nil {
 		return -1, -1
 	}
-	gid, err := strconv.Atoi(strings.TrimSpace(gidStr))
+	gid, err = strconv.Atoi(strings.TrimSpace(gidStr))
 	if err != nil {
 		return -1, -1
 	}

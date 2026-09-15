@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -39,7 +40,7 @@ func sshConfigPath() string {
 // Requires m.SSH to be non-empty and parseable as user@host.
 func WriteSSHAlias(alias string, m Machine) error {
 	if strings.TrimSpace(alias) == "" {
-		return fmt.Errorf("alias is required")
+		return errors.New("alias is required")
 	}
 	user, host, err := parseSSHEndpoint(m.SSH)
 	if err != nil {
@@ -48,10 +49,10 @@ func WriteSSHAlias(alias string, m Machine) error {
 
 	path := sshConfigPath()
 	if path == "" {
-		return fmt.Errorf("cannot resolve ~/.ssh/config: HOME unset")
+		return errors.New("cannot resolve ~/.ssh/config: HOME unset")
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o700); err != nil {
-		return err
+	if mkdirErr := os.MkdirAll(filepath.Dir(path), 0o700); mkdirErr != nil {
+		return mkdirErr
 	}
 
 	existing, err := os.ReadFile(path)
@@ -120,7 +121,7 @@ func buildSSHAliasBlock(alias, host, user, identity string) string {
 // upsertSSHAliasBlock replaces this alias's managed block if it exists, or
 // appends if not. Returns the new file contents and a non-empty conflict
 // description if a foreign `Host <alias>` line exists outside any managed block.
-func upsertSSHAliasBlock(existing []byte, alias, block string) ([]byte, string) {
+func upsertSSHAliasBlock(existing []byte, alias, block string) (updated []byte, conflict string) {
 	text := string(existing)
 	begin := sshAliasBegin(alias)
 	end := sshAliasEnd(alias)
@@ -168,7 +169,7 @@ func removeSSHAliasBlock(existing []byte, alias string) []byte {
 // findForeignHostAlias returns a human-readable description if a `Host <alias>`
 // line exists outside of any managed block. "Managed" means inside any
 // `# >>> jterrazz machine X >>>` ... `# <<< jterrazz machine X <<<` pair, not
-// just this alias's block — neighbouring managed blocks belong to other aliases
+// just this alias's block — neighboring managed blocks belong to other aliases
 // and shouldn't be mistaken for foreign.
 func findForeignHostAlias(text, alias string) string {
 	inManaged := false

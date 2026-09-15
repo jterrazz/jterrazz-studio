@@ -61,14 +61,6 @@ func (m Model) renderTabBar(width int) string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Section divider
-// ─────────────────────────────────────────────────────────────────────────────
-
-func sectionDivider(title string, width int) string {
-	return components.SectionHeader(title, width)
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // ACTIVITY — sparklines + CPU/Memory columns
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -97,8 +89,8 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 	sparkColW := innerW - sysColW - 1 // -1 for divider
 
 	// All sparkline rows use: " LABEL " (7) + padding + graph + " VALUE " (8)
-	const slLabelW = 7  // " CPU  " or " NET ↓"
-	const slValueW = 8  // " 109%  " or "  3.4K "
+	const slLabelW = 7 // " CPU  " or " NET ↓"
+	const slValueW = 8 // " 109%  " or "  3.4K "
 	graphW := sparkColW * 40 / 100
 	if graphW < 15 {
 		graphW = 15
@@ -150,26 +142,23 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 		divider := theme.SectionBorder.Render("│")
 
 		activityRows = append(activityRows,
-			padTo(" "+theme.SubSection.Render("HEALTH"), sysColW)+divider+" "+theme.SubSection.Render("GRAPHS"))
-		activityRows = append(activityRows, padTo("", sysColW)+divider)
+			padTo(" "+theme.SubSection.Render("HEALTH"), sysColW)+divider+" "+theme.SubSection.Render("GRAPHS"),
+			padTo("", sysColW)+divider)
 
 		maxR := len(sysRows)
 		if len(sparkLines) > maxR {
 			maxR = len(sparkLines)
 		}
-		for i := 0; i < maxR; i++ {
+		for i := range maxR {
 			left := getOr(sysRows, i, "")
 			right := getOr(sparkLines, i, "")
 			activityRows = append(activityRows, padTo(left, sysColW)+divider+right)
 		}
 	} else {
 		// Narrow: stacked
-		activityRows = append(activityRows, " "+theme.SubSection.Render("HEALTH"))
-		activityRows = append(activityRows, "")
+		activityRows = append(activityRows, " "+theme.SubSection.Render("HEALTH"), "")
 		activityRows = append(activityRows, sysRows...)
-		activityRows = append(activityRows, "")
-		activityRows = append(activityRows, " "+theme.SubSection.Render("GRAPHS"))
-		activityRows = append(activityRows, "")
+		activityRows = append(activityRows, "", " "+theme.SubSection.Render("GRAPHS"), "")
 		activityRows = append(activityRows, sparkLines...)
 	}
 
@@ -191,9 +180,10 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 		{"Memory", memRows},
 	}, innerW)
 
-	var boxRows []string
+	procLines := strings.Split(strings.TrimRight(procContent, "\n"), "\n")
+	boxRows := make([]string, 0, len(procLines)+2)
 	boxRows = append(boxRows, "") // breathing room
-	boxRows = append(boxRows, strings.Split(strings.TrimRight(procContent, "\n"), "\n")...)
+	boxRows = append(boxRows, procLines...)
 	boxRows = append(boxRows, "") // breathing room
 
 	b.WriteString(components.SubsectionBox("Processes", boxRows, w))
@@ -242,7 +232,8 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 	tsInnerW := colWidth - 4
 	var tsBox string
 	for _, item := range tsItems {
-		if item.Kind == status.KindTailscale && item.Loaded && item.Available && item.TailscaleStatus != nil {
+		switch {
+		case item.Kind == status.KindTailscale && item.Loaded && item.Available && item.TailscaleStatus != nil:
 			st := item.TailscaleStatus
 
 			// Top rows: status, ip, exit node
@@ -313,9 +304,9 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 			}
 
 			tsBox = components.SubsectionBoxWithSeparator("Tailscale", tsTopRows, tsPeerRows, colWidth)
-		} else if item.Kind == status.KindTailscale && !item.Loaded {
+		case item.Kind == status.KindTailscale && !item.Loaded:
 			tsBox = components.SubsectionBox("Tailscale", []string{" " + m.loadingIndicator()}, colWidth)
-		} else if item.Kind == status.KindTailscale && item.Loaded && !item.Available {
+		case item.Kind == status.KindTailscale && item.Loaded && !item.Available:
 			tsBox = components.SubsectionBox("Tailscale", []string{" " + theme.Muted.Render("not available")}, colWidth)
 		}
 	}
@@ -456,11 +447,12 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 	var repoRows []string
 	for _, item := range repoItems {
 		if item.Kind == status.KindRepository {
-			if !item.Loaded {
+			switch {
+			case !item.Loaded:
 				repoRows = append(repoRows, " "+m.loadingIndicator())
-			} else if !item.Available {
+			case !item.Available:
 				repoRows = append(repoRows, " "+theme.Muted.Render("no repositories found"))
-			} else {
+			default:
 				// Find max repo name width for alignment
 				maxNameW := 0
 				for _, group := range item.ProjectGroups {
@@ -605,11 +597,12 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 					}
 
 					var statusStr string
-					if repo.Outdated == 0 {
+					switch {
+					case repo.Outdated == 0:
 						statusStr = theme.Success.Render("✓ ok")
-					} else if repo.Outdated > 0 {
+					case repo.Outdated > 0:
 						statusStr = theme.Warning.Render(fmt.Sprintf("%d outdated", repo.Outdated))
-					} else {
+					default:
 						statusStr = theme.Muted.Render("?")
 					}
 
@@ -671,7 +664,7 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 // SETUP — boxes in masonry
 // ─────────────────────────────────────────────────────────────────────────────
 
-// renderConfig renders the Configuration tab. Boxes are organised under
+// renderConfig renders the Configuration tab. Boxes are organized under
 // intent-based group headers (Identity / Privacy & Security / Server /
 // Workspace) with the dotted-separator pattern shared with the Apps tab —
 // not by raw ScriptCategory, which produces a wall of fragmented boxes.
@@ -824,9 +817,7 @@ func configHealthRollup(items []status.Item, w int) string {
 		theme.Warning.Render(fmt.Sprintf("%d drift", drift)),
 	)
 	if drift == 0 {
-		left = fmt.Sprintf(" %s",
-			theme.Success.Render(fmt.Sprintf("%d healthy", healthy)),
-		)
+		left = " " + theme.Success.Render(fmt.Sprintf("%d healthy", healthy))
 	}
 	right := theme.Muted.Render(bar) + " " + theme.Muted.Render(pct)
 	gap := w - components.VisibleLen(left) - components.VisibleLen(right) - 1
@@ -984,7 +975,7 @@ func masonry(boxes []string, numCols int) string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // renderToolRowCompact renders a tool row with right-aligned version
-func (m Model) renderToolRowCompact(item status.Item, nameW int, rowW int) string {
+func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 	if !item.Loaded {
 		return " " + m.loadingIndicator() + " " + fmt.Sprintf("%-*s", nameW, item.Name)
 	}
@@ -1009,9 +1000,10 @@ func (m Model) renderToolRowCompact(item status.Item, nameW int, rowW int) strin
 
 	// Right part: status icon + method + version
 	right := ""
-	if item.Status == "running" {
+	switch item.Status {
+	case "running":
 		right += theme.ServiceRunning.Render(theme.IconServiceOn) + " "
-	} else if item.Status == "stopped" {
+	case "stopped":
 		right += theme.Muted.Render("○") + " "
 	}
 
@@ -1055,7 +1047,7 @@ func getTotalMemoryMB() float64 {
 		return 16 * 1024 // fallback 16GB
 	}
 	var bytes int64
-	fmt.Sscanf(strings.TrimSpace(string(out)), "%d", &bytes)
+	_, _ = fmt.Sscanf(strings.TrimSpace(string(out)), "%d", &bytes)
 	if bytes > 0 {
 		totalMemoryMB = float64(bytes) / (1024 * 1024)
 	} else {
@@ -1142,7 +1134,7 @@ func renderBar(ratio float64, width int) string {
 
 // renderBarWithColor renders a horizontal bar where size and color are independent.
 // sizeRatio controls bar fill, colorRatio controls green→yellow→red color.
-func renderBarWithColor(sizeRatio float64, colorRatio float64, width int) string {
+func renderBarWithColor(sizeRatio, colorRatio float64, width int) string {
 	if sizeRatio < 0 {
 		sizeRatio = 0
 	}
@@ -1271,7 +1263,6 @@ func formatBytesPerSec(b float64) string {
 	}
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Data helpers
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1332,7 +1323,7 @@ func parseDisplaySize(s string) float64 {
 		if strings.HasSuffix(upper, entry.suffix) {
 			numStr := strings.TrimSpace(s[:len(s)-len(entry.suffix)])
 			var val float64
-			fmt.Sscanf(numStr, "%f", &val)
+			_, _ = fmt.Sscanf(numStr, "%f", &val)
 			return val * entry.mult
 		}
 	}
@@ -1412,7 +1403,7 @@ func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) st
 			}
 		}
 
-		for r := 0; r < maxRows; r++ {
+		for r := range maxRows {
 			for i, col := range group {
 				row := getOr(col.rows, r, "")
 				if i < len(group)-1 {
@@ -1436,19 +1427,19 @@ func renderColumnsRaw(cols []namedColumn, totalWidth int) string {
 	return renderColumnsImpl(cols, totalWidth, false)
 }
 
-
 // parseProcessValue parses "48.4%", "884M", "1.2G" into a comparable float
 func parseProcessValue(s string) float64 {
 	var v float64
-	if strings.HasSuffix(s, "%") {
-		fmt.Sscanf(strings.TrimSuffix(s, "%"), "%f", &v)
-	} else if strings.HasSuffix(s, "G") {
-		fmt.Sscanf(strings.TrimSuffix(s, "G"), "%f", &v)
+	switch {
+	case strings.HasSuffix(s, "%"):
+		_, _ = fmt.Sscanf(strings.TrimSuffix(s, "%"), "%f", &v)
+	case strings.HasSuffix(s, "G"):
+		_, _ = fmt.Sscanf(strings.TrimSuffix(s, "G"), "%f", &v)
 		v *= 1024
-	} else if strings.HasSuffix(s, "M") {
-		fmt.Sscanf(strings.TrimSuffix(s, "M"), "%f", &v)
-	} else if strings.HasSuffix(s, "K") {
-		fmt.Sscanf(strings.TrimSuffix(s, "K"), "%f", &v)
+	case strings.HasSuffix(s, "M"):
+		_, _ = fmt.Sscanf(strings.TrimSuffix(s, "M"), "%f", &v)
+	case strings.HasSuffix(s, "K"):
+		_, _ = fmt.Sscanf(strings.TrimSuffix(s, "K"), "%f", &v)
 		v /= 1024
 	}
 	return v
@@ -1474,15 +1465,4 @@ func getOr(slice []string, i int, fallback string) string {
 		return slice[i]
 	}
 	return fallback
-}
-
-func max3(a, b, c int) int {
-	m := a
-	if b > m {
-		m = b
-	}
-	if c > m {
-		m = c
-	}
-	return m
 }

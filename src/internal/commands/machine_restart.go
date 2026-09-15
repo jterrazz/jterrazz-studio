@@ -24,7 +24,7 @@ agent session ~60s later.
 
 Requires --yes — this is a destructive remote action.`),
 	Args: cobra.ExactArgs(1),
-	Run:  func(cmd *cobra.Command, args []string) { runMachineRestart(args[0]) },
+	Run:  func(_ *cobra.Command, args []string) { runMachineRestart(args[0]) },
 }
 
 func init() {
@@ -80,7 +80,7 @@ func resolveSSHHostname(target string) string {
 }
 
 func waitForPing(ip string, attempts int) bool {
-	for i := 0; i < attempts; i++ {
+	for i := range attempts {
 		if err := exec.Command("ping", "-c", "1", "-W", "1000", ip).Run(); err == nil {
 			print.Success(fmt.Sprintf("ping reachable after ~%ds", i*2))
 			return true
@@ -91,7 +91,7 @@ func waitForPing(ip string, attempts int) bool {
 }
 
 func waitForSSH(target string, attempts int) bool {
-	for i := 0; i < attempts; i++ {
+	for range attempts {
 		err := exec.Command("ssh",
 			"-o", "ConnectTimeout=2",
 			"-o", "BatchMode=yes",

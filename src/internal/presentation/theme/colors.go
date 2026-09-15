@@ -8,7 +8,7 @@ import "github.com/charmbracelet/lipgloss"
 // language for "this is a client (your laptop)" vs "this is a server (your
 // always-on box)". The client blue doubles as the project's primary accent:
 // every header title, active selection, spinner, and progress bar lands on
-// this colour so the j CLI feels visually unified.
+// this color so the j CLI feels visually unified.
 const (
 	ColorClient = "#5fafd7" // Cyan blue — client role pill, primary accent
 	ColorServer = "#5fd75f" // Green — server role pill

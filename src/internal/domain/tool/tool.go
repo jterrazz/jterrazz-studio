@@ -1,3 +1,6 @@
+// Package tool answers whether a tool is installed and at which version, by
+// probing commands and reading package-manager output. It imports no other
+// package of this binary.
 package tool
 
 import (

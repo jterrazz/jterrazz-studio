@@ -176,7 +176,10 @@ func TestStartInstallDependencyGate(t *testing.T) {
 	if cmd != nil {
 		t.Error("expected nil cmd when a dependency isn't installed")
 	}
-	mm := updated.(Model)
+	mm, ok := updated.(Model)
+	if !ok {
+		t.Fatalf("Update returned %T, want Model", updated)
+	}
 	if mm.lastErr == nil || mm.lastErr.Error() != "install homebrew first" {
 		t.Errorf("lastErr = %v, want %q", mm.lastErr, "install homebrew first")
 	}
@@ -216,7 +219,10 @@ func TestStartUninstallOpensConfirmModal(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("expected modal init cmd")
 	}
-	mm := updated.(Model)
+	mm, ok := updated.(Model)
+	if !ok {
+		t.Fatalf("Update returned %T, want Model", updated)
+	}
 	if !mm.modalActive() {
 		t.Error("modal should be active after startUninstall on an installed, uninstallable tool")
 	}

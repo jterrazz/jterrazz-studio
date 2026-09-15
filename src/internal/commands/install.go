@@ -37,14 +37,14 @@ Examples:
   j install homebrew        Install Homebrew
   j install nvm             Install NVM
   j install go python node  Install specific tools`,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		var all []string
+	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+		all := make([]string, 0, len(config.Tools))
 		for _, t := range config.Tools {
 			all = append(all, t.Name)
 		}
 		return tool.FilterStrings(all, args), cobra.ShellCompDirectiveNoFileComp
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		if len(args) == 0 {
 			if !installListOnly && xterm.IsTerminal(os.Stdout.Fd()) {
 				installview.RunOrExit()

@@ -30,7 +30,7 @@ Checks: ICMP reachability, SSH (BatchMode), the OpenClaw and Hermes gateway port
 and the console owner reported by stat -f %Su /dev/console. Useful right after ` + "`j machine restart`" + `
 to confirm auto-login succeeded and lock-after-login fired.`),
 	Args: cobra.ExactArgs(1),
-	Run:  func(cmd *cobra.Command, args []string) { runMachineProbe(args[0]) },
+	Run:  func(_ *cobra.Command, args []string) { runMachineProbe(args[0]) },
 }
 
 func init() {

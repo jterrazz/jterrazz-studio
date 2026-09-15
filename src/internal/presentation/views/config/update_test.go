@@ -157,7 +157,10 @@ func TestStartInstallOpensModalWhenInputsDeclared(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("expected modal init cmd")
 	}
-	mm := updated.(Model)
+	mm, ok := updated.(Model)
+	if !ok {
+		t.Fatalf("Update returned %T, want Model", updated)
+	}
 	if !mm.modalActive() {
 		t.Error("modal should be active after startInstall on a script with Inputs")
 	}

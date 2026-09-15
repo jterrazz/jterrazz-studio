@@ -54,7 +54,7 @@ func (m Model) renderModal() string {
 }
 
 // renderHeader builds the canonical j install header. The right-side context
-// shows which machine the TUI is operating on (alias + colour-coded role).
+// shows which machine the TUI is operating on (alias + color-coded role).
 func (m Model) renderHeader(command string) string {
 	var context string
 	if m.selfRole == "" {
@@ -77,15 +77,15 @@ func (m Model) renderDivider() string {
 func (m Model) renderBody() string {
 	page := m.tabs.Active
 	var b strings.Builder
-	any := false
+	rendered := false
 	for sIdx, section := range m.sections {
 		if section.Page != page {
 			continue
 		}
-		if any {
+		if rendered {
 			b.WriteString("\n")
 		}
-		any = true
+		rendered = true
 		b.WriteString(m.renderSectionHeader(section))
 		b.WriteString("\n")
 		if section.Collapsed {
@@ -100,7 +100,7 @@ func (m Model) renderBody() string {
 			}
 		}
 	}
-	if !any {
+	if !rendered {
 		return contextStyle.Render("  No tools on this page.")
 	}
 	return b.String()
@@ -260,9 +260,10 @@ func (m Model) renderFooter() string {
 		if m.expanded[t.Name] {
 			detailLabel = "close"
 		}
-		hints = append(hints, footerKey("space", detailLabel))
-		hints = append(hints, footerKey("tab", "fold"))
-		hints = append(hints, footerKey("q", "quit"))
+		hints = append(hints,
+			footerKey("space", detailLabel),
+			footerKey("tab", "fold"),
+			footerKey("q", "quit"))
 
 		prefix := footerLabelStyle.Render(" ▶ " + t.Name + "  ")
 		footer = prefix + strings.Join(hints, footerSepStyle.Render("   "))

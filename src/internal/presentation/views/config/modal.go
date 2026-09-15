@@ -12,7 +12,7 @@ func (m Model) modalActive() bool {
 	return m.form != nil
 }
 
-// buildModal initialises a huh.Form for the script's Inputs and stashes the
+// buildModal initializes a huh.Form for the script's Inputs and stashes the
 // bindings on the model so values can be read back when the form completes.
 //
 // One *string per input is allocated so huh can write directly into it.

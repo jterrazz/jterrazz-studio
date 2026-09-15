@@ -66,7 +66,7 @@ func SubsectionBox(title string, lines []string, width int) string {
 	bottom := borderStyle.Render(theme.BoxRoundedBottomLeft + strings.Repeat(theme.BoxRoundedHorizontal, innerWidth+2) + theme.BoxRoundedBottomRight)
 
 	// Pad content lines
-	var paddedLines []string
+	paddedLines := make([]string, 0, len(lines))
 	for _, line := range lines {
 		paddedLines = append(paddedLines, padBoxLine(line, innerWidth))
 	}
@@ -83,7 +83,7 @@ func SubsectionBox(title string, lines []string, width int) string {
 // │ bottom line 1                                                          │
 // │ bottom line 2                                                          │
 // ╰────────────────────────────────────────────────────────────────────────╯
-func SubsectionBoxWithSeparator(title string, topLines []string, bottomLines []string, width int) string {
+func SubsectionBoxWithSeparator(title string, topLines, bottomLines []string, width int) string {
 	innerWidth := width - 4
 	if innerWidth < 20 {
 		innerWidth = 20
@@ -109,11 +109,11 @@ func SubsectionBoxWithSeparator(title string, topLines []string, bottomLines []s
 
 	bottom := borderStyle.Render(theme.BoxRoundedBottomLeft + strings.Repeat(theme.BoxRoundedHorizontal, innerWidth+2) + theme.BoxRoundedBottomRight)
 
-	var paddedTop []string
+	paddedTop := make([]string, 0, len(topLines))
 	for _, line := range topLines {
 		paddedTop = append(paddedTop, padBoxLine(line, innerWidth))
 	}
-	var paddedBottom []string
+	paddedBottom := make([]string, 0, len(bottomLines))
 	for _, line := range bottomLines {
 		paddedBottom = append(paddedBottom, padBoxLine(line, innerWidth))
 	}

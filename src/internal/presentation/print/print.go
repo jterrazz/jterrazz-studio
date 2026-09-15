@@ -1,3 +1,5 @@
+// Package print renders the plain-text lines the commands emit outside a TUI —
+// headers, role pills and the verdicts an install action reports.
 package print
 
 import (
@@ -46,10 +48,10 @@ func Installing(name string) {
 // =============================================================================
 
 // roleClientStyle / roleServerStyle render the role as an inverse-video pill
-// (background colour + dark bold text + 1-char horizontal padding) so it
-// reads as a badge — the GitHub/Linear/Vercel pattern. Background colours
+// (background color + dark bold text + 1-char horizontal padding) so it
+// reads as a badge — the GitHub/Linear/Vercel pattern. Background colors
 // come from the theme palette so they stay in sync with the primary accent
-// (client blue is also the project's primary colour).
+// (client blue is also the project's primary color).
 var (
 	roleClientStyle = lipgloss.NewStyle().
 			Background(lipgloss.Color(theme.ColorClient)).
@@ -63,7 +65,7 @@ var (
 			Padding(0, 1)
 )
 
-// RenderRole returns the role rendered as a coloured pill ready to drop into
+// RenderRole returns the role rendered as a colored pill ready to drop into
 // a header context. Falls back to plain text for unknown roles. Lives here
 // (rather than in commands or config) so TUIs and CLI commands share the
 // same rendering without pulling in a config dependency on the print package.
@@ -90,9 +92,12 @@ func MutedText(s string) string { return theme.Muted.Render(s) }
 // use RenderHeader.
 //
 // command:  command path or action label, e.g. "j install", "install autologin".
-//           Always lowercase, never decorated.
+//
+//	Always lowercase, never decorated.
+//
 // context:  optional right-aligned info, e.g. "self: mac-mini · server".
-//           Pass "" to omit (no placeholder rendered).
+//
+//	Pass "" to omit (no placeholder rendered).
 //
 // Output:
 //
@@ -163,6 +168,6 @@ var (
 	dim   = lipgloss.NewStyle().Foreground(lipgloss.Color(theme.ColorMuted))
 )
 
-func Cyan(s string) string    { return cyan.Render(s) }
-func Green(s string) string   { return green.Render(s) }
-func Dimmed(s string) string  { return dim.Render(s) }
+func Cyan(s string) string   { return cyan.Render(s) }
+func Green(s string) string  { return green.Render(s) }
+func Dimmed(s string) string { return dim.Render(s) }

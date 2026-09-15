@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -19,13 +20,13 @@ var machineInitCmd = &cobra.Command{
 Prompts for an alias (default = hostname) and a role (client or server),
 adds the entry to ~/.jterrazz/config.json, and marks it as self. Run this
 once per machine you own.`),
-	Run: func(cmd *cobra.Command, args []string) { runMachineInit() },
+	Run: func(_ *cobra.Command, _ []string) { runMachineInit() },
 }
 
 var machineListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered machines",
-	Run:   func(cmd *cobra.Command, args []string) { runMachineList() },
+	Run:   func(_ *cobra.Command, _ []string) { runMachineList() },
 }
 
 var (
@@ -42,7 +43,7 @@ var machineAddCmd = &cobra.Command{
 When --ssh is set, also writes a managed Host block in ~/.ssh/config so the
 alias is reachable via the same name from this CLI's other commands.`),
 	Args: cobra.ExactArgs(1),
-	Run:  func(cmd *cobra.Command, args []string) { runMachineAdd(args[0]) },
+	Run:  func(_ *cobra.Command, args []string) { runMachineAdd(args[0]) },
 }
 
 var machineRemoveCmd = &cobra.Command{
@@ -50,7 +51,7 @@ var machineRemoveCmd = &cobra.Command{
 	Aliases: []string{"rm"},
 	Short:   "Remove a machine from the registry",
 	Args:    cobra.ExactArgs(1),
-	Run:     func(cmd *cobra.Command, args []string) { runMachineRemove(args[0]) },
+	Run:     func(_ *cobra.Command, args []string) { runMachineRemove(args[0]) },
 }
 
 func init() {
@@ -120,7 +121,7 @@ func runMachineList() {
 
 func runMachineAdd(alias string) {
 	if machineAddRole == "" {
-		failOn(fmt.Errorf("--role is required (client or server)"))
+		failOn(errors.New("--role is required (client or server)"))
 	}
 	m := config.Machine{
 		Role:     config.Role(machineAddRole),

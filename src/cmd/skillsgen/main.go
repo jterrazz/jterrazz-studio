@@ -66,6 +66,7 @@ func run(path string, check bool) error {
 		return nil
 	}
 
+	//nolint:gosec // a tracked page of the repository, readable like everything else git checks out
 	return os.WriteFile(path, []byte(rendered), 0o644)
 }
 

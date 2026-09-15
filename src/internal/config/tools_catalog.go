@@ -75,10 +75,10 @@ var Tools = []Tool{
 			caskOut, _ := exec.Command("brew", "list", "--cask", "-1").Output()        // non-critical
 			formulaeCount := 0
 			caskCount := 0
-			if len(strings.TrimSpace(string(formulaeOut))) > 0 {
+			if strings.TrimSpace(string(formulaeOut)) != "" {
 				formulaeCount = len(strings.Split(strings.TrimSpace(string(formulaeOut)), "\n"))
 			}
-			if len(strings.TrimSpace(string(caskOut))) > 0 {
+			if strings.TrimSpace(string(caskOut)) != "" {
 				caskCount = len(strings.Split(strings.TrimSpace(string(caskOut)), "\n"))
 			}
 			return CheckResult{

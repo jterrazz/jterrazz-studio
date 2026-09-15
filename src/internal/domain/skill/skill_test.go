@@ -12,11 +12,11 @@ import (
 func mkSkillDir(t *testing.T, base, name string, withSkillMd bool) {
 	t.Helper()
 	path := filepath.Join(base, name)
-	if err := os.Mkdir(path, 0o755); err != nil {
+	if err := os.Mkdir(path, 0o750); err != nil {
 		t.Fatalf("mkdir %s: %v", path, err)
 	}
 	if withSkillMd {
-		if err := os.WriteFile(filepath.Join(path, "SKILL.md"), []byte("# skill\n"), 0o644); err != nil {
+		if err := os.WriteFile(filepath.Join(path, "SKILL.md"), []byte("# skill\n"), 0o600); err != nil {
 			t.Fatalf("write SKILL.md: %v", err)
 		}
 	}
@@ -68,10 +68,10 @@ func TestListInstalledInSkipsDirsWithoutSkillMd(t *testing.T) {
 func TestListInstalledInSkipsFilesAndDotfiles(t *testing.T) {
 	dir := t.TempDir()
 	mkSkillDir(t, dir, "real-skill", true)
-	if err := os.WriteFile(filepath.Join(dir, "README.md"), []byte("not a skill"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "README.md"), []byte("not a skill"), 0o600); err != nil {
 		t.Fatalf("write file: %v", err)
 	}
-	if err := os.Mkdir(filepath.Join(dir, ".hidden"), 0o755); err != nil {
+	if err := os.Mkdir(filepath.Join(dir, ".hidden"), 0o750); err != nil {
 		t.Fatalf("mkdir hidden: %v", err)
 	}
 

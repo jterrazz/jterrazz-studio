@@ -40,7 +40,7 @@ func ParseSkillsListOutput(output string) []string {
 			continue
 		}
 
-		if leadingSpaces <= 5 && !strings.Contains(trimmed, " ") && len(trimmed) > 0 {
+		if leadingSpaces <= 5 && !strings.Contains(trimmed, " ") && trimmed != "" {
 			if IsValidName(trimmed) {
 				skills = append(skills, trimmed)
 			}
@@ -52,11 +52,11 @@ func ParseSkillsListOutput(output string) []string {
 
 // IsValidName checks if a string is a valid skill name (lowercase, numbers, hyphens, underscores)
 func IsValidName(s string) bool {
-	if len(s) == 0 {
+	if s == "" {
 		return false
 	}
 	for _, c := range s {
-		if !((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '-' || c == '_') {
+		if (c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '-' && c != '_' {
 			return false
 		}
 	}

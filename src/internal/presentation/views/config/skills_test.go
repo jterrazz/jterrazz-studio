@@ -155,7 +155,10 @@ func TestSkillStartInstallUpdatesWhenOutdated(t *testing.T) {
 	if cmd == nil {
 		t.Fatal("expected update cmd for outdated skill")
 	}
-	mm := updated.(Model)
+	mm, ok := updated.(Model)
+	if !ok {
+		t.Fatalf("Update returned %T, want Model", updated)
+	}
 	if mm.busyAction != "update stale-skill" {
 		t.Errorf("busyAction = %q, want %q", mm.busyAction, "update stale-skill")
 	}

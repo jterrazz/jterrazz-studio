@@ -33,7 +33,7 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "rm",
 				Description: "Remove all containers",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					out, err := exec.Command("docker", "ps", "-aq").Output()
 					if err != nil || strings.TrimSpace(string(out)) == "" {
 						fmt.Println("No containers to remove")
@@ -46,7 +46,7 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "rmi",
 				Description: "Remove all images",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					out, err := exec.Command("docker", "images", "-aq").Output()
 					if err != nil || strings.TrimSpace(string(out)) == "" {
 						fmt.Println("No images to remove")
@@ -59,14 +59,14 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "clean",
 				Description: "Clean up Docker system (prune)",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					return ExecCommand("docker", "system", "prune", "-af")
 				},
 			},
 			{
 				Name:        "reset",
 				Description: "Remove all containers and images",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					// Remove containers (ignore errors, continue cleaning)
 					out, _ := exec.Command("docker", "ps", "-aq").Output()
 					if strings.TrimSpace(string(out)) != "" {
@@ -112,14 +112,14 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "push",
 				Description: "Push current branch to origin",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					return ExecCommand("git", "push", "-u", "origin", "HEAD")
 				},
 			},
 			{
 				Name:        "sync",
 				Description: "Fetch and pull from remote",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					// fetch -p can fail if no remote configured, continue anyway
 					_ = ExecCommand("git", "fetch", "-p")
 					return ExecCommand("git", "pull")
@@ -128,7 +128,7 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "wip",
 				Description: "Add all and commit as 'WIP'",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					if err := ExecCommand("git", "add", "--all"); err != nil {
 						return fmt.Errorf("git add failed: %w", err)
 					}
@@ -138,7 +138,7 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "unwip",
 				Description: "Undo last commit and unstage",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					if err := ExecCommand("git", "reset", "--soft", "HEAD~1"); err != nil {
 						return fmt.Errorf("git reset failed: %w", err)
 					}
@@ -148,21 +148,21 @@ var RunCommands = []RunCommand{
 			{
 				Name:        "status",
 				Description: "Show git status",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					return ExecCommand("git", "status")
 				},
 			},
 			{
 				Name:        "log",
 				Description: "Show recent commits",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					return ExecCommand("git", "log", "--oneline", "-10")
 				},
 			},
 			{
 				Name:        "branches",
 				Description: "List local branches",
-				RunFn: func(args []string) error {
+				RunFn: func(_ []string) error {
 					return ExecCommand("git", "branch")
 				},
 			},

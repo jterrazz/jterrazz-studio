@@ -22,7 +22,7 @@ Examples:
   j upgrade node              Upgrade specific brew package
   j upgrade claude opencode   Upgrade specific packages
   j upgrade                   List available options`,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		var all []string
 		for _, pkg := range config.Tools {
 			if pkg.Method == config.InstallBrewFormula || pkg.Method == config.InstallBrewCask {

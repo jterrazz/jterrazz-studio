@@ -96,7 +96,7 @@ var daemonNamePrefixes = []string{"ai.jterrazz.", "com.jterrazz.", "ai.openclaw.
 // DiscoverDaemons enumerates ~/Library/LaunchAgents for plists matching
 // daemonNamePrefixes. Sorted by label so the rendered list is stable.
 func DiscoverDaemons() []DaemonCheck {
-	dir := filepath.Join(os.Getenv("HOME"), "Library/LaunchAgents")
+	dir := filepath.Join(os.Getenv("HOME"), "Library", "LaunchAgents")
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return nil

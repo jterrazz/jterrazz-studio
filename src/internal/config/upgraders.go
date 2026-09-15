@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 
 	output "github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
@@ -78,51 +79,67 @@ func UpgradePackageByName(name string) error {
 		switch pkg.Method {
 		case InstallBrewFormula:
 			if !CommandExists("brew") {
-				return fmt.Errorf("Homebrew not found")
+				return errors.New("brew not found")
 			}
 			fmt.Printf("  📥 Upgrading %s...\n", name)
-			ExecCommand("brew", "upgrade", pkg.Formula)
+			if err := ExecCommand("brew", "upgrade", pkg.Formula); err != nil {
+				return fmt.Errorf("upgrading %s: %w", name, err)
+			}
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallBrewCask:
 			if !CommandExists("brew") {
-				return fmt.Errorf("Homebrew not found")
+				return errors.New("brew not found")
 			}
 			fmt.Printf("  📥 Upgrading %s...\n", name)
-			ExecCommand("brew", "upgrade", "--cask", pkg.Formula)
+			if err := ExecCommand("brew", "upgrade", "--cask", pkg.Formula); err != nil {
+				return fmt.Errorf("upgrading %s: %w", name, err)
+			}
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallNpm:
 			if !CommandExists("npm") {
-				return fmt.Errorf("npm not found")
+				return errors.New("npm not found")
 			}
 			fmt.Printf("  📥 Upgrading %s...\n", name)
-			ExecCommand("npm", "update", "-g", pkg.Formula)
+			if err := ExecCommand("npm", "update", "-g", pkg.Formula); err != nil {
+				return fmt.Errorf("upgrading %s: %w", name, err)
+			}
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallBun:
 			if !CommandExists("bun") {
-				return fmt.Errorf("bun not found")
+				return errors.New("bun not found")
 			}
 			fmt.Printf("  📥 Upgrading %s...\n", name)
-			ExecCommand("bun", "update", "-g", pkg.Formula)
+			if err := ExecCommand("bun", "update", "-g", pkg.Formula); err != nil {
+				return fmt.Errorf("upgrading %s: %w", name, err)
+			}
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallUV:
 			if !CommandExists("uv") {
-				return fmt.Errorf("uv not found")
+				return errors.New("uv not found")
 			}
 			fmt.Printf("  📥 Upgrading %s...\n", name)
-			ExecCommand("uv", "tool", "upgrade", pkg.Formula)
+			if err := ExecCommand("uv", "tool", "upgrade", pkg.Formula); err != nil {
+				return fmt.Errorf("upgrading %s: %w", name, err)
+			}
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
+		case InstallNvm, InstallXcode, InstallManual, InstallMAS:
+			// No package manager of ours owns these — nvm-managed Node, Xcode, a
+			// manual install and a Mac App Store app each upgrade elsewhere. The
+			// brew fallback below is the only path j can still offer.
 		}
 	}
 
 	// Try as a direct brew package name
 	if CommandExists("brew") {
 		fmt.Printf("  📥 Upgrading %s...\n", name)
-		ExecCommand("brew", "upgrade", name)
+		if err := ExecCommand("brew", "upgrade", name); err != nil {
+			return fmt.Errorf("upgrading %s: %w", name, err)
+		}
 		fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 		return nil
 	}
@@ -139,7 +156,9 @@ func makeUpgrader(icon, label string, commands ...[]string) func() {
 	return func() {
 		fmt.Println(output.Cyan(icon + " Upgrading " + label + "..."))
 		for _, cmd := range commands {
-			ExecCommand(cmd[0], cmd[1:]...)
+			if err := ExecCommand(cmd[0], cmd[1:]...); err != nil {
+				fmt.Println(output.Cyan("  ⚠ " + cmd[0] + " failed: " + err.Error()))
+			}
 		}
 		fmt.Println(output.Green("  ✅ " + label + " upgrade completed"))
 	}

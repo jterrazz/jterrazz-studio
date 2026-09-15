@@ -8,7 +8,7 @@ import (
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show comprehensive system status",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		statusview.RunOrExit()
 	},
 }

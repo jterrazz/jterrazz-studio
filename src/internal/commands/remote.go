@@ -15,7 +15,7 @@ var remoteCmd = &cobra.Command{
 	Long: "Connect / disconnect / inspect the Tailscale endpoint for remote\n" +
 		"access. To configure the endpoint itself (mode, auth, hostname, secret),\n" +
 		"use `j config` and switch to the Remote tab.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		runRemoteStatus()
 	},
 }
@@ -23,7 +23,7 @@ var remoteCmd = &cobra.Command{
 var remoteUpCmd = &cobra.Command{
 	Use:   "up",
 	Short: "Connect remote access",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		settings, err := config.LoadRemoteSettings()
 		if err != nil {
 			print.Error(err.Error())
@@ -48,7 +48,7 @@ var remoteUpCmd = &cobra.Command{
 var remoteDownCmd = &cobra.Command{
 	Use:   "down",
 	Short: "Disconnect remote access",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		settings, err := config.LoadRemoteSettings()
 		if err != nil {
 			print.Error(err.Error())
@@ -76,7 +76,7 @@ var remoteDownCmd = &cobra.Command{
 var remoteStatusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show remote access status",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		runRemoteStatus()
 	},
 }

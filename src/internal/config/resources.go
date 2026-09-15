@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -301,14 +302,14 @@ func parseDockerSize(s string) int64 {
 		if strings.HasSuffix(s, suffix) {
 			numStr := strings.TrimSuffix(s, suffix)
 			var val float64
-			fmt.Sscanf(numStr, "%f", &val)
+			_, _ = fmt.Sscanf(numStr, "%f", &val)
 			return int64(val * mult)
 		}
 	}
 	return 0
 }
 
-// CheckDisk checks a disk path and returns the result
+// Check reports the disk path this check names, or what its own CheckFn answers.
 func (d DiskCheck) Check() ResourceResult {
 	if d.CheckFn != nil {
 		return d.CheckFn()
@@ -368,10 +369,8 @@ var ProcessChecks = []ProcessCheck{
 		},
 	},
 	{
-		Name: "Uptime",
-		CheckFn: func() []ProcessInfo {
-			return getUptimeInfo()
-		},
+		Name:    "Uptime",
+		CheckFn: getUptimeInfo,
 	},
 }
 
@@ -400,7 +399,7 @@ func parseListeningPortsFcn(out []byte) []ProcessInfo {
 	var entries []portEntry
 
 	for _, line := range lines {
-		if len(line) == 0 {
+		if line == "" {
 			continue
 		}
 		switch line[0] {
@@ -437,7 +436,7 @@ func parseListeningPortsFcn(out []byte) []ProcessInfo {
 		return entries[i].portNum < entries[j].portNum
 	})
 
-	var result []ProcessInfo
+	result := make([]ProcessInfo, 0, len(entries))
 	for _, e := range entries {
 		result = append(result, ProcessInfo{
 			Name:  e.cmd,
@@ -650,7 +649,7 @@ func scanRepo(repoPath, relPath string) RepoInfo {
 //     dash in the name (existing convention, keeps "jterrazz-studio" grouped
 //     under "jterrazz" if you have flat repos).
 //   - deeper repo (e.g. ~/Developer/jterrazz/jterrazz-studio): prefix = the
-//     containing directory name. Natural since organisations cluster repos
+//     containing directory name. Natural since organizations cluster repos
 //     under one folder.
 //
 // Git invocations run in parallel — without it, a server with 30+ repos
@@ -801,7 +800,7 @@ func ScanDependencies() []DepProjectGroup {
 }
 
 // countOutdated returns number of outdated dependencies for a repo.
-func countOutdated(repoPath string, manager string) int {
+func countOutdated(repoPath, manager string) int {
 	switch manager {
 	case "pnpm":
 		out, err := exec.Command("pnpm", "outdated", "--dir", repoPath, "--format", "json").Output()
@@ -857,7 +856,7 @@ func countOutdated(repoPath string, manager string) int {
 // GetDockerStatus returns full Docker dashboard data.
 func GetDockerStatus() (DockerStatus, error) {
 	if !CommandExists("docker") {
-		return DockerStatus{}, fmt.Errorf("docker not found")
+		return DockerStatus{}, errors.New("docker not found")
 	}
 
 	var ds DockerStatus

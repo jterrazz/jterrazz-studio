@@ -34,7 +34,7 @@ func createSubcommand(sub config.RunSubcommand) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   sub.Name,
 		Short: sub.Description,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
 			if err := sub.RunFn(args); err != nil {
 				print.Error(err.Error())
 			}

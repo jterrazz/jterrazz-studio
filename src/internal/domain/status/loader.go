@@ -1,3 +1,5 @@
+// Package status loads what `j status` reports — the machine's own facts and
+// every registry probe — concurrently, and hands the rows to the view.
 package status
 
 import (
@@ -129,7 +131,7 @@ func (l *Loader) buildItems() {
 	for _, check := range config.ProcessChecks {
 		section := "System"
 		subsection := check.Name
-		// Services = Ports
+		// The Ports check renders under Environment, as Services.
 		if check.Name == "Ports" {
 			section = "Environment"
 			subsection = "Services"

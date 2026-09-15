@@ -2,6 +2,7 @@ package configview
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -68,7 +69,7 @@ func (m Model) renderModal() string {
 }
 
 // renderHeader builds the canonical j config header. The right-side context
-// shows which machine the TUI is operating on (alias + colour-coded role).
+// shows which machine the TUI is operating on (alias + color-coded role).
 func (m Model) renderHeader(command string) string {
 	var context string
 	if m.selfRole == "" {
@@ -123,7 +124,7 @@ func (m Model) renderSectionHeader(s Section) string {
 	if total > 0 {
 		count = fmt.Sprintf("%d/%d", installed, total)
 	} else {
-		count = fmt.Sprintf("%d", len(s.Scripts))
+		count = strconv.Itoa(len(s.Scripts))
 	}
 	name := sectionHeaderStyle.Render(string(s.Category))
 	return fmt.Sprintf(" %s %s   %s",
@@ -247,6 +248,8 @@ func (m Model) renderSkillsFooter() string {
 		}
 	case skillStateOutdated:
 		hints = append(hints, footerKey("i", "update"))
+	case skillStateChecking, skillStateInstalled:
+		// Nothing to install or update — the uninstall hint below is the only one.
 	}
 	if m.skillInstalled(e) {
 		hints = append(hints, footerKey("u", "uninstall"))

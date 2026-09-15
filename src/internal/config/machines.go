@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -96,7 +97,7 @@ func ListMachines() []struct {
 // AddMachine inserts a new machine. Refuses to overwrite an existing alias.
 func AddMachine(alias string, m Machine) error {
 	if strings.TrimSpace(alias) == "" {
-		return fmt.Errorf("alias is required")
+		return errors.New("alias is required")
 	}
 	if err := m.Validate(); err != nil {
 		return err

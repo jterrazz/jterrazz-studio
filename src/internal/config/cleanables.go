@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -85,8 +86,10 @@ var Cleanables = []Cleanable{
 		Description: "Empty system trash",
 		CleanFn: func() error {
 			trashPath := os.Getenv("HOME") + "/.Trash"
-			os.RemoveAll(trashPath)
-			return os.MkdirAll(trashPath, 0755)
+			if err := os.RemoveAll(trashPath); err != nil {
+				return fmt.Errorf("emptying the trash: %w", err)
+			}
+			return os.MkdirAll(trashPath, 0o700)
 		},
 		SizeFn: func() int64 {
 			return GetDirSize(os.Getenv("HOME") + "/.Trash")
@@ -127,8 +130,9 @@ func GetAvailableCleanables() []Cleanable {
 // GetDirSize calculates the total size of a directory
 func GetDirSize(path string) int64 {
 	var size int64
-	filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+	_ = filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
 		if err != nil {
+			//nolint:nilerr // an unreadable entry is skipped; the size of the rest is still the answer
 			return nil
 		}
 		if !info.IsDir() {

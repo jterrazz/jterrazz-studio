@@ -62,13 +62,13 @@ func ReadLock() map[string]LockEntry {
 
 // readLockFrom is the testable variant of ReadLock — takes the lock file
 // path explicitly.
-func readLockFrom(path string) map[string]LockEntry {
+func readLockFrom(lockPath string) map[string]LockEntry {
 	out := map[string]LockEntry{}
-	if path == "" {
+	if lockPath == "" {
 		return out
 	}
 
-	data, err := os.ReadFile(path)
+	data, err := os.ReadFile(lockPath)
 	if err != nil {
 		return out
 	}
@@ -79,12 +79,7 @@ func readLockFrom(path string) map[string]LockEntry {
 	}
 
 	for name, e := range parsed.Skills {
-		out[name] = LockEntry{
-			Source:     e.Source,
-			SourceType: e.SourceType,
-			SkillPath:  e.SkillPath,
-			FolderHash: e.FolderHash,
-		}
+		out[name] = LockEntry(e)
 	}
 	return out
 }
@@ -234,7 +229,7 @@ func resetDirCache() {
 func fetchDirSHAs(source, dir string) (map[string]string, error) {
 	url := fmt.Sprintf("%s/repos/%s/contents/%s", apiBaseURL, source, dir)
 
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, http.NoBody)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +247,7 @@ func fetchDirSHAs(source, dir string) (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("unexpected status %d for %s", resp.StatusCode, url)

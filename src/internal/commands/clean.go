@@ -22,14 +22,14 @@ Examples:
   j clean trash              Empty trash
   j clean brew docker        Clean specific items
   j clean                    List available clean items`,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		var all []string
+	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+		all := make([]string, 0, len(config.Cleanables))
 		for _, c := range config.Cleanables {
 			all = append(all, c.Name)
 		}
 		return tool.FilterStrings(all, args), cobra.ShellCompDirectiveNoFileComp
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		if cleanAll {
 			print.Action("🧹", "Cleaning everything...")
 			for _, c := range config.Cleanables {

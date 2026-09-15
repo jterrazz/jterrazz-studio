@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -410,7 +411,9 @@ func runHushlogin() error {
 	if err != nil {
 		return fmt.Errorf("failed to create .hushlogin: %w", err)
 	}
-	f.Close()
+	if err := f.Close(); err != nil {
+		return fmt.Errorf("failed to close .hushlogin: %w", err)
+	}
 
 	fmt.Println(out.Green("Done - terminal login message silenced"))
 	return nil
@@ -418,7 +421,7 @@ func runHushlogin() error {
 
 // copyRepoConfig copies a config file from the repo to a destination path.
 func copyRepoConfig(repoRelPath, destPath string) error {
-	if err := os.MkdirAll(filepath.Dir(destPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(destPath), 0o750); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
@@ -432,7 +435,7 @@ func copyRepoConfig(repoRelPath, destPath string) error {
 		return fmt.Errorf("failed to read config file %s: %w", repoConfig, err)
 	}
 
-	if err := os.WriteFile(destPath, content, 0644); err != nil {
+	if err := os.WriteFile(destPath, content, 0o600); err != nil {
 		return fmt.Errorf("failed to write config file %s: %w", destPath, err)
 	}
 
@@ -490,7 +493,7 @@ func runGPGSetup() error {
 	name := UserName()
 
 	if !CommandExists("gpg") {
-		return fmt.Errorf("GPG not installed. Run: brew install gnupg")
+		return errors.New("GPG not installed. Run: brew install gnupg")
 	}
 
 	checkCmd := exec.Command("gpg", "--list-secret-keys", "--keyid-format", "long", email)
@@ -590,7 +593,7 @@ func runSSHSetup() error {
 	sshKey := sshDir + "/id_ed25519"
 	email := UserEmail()
 
-	if err := os.MkdirAll(sshDir, 0700); err != nil {
+	if err := os.MkdirAll(sshDir, 0o700); err != nil {
 		return fmt.Errorf("failed to create .ssh directory: %w", err)
 	}
 
@@ -622,15 +625,17 @@ Host *
   UseKeychain yes
   IdentityFile ~/.ssh/id_ed25519
 `
-		f, err := os.OpenFile(sshConfig, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		f, err := os.OpenFile(sshConfig, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
 		if err != nil {
 			return fmt.Errorf("failed to open SSH config: %w", err)
 		}
 		if _, err := f.WriteString(configContent); err != nil {
-			f.Close()
+			_ = f.Close()
 			return fmt.Errorf("failed to write SSH config: %w", err)
 		}
-		f.Close()
+		if err := f.Close(); err != nil {
+			return fmt.Errorf("failed to close SSH config: %w", err)
+		}
 		fmt.Println(out.Green("SSH config updated"))
 	} else {
 		fmt.Println(out.Green("SSH config already configured"))
@@ -681,11 +686,11 @@ func isSpotlightExcluded(dir string) bool {
 	}
 	cmd := exec.Command("/usr/bin/mdfind", "-onlyin", filepath.Dir(probe),
 		fmt.Sprintf("kMDItemFSName == %q", filepath.Base(probe)))
-	out, err := cmd.Output()
+	mdfindOut, err := cmd.Output()
 	if err != nil {
 		return false
 	}
-	return strings.TrimSpace(string(out)) == ""
+	return strings.TrimSpace(string(mdfindOut)) == ""
 }
 
 // pickSpotlightProbe walks `dir` and returns the path of the first regular,
@@ -695,6 +700,7 @@ func pickSpotlightProbe(dir string) string {
 	var probe string
 	_ = filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
+			//nolint:nilerr // an unreadable entry is skipped; the probe is the first file that IS readable
 			return nil
 		}
 		name := d.Name()
@@ -716,7 +722,7 @@ func pickSpotlightProbe(dir string) string {
 func runSpotlightExclude() error {
 	devDir := os.Getenv("HOME") + "/Developer"
 	if _, err := os.Stat(devDir); err != nil {
-		return fmt.Errorf("~/Developer directory does not exist")
+		return errors.New("~/Developer directory does not exist")
 	}
 
 	if isSpotlightExcluded(devDir) {
@@ -763,7 +769,7 @@ func runJavaHome() error {
 
 	javaHome := "/opt/homebrew/opt/openjdk"
 	if _, err := os.Stat(javaHome + "/bin/java"); err != nil {
-		return fmt.Errorf("OpenJDK not installed. Run: j install openjdk")
+		return errors.New("OpenJDK not installed. Run: j install openjdk")
 	}
 
 	zshrcPath := os.Getenv("HOME") + "/.zshrc"
@@ -773,15 +779,17 @@ func runJavaHome() error {
 		return nil
 	}
 
-	f, err := os.OpenFile(zshrcPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(zshrcPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open ~/.zshrc: %w", err)
 	}
-	defer f.Close()
-
-	javaConfig := fmt.Sprintf("\n# Java (managed by j)\nexport JAVA_HOME=\"%s\"\nexport PATH=\"$JAVA_HOME/bin:$PATH\"\n", javaHome)
+	javaConfig := fmt.Sprintf("\n# Java (managed by j)\nexport JAVA_HOME=%q\nexport PATH=\"$JAVA_HOME/bin:$PATH\"\n", javaHome)
 	if _, err := f.WriteString(javaConfig); err != nil {
+		_ = f.Close()
 		return fmt.Errorf("failed to write to ~/.zshrc: %w", err)
+	}
+	if err := f.Close(); err != nil {
+		return fmt.Errorf("failed to close ~/.zshrc: %w", err)
 	}
 
 	fmt.Println(out.Green("Done - JAVA_HOME configured in ~/.zshrc"))
@@ -798,7 +806,7 @@ func runNvmSetup() error {
 	}
 
 	nvmDir := os.Getenv("HOME") + "/.nvm"
-	if err := os.MkdirAll(nvmDir, 0755); err != nil {
+	if err := os.MkdirAll(nvmDir, 0o750); err != nil {
 		return fmt.Errorf("failed to create %s: %w", nvmDir, err)
 	}
 
@@ -809,26 +817,34 @@ func runNvmSetup() error {
 
 func runDockReset() error {
 	fmt.Println(out.Cyan("Resetting macOS Dock..."))
-	ExecCommand("defaults", "delete", "com.apple.dock")
-	ExecCommand("killall", "Dock")
+	// `defaults delete` fails when the domain is already absent, which is the
+	// state the reset is asking for.
+	_ = ExecCommand("defaults", "delete", "com.apple.dock")
+	if err := ExecCommand("killall", "Dock"); err != nil {
+		return fmt.Errorf("restarting the Dock: %w", err)
+	}
 	fmt.Println(out.Green("Done - Dock reset to defaults"))
 	return nil
 }
 
 func runDockSpacer() error {
 	fmt.Println(out.Cyan("Adding spacer to Dock..."))
-	ExecCommand("defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", `{"tile-type"="small-spacer-tile";}`)
-	ExecCommand("killall", "Dock")
+	if err := ExecCommand("defaults", "write", "com.apple.dock", "persistent-apps", "-array-add", `{"tile-type"="small-spacer-tile";}`); err != nil {
+		return fmt.Errorf("adding the Dock spacer: %w", err)
+	}
+	if err := ExecCommand("killall", "Dock"); err != nil {
+		return fmt.Errorf("restarting the Dock: %w", err)
+	}
 	fmt.Println(out.Green("Done - Dock spacer added"))
 	return nil
 }
 
 func IsDNSProfileInstalled() bool {
-	out, err := exec.Command("profiles", "-C", "-v").Output()
+	profilesOut, err := exec.Command("profiles", "-C", "-v").Output()
 	if err != nil {
 		return false
 	}
-	return strings.Contains(string(out), dnsProfileIdentifier)
+	return strings.Contains(string(profilesOut), dnsProfileIdentifier)
 }
 
 func dnsProfilePath() string {
@@ -837,20 +853,24 @@ func dnsProfilePath() string {
 
 func runDNSEncrypt() error {
 	if IsDNSProfileInstalled() {
-		exec.Command("open", "x-apple.systempreferences:com.apple.Profiles-Settings.extension").Run()
+		if err := exec.Command("open", "x-apple.systempreferences:com.apple.Profiles-Settings.extension").Run(); err != nil {
+			return fmt.Errorf("opening the Profiles settings pane: %w", err)
+		}
 		return nil
 	}
 
 	profilePath := dnsProfilePath()
-	if err := os.MkdirAll(filepath.Dir(profilePath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(profilePath), 0o750); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
-	if err := os.WriteFile(profilePath, []byte(generateDNSProfile()), 0644); err != nil {
+	if err := os.WriteFile(profilePath, []byte(generateDNSProfile()), 0o600); err != nil {
 		return fmt.Errorf("failed to write profile: %w", err)
 	}
 
-	exec.Command("open", profilePath).Run()
+	if err := exec.Command("open", profilePath).Run(); err != nil {
+		return fmt.Errorf("opening the DNS profile: %w", err)
+	}
 
 	// Give macOS time to read the file before the TUI resumes
 	time.Sleep(2 * time.Second)
@@ -1026,13 +1046,13 @@ func GetScriptsByCategory(category ScriptCategory) []Script {
 
 // GetScriptsForTool returns scripts that belong to a tool
 func GetScriptsForTool(toolName string) []Script {
-	tool := GetToolByName(toolName)
-	if tool == nil || len(tool.Scripts) == 0 {
+	entry := GetToolByName(toolName)
+	if entry == nil || len(entry.Scripts) == 0 {
 		return nil
 	}
 
 	var result []Script
-	for _, scriptName := range tool.Scripts {
+	for _, scriptName := range entry.Scripts {
 		if script := GetScriptByName(scriptName); script != nil {
 			result = append(result, *script)
 		}
@@ -1044,8 +1064,8 @@ func GetScriptsForTool(toolName string) []Script {
 func GetStandaloneScripts() []Script {
 	// Build set of tool-attached scripts
 	attached := make(map[string]bool)
-	for _, tool := range Tools {
-		for _, scriptName := range tool.Scripts {
+	for _, catalogEntry := range Tools {
+		for _, scriptName := range catalogEntry.Scripts {
 			attached[scriptName] = true
 		}
 	}

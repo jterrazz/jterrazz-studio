@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -14,16 +15,6 @@ const (
 	autologinTargetUser  = "jterrazz.agent"
 	autologinPasswordEnv = "AGENT_PASSWORD"
 )
-
-// statusAutologin prints the current auto-login state.
-func statusAutologin() error {
-	if err := requireDarwin(); err != nil {
-		return err
-	}
-	print.Header("autologin status", machineContext())
-	dumpAutologinState()
-	return nil
-}
 
 // installAutologin enables FileVault-aware GUI auto-login for the agent user.
 // The agent password comes from the InputValues collected via the j config
@@ -49,7 +40,7 @@ func installAutologin(values config.InputValues) error {
 		password = os.Getenv(autologinPasswordEnv)
 	}
 	if password == "" {
-		return fmt.Errorf("empty password — refusing to set /etc/kcpassword with an empty value")
+		return errors.New("empty password — refusing to set /etc/kcpassword with an empty value")
 	}
 
 	print.Header("install autologin", machineContext())
@@ -86,7 +77,7 @@ func installAutologin(values config.InputValues) error {
 
 	// Cross-check both side effects.
 	if _, err := os.Stat("/etc/kcpassword"); err != nil {
-		return fmt.Errorf("/etc/kcpassword missing after write")
+		return errors.New("/etc/kcpassword missing after write")
 	}
 	out, err := runQuiet("/usr/bin/defaults", "read", "/Library/Preferences/com.apple.loginwindow", "autoLoginUser")
 	if err != nil || strings.TrimSpace(out) != autologinTargetUser {

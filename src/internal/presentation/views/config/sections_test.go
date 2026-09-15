@@ -108,6 +108,8 @@ func TestSectionInstalledCount(t *testing.T) {
 			if installed != 1 || total != 2 {
 				t.Errorf("Server: got %d/%d, want 1/2", installed, total)
 			}
+		default:
+			// The fixture declares counts for those two categories only.
 		}
 	}
 }

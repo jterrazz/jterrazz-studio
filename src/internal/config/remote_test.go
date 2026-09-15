@@ -58,10 +58,10 @@ func TestSaveAndLoadRemoteSettings(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
 
-	given := RemoteSettings{
+	given := RemoteSettings{ //nolint:gosec // an example tailnet key: this test never reaches a tailnet
 		Mode:       RemoteModeUserspace,
 		AuthMethod: RemoteAuthAuthKey,
-		Secret:     "tskey-auth-abc",
+		Secret:     "tskey-auth-example",
 		Hostname:   "worker",
 	}
 
@@ -142,10 +142,10 @@ func TestIsKeepAwakeRunningWithCurrentProcessPID(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
 
-	if err := os.MkdirAll(userspaceDir(), 0700); err != nil {
+	if err := os.MkdirAll(userspaceDir(), 0o700); err != nil {
 		t.Fatalf("MkdirAll() error = %v", err)
 	}
-	if err := os.WriteFile(keepAwakePIDPath(), []byte("1"), 0600); err != nil {
+	if err := os.WriteFile(keepAwakePIDPath(), []byte("1"), 0o600); err != nil {
 		t.Fatalf("WriteFile() error = %v", err)
 	}
 
@@ -159,10 +159,10 @@ func TestIsKeepAwakeRunningRemovesStalePIDFile(t *testing.T) {
 	home := t.TempDir()
 	t.Setenv("HOME", home)
 
-	if err := os.MkdirAll(userspaceDir(), 0700); err != nil {
+	if err := os.MkdirAll(userspaceDir(), 0o700); err != nil {
 		t.Fatalf("MkdirAll() error = %v", err)
 	}
-	if err := os.WriteFile(keepAwakePIDPath(), []byte("99999999"), 0600); err != nil {
+	if err := os.WriteFile(keepAwakePIDPath(), []byte("99999999"), 0o600); err != nil {
 		t.Fatalf("WriteFile() error = %v", err)
 	}
 

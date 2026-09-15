@@ -3,6 +3,7 @@ package config
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -16,8 +17,8 @@ import (
 	"time"
 )
 
-// Remote access runs over Tailscale. Two distinct tailscaled daemons can
-// exist on the same machine, and the distinction drives everything below:
+// RemoteDaemon identifies which tailscaled a call talks to. Remote access runs
+// over Tailscale, and two distinct daemons can exist on the same machine:
 //
 //   - userspace: a tailscaled that j starts itself with
 //     --tun=userspace-networking (no root, no kernel extension), keeping its
@@ -25,8 +26,6 @@ import (
 //     daemon j ever starts.
 //   - system: the daemon owned by the Tailscale.app GUI (or an OS service).
 //     j never starts it, but it can report it and disconnect it.
-//
-// RemoteDaemon identifies which of the two a call talks to.
 type RemoteDaemon string
 
 const (
@@ -206,7 +205,7 @@ func SaveJRC(cfg JRCConfig) error {
 	}
 
 	dir := filepath.Dir(jrcPath())
-	if err := os.MkdirAll(dir, 0700); err != nil {
+	if err := os.MkdirAll(dir, 0o700); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
 	}
 
@@ -217,7 +216,7 @@ func SaveJRC(cfg JRCConfig) error {
 	out = append(out, '\n')
 
 	tmpPath := jrcPath() + ".tmp"
-	if err := os.WriteFile(tmpPath, out, 0600); err != nil {
+	if err := os.WriteFile(tmpPath, out, 0o600); err != nil {
 		return fmt.Errorf("failed to write temp config.json: %w", err)
 	}
 	if err := os.Rename(tmpPath, jrcPath()); err != nil {
@@ -368,7 +367,7 @@ func parseCLIFLags(tokens []string) []cliFlag {
 	return flags
 }
 
-func mergeUpArgsWithSuggestedFlags(desiredUpArgs []string, suggestedFlags []string) []string {
+func mergeUpArgsWithSuggestedFlags(desiredUpArgs, suggestedFlags []string) []string {
 	desiredFlags := desiredUpArgs
 	if len(desiredFlags) > 0 && desiredFlags[0] == "up" {
 		desiredFlags = desiredFlags[1:]
@@ -433,18 +432,18 @@ func ensureUserspaceDaemon() error {
 	}
 
 	if !CommandExists("tailscaled") {
-		return fmt.Errorf("tailscaled is required for userspace mode")
+		return errors.New("tailscaled is required for userspace mode")
 	}
 
-	if err := os.MkdirAll(userspaceDir(), 0700); err != nil {
+	if err := os.MkdirAll(userspaceDir(), 0o700); err != nil {
 		return fmt.Errorf("failed to create userspace directory: %w", err)
 	}
 
-	logFile, err := os.OpenFile(userspaceLogPath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	logFile, err := os.OpenFile(userspaceLogPath(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open tailscaled log file: %w", err)
 	}
-	defer logFile.Close()
+	defer func() { _ = logFile.Close() }()
 
 	cmd := exec.Command(
 		"tailscaled",
@@ -460,7 +459,7 @@ func ensureUserspaceDaemon() error {
 		return fmt.Errorf("failed to start userspace tailscaled: %w", err)
 	}
 
-	_ = os.WriteFile(userspacePIDPath(), []byte(strconv.Itoa(cmd.Process.Pid)), 0600)
+	_ = os.WriteFile(userspacePIDPath(), []byte(strconv.Itoa(cmd.Process.Pid)), 0o600)
 	_ = cmd.Process.Release()
 
 	deadline := time.Now().Add(4 * time.Second)
@@ -530,15 +529,15 @@ func ensureKeepAwake() error {
 	if isKeepAwakeRunning() {
 		return nil
 	}
-	if err := os.MkdirAll(userspaceDir(), 0700); err != nil {
+	if err := os.MkdirAll(userspaceDir(), 0o700); err != nil {
 		return fmt.Errorf("failed to create userspace directory: %w", err)
 	}
 
-	devNull, err := os.OpenFile(os.DevNull, os.O_WRONLY, 0600)
+	devNull, err := os.OpenFile(os.DevNull, os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("failed to open %s: %w", os.DevNull, err)
 	}
-	defer devNull.Close()
+	defer func() { _ = devNull.Close() }()
 
 	cmd := exec.Command("caffeinate", "-i")
 	cmd.Stdout = devNull
@@ -549,7 +548,7 @@ func ensureKeepAwake() error {
 		return fmt.Errorf("failed to start caffeinate: %w", err)
 	}
 
-	if err := os.WriteFile(keepAwakePIDPath(), []byte(strconv.Itoa(cmd.Process.Pid)), 0600); err != nil {
+	if err := os.WriteFile(keepAwakePIDPath(), []byte(strconv.Itoa(cmd.Process.Pid)), 0o600); err != nil {
 		_ = cmd.Process.Signal(syscall.SIGTERM)
 		return fmt.Errorf("failed to persist caffeinate pid: %w", err)
 	}
@@ -583,7 +582,7 @@ func buildUpArgs(settings RemoteSettings) []string {
 // against it, and starts the keep-awake guard.
 func connectUserspace(settings RemoteSettings) error {
 	if !CommandExists("tailscale") {
-		return fmt.Errorf("tailscale CLI not found")
+		return errors.New("tailscale CLI not found")
 	}
 
 	if err := ensureUserspaceDaemon(); err != nil {

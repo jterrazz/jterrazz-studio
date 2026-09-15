@@ -12,7 +12,7 @@ var configCmd = &cobra.Command{
 		"terminal, security, editor, system tweaks, and (on a server-registered " +
 		"machine) server services. Items show their current install state; " +
 		"toggleable items run uninstall when already installed.",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		configview.RunOrExit()
 	},
 }

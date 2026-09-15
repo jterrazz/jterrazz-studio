@@ -12,7 +12,7 @@ import (
 
 // skillEntry is one row in the Skills tab — a (repo, name) pair plus the
 // derived install state. Built by refreshSkillSections from the static
-// favourites list and the live `skill list` output.
+// favorites list and the live `skill list` output.
 type skillEntry struct {
 	Repo string
 	Name string
@@ -67,7 +67,7 @@ func skillsAvailable() bool {
 }
 
 // refreshSkillSections rebuilds skillSections + skillStates from the static
-// favourites list and the filesystem/lock-file truth (skill.ListInstalled +
+// favorites list and the filesystem/lock-file truth (skill.ListInstalled +
 // skill.ReadLock — fast and offline). Called on startup and after each
 // install/update/uninstall completes.
 //
@@ -101,7 +101,7 @@ func (m *Model) refreshSkillSections() {
 	}
 
 	// "Installed" section: anything currently installed that isn't already
-	// pinned as a Studio or Community favourite. Repo column blank — we
+	// pinned as a Studio or Community favorite. Repo column blank — we
 	// only know the name from `skills list`.
 	var others []skillEntry
 	for _, name := range installed {
@@ -236,7 +236,7 @@ func (m *Model) toggleCurrentSkillSection() {
 	m.skillSections[m.skillCursor.section].Collapsed = !m.skillSections[m.skillCursor.section].Collapsed
 }
 
-// skillStartInstall handles the `i` key on the Skills tab. Behaviour depends
+// skillStartInstall handles the `i` key on the Skills tab. Behavior depends
 // on the entry's currency state:
 //   - not installed: installs it (no-op if we don't know its repo — an
 //     Installed-section orphan);

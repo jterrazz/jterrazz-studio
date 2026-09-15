@@ -192,6 +192,6 @@ func Resolve(styleName string) lipgloss.Style {
 }
 
 // Render applies a semantic style to a value
-func Render(value string, styleName string) string {
+func Render(value, styleName string) string {
 	return Resolve(styleName).Render(value)
 }

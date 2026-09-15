@@ -26,7 +26,7 @@ func TestReadLockFromEmptyPath(t *testing.T) {
 
 func TestReadLockFromCorruptFile(t *testing.T) {
 	path := filepath.Join(t.TempDir(), ".skill-lock.json")
-	if err := os.WriteFile(path, []byte("{not json"), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte("{not json"), 0o600); err != nil {
 		t.Fatalf("write: %v", err)
 	}
 	got := readLockFrom(path)
@@ -52,7 +52,7 @@ func TestReadLockFromParsesFixture(t *testing.T) {
   "dismissed": []
 }`
 	path := filepath.Join(t.TempDir(), ".skill-lock.json")
-	if err := os.WriteFile(path, []byte(fixture), 0o644); err != nil {
+	if err := os.WriteFile(path, []byte(fixture), 0o600); err != nil {
 		t.Fatalf("write: %v", err)
 	}
 
@@ -110,10 +110,10 @@ func contentsHandler(sha string) http.HandlerFunc {
 // mkSkill creates <dir>/<name>/SKILL.md so the local-presence guard passes.
 func mkSkill(t *testing.T, dir, name string) {
 	t.Helper()
-	if err := os.MkdirAll(filepath.Join(dir, name), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(dir, name), 0o750); err != nil {
 		t.Fatalf("mkdir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(dir, name, "SKILL.md"), []byte("# Skill\n"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, name, "SKILL.md"), []byte("# Skill\n"), 0o600); err != nil {
 		t.Fatalf("write: %v", err)
 	}
 }
@@ -174,7 +174,7 @@ func TestCheckUpToDateInDetectsOutdated(t *testing.T) {
 func TestCheckUpToDateInIgnoresLocalContentDrift(t *testing.T) {
 	dir := t.TempDir()
 	mkSkill(t, dir, "s")
-	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("locally edited\n"), 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(dir, "s", "SKILL.md"), []byte("locally edited\n"), 0o600); err != nil {
 		t.Fatalf("write: %v", err)
 	}
 	entry := LockEntry{Source: "owner/repo", SourceType: "github", SkillPath: "skills/s/SKILL.md", FolderHash: "samehash"}

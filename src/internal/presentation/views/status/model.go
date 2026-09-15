@@ -102,7 +102,7 @@ func selfHeaderContext() string {
 
 // scheduleProcessRefresh returns a command that triggers a process refresh after 1 second
 func scheduleProcessRefresh() tea.Cmd {
-	return tea.Tick(time.Second, func(t time.Time) tea.Msg {
+	return tea.Tick(time.Second, func(_ time.Time) tea.Msg {
 		return ProcessRefreshMsg{}
 	})
 }
@@ -126,7 +126,7 @@ func refreshProcesses() tea.Cmd {
 		if cpuData, ok := data["process-CPU"]; ok {
 			for _, p := range cpuData {
 				var v float64
-				fmt.Sscanf(strings.TrimSuffix(p.Value, "%"), "%f", &v)
+				_, _ = fmt.Sscanf(strings.TrimSuffix(p.Value, "%"), "%f", &v)
 				totalCPU += v
 			}
 		}
@@ -137,7 +137,7 @@ func refreshProcesses() tea.Cmd {
 }
 
 // getNetworkBytes reads total rx/tx bytes from en0 via netstat
-func getNetworkBytes() (int64, int64) {
+func getNetworkBytes() (rxBytes, txBytes int64) {
 	out, err := exec.Command("netstat", "-ib").Output()
 	if err != nil {
 		return 0, 0
@@ -152,8 +152,8 @@ func getNetworkBytes() (int64, int64) {
 			continue
 		}
 		var rx, tx int64
-		fmt.Sscanf(fields[6], "%d", &rx)
-		fmt.Sscanf(fields[9], "%d", &tx)
+		_, _ = fmt.Sscanf(fields[6], "%d", &rx)
+		_, _ = fmt.Sscanf(fields[9], "%d", &tx)
 		return rx, tx
 	}
 	return 0, 0
@@ -168,11 +168,11 @@ func getGPUUtilization() float64 {
 	// Look for "Device Utilization %" in the output
 	for _, line := range strings.Split(string(out), "\n") {
 		if strings.Contains(line, `"Device Utilization %"`) {
-			// Format: "Device Utilization %" = 28
+			// The number follows the quoted key on the same line.
 			parts := strings.Split(line, "=")
 			if len(parts) == 2 {
 				var v float64
-				fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &v)
+				_, _ = fmt.Sscanf(strings.TrimSpace(parts[1]), "%f", &v)
 				return v
 			}
 		}
@@ -223,7 +223,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		headerHeight := components.CommandHeaderHeight
-		tabBarHeight := 2                                 // tab strip + blank line
+		tabBarHeight := 2 // tab strip + blank line
 		footerHeight := 1
 
 		if !m.ready {
@@ -426,9 +426,4 @@ func RunOrExit() {
 	if err := Run(); err != nil {
 		fmt.Printf("Error: %v\n", err)
 	}
-}
-
-// Helper to get visible length (strip ANSI)
-func visibleLen(s string) int {
-	return components.VisibleLen(s)
 }

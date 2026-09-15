@@ -102,6 +102,9 @@ func (m Model) updateModal(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case huh.StateAborted:
 		m.closeModal()
 		return m, nil
+
+	case huh.StateNormal:
+		// Still being filled: the form keeps the keystrokes, nothing to settle.
 	}
 	return m, cmd
 }

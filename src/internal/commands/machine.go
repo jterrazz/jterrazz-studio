@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -42,7 +41,7 @@ var machineCmd = &cobra.Command{
 var machineStatusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Show machine + service status",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		runMachineStatus()
 	},
 }
@@ -56,7 +55,7 @@ unlock password. The endpoint comes from the registry (see j machine list).
 Pre-boot SSH advertises a different host key than the running OS and only
 accepts password auth — no authorized_keys exist before FileVault unlock.`,
 	Args: cobra.ExactArgs(1),
-	Run:  func(cmd *cobra.Command, args []string) { runMachineUnlock(args[0]) },
+	Run:  func(_ *cobra.Command, args []string) { runMachineUnlock(args[0]) },
 }
 
 func init() {
@@ -161,16 +160,11 @@ func machineStateChecks() []machineCheck {
 }
 
 func serviceStateChecks() []machineCheck {
-	checks := []machineCheck{
-		checkOpenClawProcess(),
-		checkOpenClawConfig(),
-	}
-	checks = append(checks, checkOpenClawChannels()...)
-	checks = append(checks,
-		checkHermesProcess(),
-		checkHermesConfig(),
-		checkOrbStackStatus(),
-	)
+	channels := checkOpenClawChannels()
+	checks := make([]machineCheck, 0, len(channels)+5)
+	checks = append(checks, checkOpenClawProcess(), checkOpenClawConfig())
+	checks = append(checks, channels...)
+	checks = append(checks, checkHermesProcess(), checkHermesConfig(), checkOrbStackStatus())
 	return checks
 }
 
@@ -214,7 +208,7 @@ func checkOpenClawProcess() machineCheck {
 
 func checkOpenClawConfig() machineCheck {
 	home, _ := os.UserHomeDir()
-	path := filepath.Join(home, ".openclaw/openclaw.json")
+	path := filepath.Join(home, ".openclaw", "openclaw.json")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return machineCheck{machineStateFail, "OpenClaw config", "missing", path}
@@ -247,19 +241,20 @@ func checkOpenClawChannels() []machineCheck {
 
 func channelCheck(statusOutput, name string) machineCheck {
 	for _, line := range strings.Split(statusOutput, "\n") {
-		if strings.Contains(line, name+" ") || strings.Contains(line, name+":") {
-			state := machineStateOK
-			value := "connected"
-			if !strings.Contains(line, "connected") {
-				state = machineStateWarn
-				value = "check"
-			}
-			if strings.Contains(line, "health:") && !strings.Contains(line, "health:healthy") {
-				state = machineStateWarn
-				value = "check"
-			}
-			return machineCheck{state, name, value, strings.TrimSpace(line)}
+		if !strings.Contains(line, name+" ") && !strings.Contains(line, name+":") {
+			continue
 		}
+		state := machineStateOK
+		value := "connected"
+		if !strings.Contains(line, "connected") {
+			state = machineStateWarn
+			value = "check"
+		}
+		if strings.Contains(line, "health:") && !strings.Contains(line, "health:healthy") {
+			state = machineStateWarn
+			value = "check"
+		}
+		return machineCheck{state, name, value, strings.TrimSpace(line)}
 	}
 	return machineCheck{machineStateWarn, name, "not found", "channel not reported by OpenClaw"}
 }
@@ -283,7 +278,7 @@ func checkHermesProcess() machineCheck {
 
 func checkHermesConfig() machineCheck {
 	home, _ := os.UserHomeDir()
-	path := filepath.Join(home, ".hermes/config.yaml")
+	path := filepath.Join(home, ".hermes", "config.yaml")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return machineCheck{machineStateFail, "Hermes config", "missing", path}
@@ -306,7 +301,7 @@ func scanYAMLDefaultModel(s string) string {
 		if stripped == "" || strings.HasPrefix(stripped, "#") {
 			continue
 		}
-		topLevel := len(line) > 0 && line[0] != ' ' && line[0] != '\t'
+		topLevel := line != "" && line[0] != ' ' && line[0] != '\t'
 		if topLevel {
 			inModel = strings.HasPrefix(stripped, "model:")
 			continue
@@ -371,16 +366,6 @@ func hostname() string {
 		return "unknown"
 	}
 	return h
-}
-
-func osSummary() string {
-	if runtime.GOOS == "darwin" {
-		out, err := runOutput("sw_vers", "-productVersion")
-		if err == nil {
-			return "macOS " + trimOneLine(out) + " (" + runtime.GOARCH + ")"
-		}
-	}
-	return runtime.GOOS + " " + runtime.GOARCH
 }
 
 func jsonPathString(root map[string]any, path ...string) string {
