@@ -14,58 +14,65 @@ npm init -y
 ```
 
 **package.json:**
+
 ```json
 {
-  "name": "@jterrazz/{name}",
-  "version": "0.1.0",
-  "author": "Jean-Baptiste Terrazzoni <contact@jterrazz.com>",
-  "type": "module",
-  "files": ["dist"],
-  "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+    "name": "@jterrazz/{name}",
+    "version": "0.1.0",
+    "author": "Jean-Baptiste Terrazzoni <contact@jterrazz.com>",
+    "type": "module",
+    "files": ["dist"],
+
+    "exports": {
+        ".": {
+            "require": "./dist/index.cjs",
+            "import": "./dist/index.js"
+        }
+    },
+    "publishConfig": { "registry": "https://registry.npmjs.org/" },
+    "repository": { "type": "git", "url": "https://github.com/jterrazz/package-{name}" },
+
+    "scripts": {
+        "build": "typescript bundle",
+        "lint": "typescript check",
+        "lint:fix": "typescript fix",
+        "test": "vitest --run"
+    },
+    "devDependencies": {
+        "@jterrazz/test": "latest",
+        "@jterrazz/typescript": "latest",
+        "@types/node": "latest",
+        "vitest": "latest"
     }
-  },
-  "publishConfig": { "registry": "https://registry.npmjs.org/" },
-  "repository": { "type": "git", "url": "https://github.com/jterrazz/package-{name}" },
-  "scripts": {
-    "build": "typescript bundle",
-    "lint": "typescript check",
-    "lint:fix": "typescript fix",
-    "test": "vitest --run"
-  },
-  "devDependencies": {
-    "@jterrazz/test": "latest",
-    "@jterrazz/typescript": "latest",
-    "@types/node": "latest",
-    "vitest": "latest"
-  }
 }
 ```
 
 **tsconfig.json:**
+
 ```json
 { "extends": "@jterrazz/typescript/tsconfig/node" }
 ```
 
 **oxlint.config.ts:**
-```ts
-import { oxlint } from '@jterrazz/typescript';
-import { defineConfig } from 'oxlint';
 
-export default defineConfig({ extends: [oxlint.node] });
+```ts
+import { defineConfig, node } from '@jterrazz/typescript/oxlint';
+
+export default defineConfig({ extends: [node] });
 ```
 
-**oxfmt.config.ts:**
-```ts
-import { oxfmt } from '@jterrazz/typescript';
-import { defineConfig } from 'oxfmt';
+Swap `node` for the profile the project picked, and compose `testing` from `@jterrazz/test/oxlint` where it has specs. Both `defineConfig` and the preset arrive from `@jterrazz/typescript` — a config naming `oxlint` itself asks the project to declare the tool as well.
 
-export default defineConfig(oxfmt);
+**oxfmt.config.ts:**
+
+```ts
+import { base, defineConfig } from '@jterrazz/typescript/oxfmt';
+
+export default defineConfig(base);
 ```
 
 **.gitignore:**
+
 ```
 node_modules/
 dist
@@ -74,6 +81,7 @@ dist
 ```
 
 **Makefile:**
+
 ```makefile
 .PHONY: build lint test install
 
@@ -100,14 +108,15 @@ test: node_modules/.install
 Same as library but with these differences:
 
 **package.json scripts:**
+
 ```json
 {
-  "build": "typescript build",
-  "start": "typescript start",
-  "dev": "typescript dev",
-  "lint": "typescript check",
-  "lint:fix": "typescript fix",
-  "test": "vitest --run"
+    "build": "typescript build",
+    "start": "typescript start",
+    "dev": "typescript dev",
+    "lint": "typescript check",
+    "lint:fix": "typescript fix",
+    "test": "vitest --run"
 }
 ```
 
@@ -116,35 +125,37 @@ No `exports` or `publishConfig` needed.
 ## CI workflows
 
 **.github/workflows/validate.yaml:**
+
 ```yaml
 name: Validate
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
 jobs:
-  validate:
-    uses: jterrazz/jterrazz-actions/.github/workflows/validate.yaml@main
-    with:
-      node-version: "24"
+    validate:
+        uses: jterrazz/jterrazz-actions/.github/workflows/validate.yaml@main
+        with:
+            node-version: '24'
 ```
 
 For libraries, also add **.github/workflows/publish.yaml:**
+
 ```yaml
 name: Publish
 on:
-  release:
-    types: [created]
+    release:
+        types: [created]
 permissions:
-  contents: read
-  id-token: write
+    contents: read
+    id-token: write
 jobs:
-  publish:
-    uses: jterrazz/jterrazz-actions/.github/workflows/release-npm.yaml@main
-    with:
-      node-version: "24"
-    secrets: inherit
+    publish:
+        uses: jterrazz/jterrazz-actions/.github/workflows/release-npm.yaml@main
+        with:
+            node-version: '24'
+        secrets: inherit
 ```
 
 ## Repo structure — born structured
