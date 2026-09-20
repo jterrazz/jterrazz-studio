@@ -1,7 +1,7 @@
 {
     // The harness has no entry of its own: every module under `specs/` is reached by
     // Vitest, through the runner `vitest.config.ts` names.
-    "entry": ["specs/**/*.specification.ts", "specs/**/*.test.ts"],
+    "entry": ["specs/**/*.specification.ts", "specs/**/*.spec.ts"],
     "ignoreBinaries": [
         // The Go toolchain, which the runner shells out to for the test binary — a
         // machine requirement of this repository, never an npm dependency.
