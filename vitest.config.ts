@@ -1,10 +1,10 @@
-import { defineSpecConfig } from '@jterrazz/test/vitest';
+import { cli, defineSpecConfig } from '@jterrazz/test/vitest';
 
+// `cli()` is this tree's one facet: it collects `specs/cli/**/*.test.ts` and
+// wires the literate plugin onto its default runner, `specs/cli/cli.specification.ts`
+// — the convention this repository already follows, so nothing is stated.
 export default defineSpecConfig({
-    // Every `<case>.spec.yaml` under specs/ becomes a one-test module driving the
-    // runner this file names — stated, never guessed.
-    literate: { specification: './specs/cli/cli.specification.ts' },
     test: {
-        include: ['specs/**/*.test.ts'],
+        projects: [cli()],
     },
 });
