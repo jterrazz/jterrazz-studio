@@ -77,7 +77,7 @@ A decision that spans two or more repositories is not recorded here. It belongs 
 
 ## Packages vs applications
 
-A `docs/reference/` API projection exists for **packages** — a published library has a public API surface that others consume, and the compiler keeps its readable form in lockstep with the code (see `package-typescript` [Docs pipeline](https://github.com/jterrazz/package-typescript/blob/main/docs/05-docs-pipeline.md)). An **application** (an API server, a product CLI, a web app) has no API consumers: it adopts the doctrine in full — the corpus, the routing layers, the single-home rule — and never generates `docs/reference/`. An application may still have its own compiler when it holds another source layer worth projecting, as this repo does with its install registry.
+A `docs/reference/` API projection exists for **packages** — a published library has a public API surface that others consume, and the compiler keeps its readable form in lockstep with the code (see `package-typescript` [Docs pipeline](https://github.com/jterrazz/package-typescript/blob/main/docs/08-docs-pipeline.md)). An **application** (an API server, a product CLI, a web app) has no API consumers: it adopts the doctrine in full — the corpus, the routing layers, the single-home rule — and never generates `docs/reference/`. An application may still have its own compiler when it holds another source layer worth projecting, as this repo does with its install registry.
 
 ## Language specifics
 

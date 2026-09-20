@@ -40,7 +40,7 @@ A repository whose product is not TypeScript carries them all the same, for the 
 
 ## Testing
 
-The convention is defined by `@jterrazz/test`, and every project follows it: colocated `*.test.ts` units (no I/O), `*.integration.test.ts` against testcontainers, `*.e2e.test.ts` against a real compose stack, with data colocated per test. What a spec stands on — `_fixtures/`, `_expected/`, `_requests/`, `_seeds/` — carries a leading underscore; a spec's own folder never does. The full convention lives in `package-test`'s corpus — route there, don't restate it.
+The convention is defined by `@jterrazz/test`, and every project follows it: the SUBJECT decides where a test lives and what it is called — one unit beside its code as `<file>.test.ts` (a rendered one `.test.tsx`), the assembled product met through an entry under `specs/<facet>/<domain>/` as `<aspect>.spec.ts`, and a terminal session as a `<case>.spec.yaml` document. What a spec stands on — `_fixtures/`, `_expected/`, `_requests/`, `_seeds/` — carries a leading underscore; a spec's own folder never does. The full convention lives in `package-test`'s corpus — route there, don't restate it.
 
 ## Architecture
 
