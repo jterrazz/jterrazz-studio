@@ -20,7 +20,7 @@ make test-e2e  # npm install + rebuild j + vitest --run
 
 `make test-e2e` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/j-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `J_FORCE_REBUILD=1` is set (what the Makefile target does), or when any `src/**/*.go` is newer than the binary — an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
 
-`vitest.config.ts` names that runner once, through `defineSpecConfig({ literate: { specification: … } })`: every `*.spec.yaml` under `specs/` becomes a one-test module driving it, and `*.test.ts` files are collected on top.
+`vitest.config.ts` names that runner once, through `defineSpecConfig({ test: { projects: [cli()] } })`: the `cli()` facet collects `specs/cli/**/*.test.ts` and wires the literate plugin onto `specs/cli/cli.specification.ts` by default, so every `*.spec.yaml` under `specs/cli/` becomes a one-test module driving it.
 
 ## A scenario is a document
 
