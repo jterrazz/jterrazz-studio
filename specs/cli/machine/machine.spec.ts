@@ -31,15 +31,13 @@ test('reports the machine-level state checks', async () => {
 });
 
 test('reports the service state checks on a server machine', async () => {
-    // Given - a registry that declares this host a server, so the Services section
-    // (gated on the server role) is emitted deterministically regardless of host
+    // Given - a registry declaring this host a server, which gates the Services section
     const result = await cli
         .fixture('server-registry/')
         .env({ HOME: '$WORKDIR' })
         .exec('machine status');
 
-    // Then - the server-only service rows are present, in the deterministic order
-    // the binary emits them
+    // Then - every server-only service row is present
     expect(result.exitCode).toBe(0);
     for (const row of SERVICE_ROWS) {
         expect(result.stdout).toContain(row);
