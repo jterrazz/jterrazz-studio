@@ -20,7 +20,7 @@ make test-e2e  # npm install + rebuild j + vitest --run
 
 `make test-e2e` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/j-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `J_FORCE_REBUILD=1` is set (what the Makefile target does), or when any `src/**/*.go` is newer than the binary — an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
 
-`vitest.config.ts` names that runner once, through `defineSpecConfig({ test: { projects: [cli()] } })`: the `cli()` facet collects `specs/cli/**/*.test.ts` and wires the literate plugin onto `specs/cli/cli.specification.ts` by default, so every `*.spec.yaml` under `specs/cli/` becomes a one-test module driving it.
+`vitest.config.ts` names that runner once, through `defineSpecConfig({ test: { projects: [cli()] } })`: the `cli()` facet collects `specs/cli/**/*.spec.ts` and wires the literate plugin onto `specs/cli/cli.specification.ts` by default, so every `*.spec.yaml` under `specs/cli/` becomes a one-test module driving it.
 
 ## A scenario is a document
 
@@ -45,9 +45,9 @@ A spec may mount ground of its own: `cli.fixture("server-registry/")` mounts `sp
 
 ## When a spec stays code
 
-A spec stays a `*.test.ts` for one reason: the output's text comes from the HOST, and a byte-exact stream cannot promise it. That is the `✓`/`✗` install-state column and the machine-status verdicts — macOS version, FileVault, sshd, running services. Those specs (`specs/cli/install/install.test.ts`, `specs/cli/machine/machine.test.ts`) probe the rows the binary always emits rather than the text the machine happened to fill them with.
+A spec stays a `*.spec.ts` — code under `specs/`, not a document — for one reason: the output's text comes from the HOST, and a byte-exact stream cannot promise it. That is the `✓`/`✗` install-state column and the machine-status verdicts — macOS version, FileVault, sshd, running services. Those specs (`specs/cli/install/install.spec.ts`, `specs/cli/machine/machine.spec.ts`) probe the rows the binary always emits rather than the text the machine happened to fill them with.
 
-The full grammar, and the rest of the reasons to reach for code, are `@jterrazz/test`'s [`docs/04-cli.md`](https://github.com/jterrazz/package-test/blob/main/docs/04-cli.md).
+The full grammar, and the rest of the reasons to reach for code, are `@jterrazz/test`'s [`docs/12-cli.md`](https://github.com/jterrazz/package-test/blob/main/docs/12-cli.md).
 
 ## What CI runs
 
