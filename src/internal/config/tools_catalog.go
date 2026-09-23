@@ -612,15 +612,6 @@ var Tools = []Tool{
 		},
 	},
 	{
-		Name:         "claude-agent-acp",
-		Description:  "Claude agent bridge for Zed editor",
-		Command:      "claude-agent-acp",
-		Formula:      "@zed-industries/claude-agent-acp",
-		Method:       InstallBun,
-		Category:     CategoryAIAgents,
-		Dependencies: []string{"bun"},
-	},
-	{
 		Name:         "codex",
 		Description:  "OpenAI's CLI coding agent",
 		Command:      "codex",

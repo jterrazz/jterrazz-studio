@@ -96,7 +96,6 @@ Modern replacements are on every machine — prefer them over the defaults:
 
 ### AI Agents
 - **claude** — Claude Code CLI for agentic coding
-- **claude-agent-acp** — Claude agent bridge for Zed editor
 - **codex** — OpenAI's CLI coding agent
 - **gemini** — Google's CLI coding agent
 - **opencode** — Open-source AI coding agent CLI
