@@ -53,6 +53,9 @@ export PATH="$HOME/.jterrazz/bin:$PATH"
 # Bun global binaries
 export PATH="$HOME/.bun/bin:$PATH"
 
+# Go binaries (`go install`: golangci-lint, staticcheck, deadcode)
+export PATH="$HOME/go/bin:$PATH"
+
 # nvm (brew install path) — guarded so it's a no-op when nvm isn't installed
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
