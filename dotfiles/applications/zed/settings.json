@@ -123,22 +123,49 @@
     // Install-only: `false` never uninstalls anything.
     "auto_install_extensions": {
         // Languages & tools
+        "angular": true,
         "ansible": true,
         "astro": true,
+        "csharp": true,
+        "csv": true,
+        "dart": true,
+        "deno": true,
         "dockerfile": true,
+        "env": true,
+        "erlang": true,
         "git-firefly": true,
+        "github-actions": true,
+        "golangci-lint": true,
         "graphql": true,
+        "helm": true,
         "hoverfly": true,
         "html": true,
+        "http": true,
+        "ini": true,
         "java": true,
+        "json5": true,
+        "just": true,
+        "kotlin": true,
+        "latex": true,
+        "log": true,
+        "lua": true,
         "make": true,
+        "markdown-oxide": true,
+        "nginx": true,
+        "nix": true,
         "oxc": true,
+        "php": true,
+        "powershell": true,
         "prisma": true,
+        "proto": true,
+        "r": true,
+        "ruby": true,
         "scss": true,
         "sql": true,
         "swift": true,
         "terraform": true,
         "toml": true,
+        "tsgo": true,
         "vue": true,
         "xml": true,
         "zig": true,
@@ -162,6 +189,14 @@
         "charmed-icons": true
     },
 
+    // ─── File types ──────────────────────────────────────────────────────────
+    // github-actions and ansible ship no file association: YAML stays YAML
+    // unless its path says otherwise.
+    "file_types": {
+        "GitHub Actions": [".github/workflows/*.yml", ".github/workflows/*.yaml"],
+        "Ansible": ["**/ansible/**/*.yml", "**/ansible/**/*.yaml"]
+    },
+
     // ─── Language servers ────────────────────────────────────────────────────
     "lsp": {
         "oxlint": {
@@ -174,6 +209,19 @@
                     "fixKind": "safe_fix",
                     "unusedDisableDirectives": "deny"
                 }
+            }
+        },
+        // golangci-lint v2 (the version the Go repositories pin): JSON on stdout.
+        "golangci-lint": {
+            "initialization_options": {
+                "command": [
+                    "golangci-lint",
+                    "run",
+                    "--output.json.path",
+                    "stdout",
+                    "--show-stats=false",
+                    "--output.text.path="
+                ]
             }
         },
         "oxfmt": {
@@ -193,6 +241,16 @@
     "languages": {
         // Lint fixes first, then format — the order `typescript fix` runs them.
         "JavaScript": {
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
+            // angular would otherwise attach to every TypeScript file.
+            "language_servers": [
+                "typescript-ls",
+                "!vtsls",
+                "!typescript-language-server",
+                "!deno",
+                "!angular",
+                "..."
+            ],
             "prettier": { "allowed": false },
             "formatter": [
                 { "code_action": "source.fixAll.oxc" },
@@ -200,6 +258,16 @@
             ]
         },
         "TypeScript": {
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
+            // angular would otherwise attach to every TypeScript file.
+            "language_servers": [
+                "typescript-ls",
+                "!vtsls",
+                "!typescript-language-server",
+                "!deno",
+                "!angular",
+                "..."
+            ],
             "prettier": { "allowed": false },
             "formatter": [
                 { "code_action": "source.fixAll.oxc" },
@@ -207,6 +275,16 @@
             ]
         },
         "TSX": {
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
+            // angular would otherwise attach to every TypeScript file.
+            "language_servers": [
+                "typescript-ls",
+                "!vtsls",
+                "!typescript-language-server",
+                "!deno",
+                "!angular",
+                "..."
+            ],
             "prettier": { "allowed": false },
             "formatter": [
                 { "code_action": "source.fixAll.oxc" },
@@ -235,6 +313,7 @@
             "formatter": { "language_server": { "name": "oxfmt" } }
         },
         "HTML": {
+            "language_servers": ["!angular", "..."],
             "prettier": { "allowed": false },
             "formatter": { "language_server": { "name": "oxfmt" } }
         },
@@ -265,6 +344,41 @@
         "YAML": {
             "prettier": { "allowed": false },
             "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+
+        // YAML dialects: oxfmt's server only attaches to YAML, so these run the
+        // project's own oxfmt binary (found upward from the file) on stdin; a
+        // repository without one passes the buffer through untouched.
+        "GitHub Actions": {
+            "formatter": {
+                "external": {
+                    "command": "sh",
+                    "arguments": [
+                        "-c",
+                        "d=$(dirname \"$1\"); while [ \"$d\" != / ] && [ ! -x \"$d/node_modules/.bin/oxfmt\" ]; do d=$(dirname \"$d\"); done; [ -x \"$d/node_modules/.bin/oxfmt\" ] && exec \"$d/node_modules/.bin/oxfmt\" --stdin-filepath \"$1\"; exec cat",
+                        "_",
+                        "{buffer_path}"
+                    ]
+                }
+            }
+        },
+        "Ansible": {
+            "formatter": {
+                "external": {
+                    "command": "sh",
+                    "arguments": [
+                        "-c",
+                        "d=$(dirname \"$1\"); while [ \"$d\" != / ] && [ ! -x \"$d/node_modules/.bin/oxfmt\" ]; do d=$(dirname \"$d\"); done; [ -x \"$d/node_modules/.bin/oxfmt\" ] && exec \"$d/node_modules/.bin/oxfmt\" --stdin-filepath \"$1\"; exec cat",
+                        "_",
+                        "{buffer_path}"
+                    ]
+                }
+            }
+        },
+
+        // golangci-lint is an extra server beside gopls, never started by default.
+        "Go": {
+            "language_servers": ["gopls", "golangci-lint", "..."]
         },
 
         // oxfmt does not parse `.astro`: prettier, with the oxfmt values.
