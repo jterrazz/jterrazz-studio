@@ -6,12 +6,12 @@
 {
     // ─── Appearance ──────────────────────────────────────────────────────────
     "theme": {
-        "mode": "light",
+        "mode": "dark",
         "light": "Sequoia Moonlight Light",
         "dark": "Sequoia Moonlight"
     },
     "icon_theme": {
-        "mode": "light",
+        "mode": "dark",
         "light": "Base Charmed Icons",
         "dark": "Base Charmed Icons"
     },
@@ -22,25 +22,6 @@
     // Keyed by theme name: one palette cannot suit both a light and a dark
     // theme, so each active theme (`theme.light`, `theme.dark`) carries its own.
     "theme_overrides": {
-        "Polar": {
-            "background": "#D7DBE3",
-            "editor.background": "#EAEDF3",
-            "terminal.background": "#EAEDF3",
-            "elevated_surface.background": "#F4F6FA",
-            "element.background": "#CDD3DE",
-            "title_bar.background": "#D7DBE3",
-            "status_bar.background": "#D7DBE3",
-            "toolbar.background": "#EAEDF3",
-            "tab_bar.background": "#D7DBE3",
-            "tab.inactive_background": "#D7DBE3",
-            "tab.active_background": "#EAEDF3",
-            "panel.background": "#DEE2E9",
-            "scrollbar.track.background": "#EAEDF3",
-            "editor.gutter.background": "#EAEDF3",
-            "editor.subheader.background": "#D7DBE3",
-            "editor.active_line.background": "#DFE3EB",
-            "editor.highlighted_line.background": "#DFE3EB"
-        },
         "Sequoia Moonlight": {
             "background": "#06070A",
             "editor.background": "#06070A",
