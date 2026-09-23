@@ -16,7 +16,7 @@
         "dark": "Base Charmed Icons"
     },
     "ui_font_size": 16,
-    "buffer_font_size": 14,
+    "buffer_font_size": 13.3,
     "agent_ui_font_size": 15,
 
     // Keyed by theme name: one palette cannot suit both a light and a dark
