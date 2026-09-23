@@ -8,7 +8,7 @@
 | `starship`  | `starship.toml` prompt                                                                                        |
 | `tmux`      | `tmux.conf`                                                                                                   |
 | `vscode`    | `Default.code-profile`                                                                                        |
-| `zed`       | `settings.json`                                                                                               |
+| `zed`       | `settings.json` + `.oxfmtrc.json` — the formatter values Zed applies when it saves its own settings           |
 | `zsh`       | `zshrc.sh` — sourced into `~/.zshrc` by `make install`; defines the `jj` / `jc` / `jo` / `jg` shell shortcuts |
 
 The relevant `j config` items (Terminal, Editor categories) point at these files — see [Configuration](07-configuration.md). The shell shortcuts are listed in [Commands](05-commands.md).

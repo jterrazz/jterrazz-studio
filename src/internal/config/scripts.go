@@ -255,7 +255,7 @@ var Scripts = []Script{
 		Description:  "Install Zed editor config",
 		Category:     ScriptCategoryEditor,
 		RequiresTool: "zed",
-		Help:         "Installs ~/.config/zed/settings.json from the repo (themes, keymaps, font).",
+		Help:         "Installs ~/.config/zed/settings.json and its .oxfmtrc.json from the repo (theme, formatting, agents, extensions).",
 		CheckFn:      checkFileExists(os.Getenv("HOME")+"/.config/zed/settings.json", "~/.config/zed/settings.json"),
 		InstallFn:    NoInputs(runZedConfig),
 	},
@@ -760,9 +760,22 @@ var runStarshipConfig = makeConfigInstaller("Starship",
 	"dotfiles/applications/starship/starship.toml",
 	os.Getenv("HOME")+"/.config/starship.toml")
 
-var runZedConfig = makeConfigInstaller("Zed",
-	"dotfiles/applications/zed/settings.json",
-	os.Getenv("HOME")+"/.config/zed/settings.json")
+// Zed formats its own settings.json with oxfmt on save; the .oxfmtrc.json
+// beside it holds the estate's values, or oxfmt falls back to its defaults
+// and rewrites the installed file on first open.
+func runZedConfig() error {
+	zedDir := os.Getenv("HOME") + "/.config/zed"
+	install := makeConfigInstaller("Zed",
+		"dotfiles/applications/zed/settings.json",
+		zedDir+"/settings.json")
+	if err := install(); err != nil {
+		return err
+	}
+	if err := copyRepoConfig("dotfiles/applications/zed/.oxfmtrc.json", zedDir+"/.oxfmtrc.json"); err != nil {
+		return fmt.Errorf("failed to install Zed formatter config: %w", err)
+	}
+	return nil
+}
 
 func runJavaHome() error {
 	fmt.Println(out.Cyan("Setting up JAVA_HOME..."))
