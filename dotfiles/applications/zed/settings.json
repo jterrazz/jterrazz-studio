@@ -6,12 +6,12 @@
 {
     // ─── Appearance ──────────────────────────────────────────────────────────
     "theme": {
-        "mode": "dark",
-        "light": "Polar",
+        "mode": "light",
+        "light": "Sequoia Moonlight Light",
         "dark": "Sequoia Moonlight"
     },
     "icon_theme": {
-        "mode": "dark",
+        "mode": "light",
         "light": "Base Charmed Icons",
         "dark": "Base Charmed Icons"
     },
@@ -75,6 +75,21 @@
             "version_control.conflict": "#F58EE0",
             "version_control.renamed": "#C58FFF",
             "version_control.ignored": "#2A2B31"
+        },
+        "Sequoia Moonlight Light": {
+            // Git, in the same mapping as the dark variant, on its own palette.
+            "created": "#4A85D4",
+            "modified": "#D9884A",
+            "deleted": "#C94DA8",
+            "conflict": "#C94DA8",
+            "renamed": "#9A5FD9",
+            "ignored": "#D9DAE0",
+            "version_control.added": "#4A85D4",
+            "version_control.modified": "#D9884A",
+            "version_control.deleted": "#C94DA8",
+            "version_control.conflict": "#C94DA8",
+            "version_control.renamed": "#9A5FD9",
+            "version_control.ignored": "#D9DAE0"
         }
     },
 
