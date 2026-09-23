@@ -123,7 +123,6 @@
     // Install-only: `false` never uninstalls anything.
     "auto_install_extensions": {
         // Languages & tools
-        "angular": true,
         "ansible": true,
         "astro": true,
         "csharp": true,
@@ -241,14 +240,13 @@
     "languages": {
         // Lint fixes first, then format — the order `typescript fix` runs them.
         "JavaScript": {
-            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
-            // angular would otherwise attach to every TypeScript file.
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno would
+            // otherwise attach to every TypeScript file.
             "language_servers": [
                 "typescript-ls",
                 "!vtsls",
                 "!typescript-language-server",
                 "!deno",
-                "!angular",
                 "..."
             ],
             "prettier": { "allowed": false },
@@ -258,14 +256,13 @@
             ]
         },
         "TypeScript": {
-            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
-            // angular would otherwise attach to every TypeScript file.
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno would
+            // otherwise attach to every TypeScript file.
             "language_servers": [
                 "typescript-ls",
                 "!vtsls",
                 "!typescript-language-server",
                 "!deno",
-                "!angular",
                 "..."
             ],
             "prettier": { "allowed": false },
@@ -275,14 +272,13 @@
             ]
         },
         "TSX": {
-            // tsgo is the TypeScript 7 checker `typescript check` runs; deno and
-            // angular would otherwise attach to every TypeScript file.
+            // tsgo is the TypeScript 7 checker `typescript check` runs; deno would
+            // otherwise attach to every TypeScript file.
             "language_servers": [
                 "typescript-ls",
                 "!vtsls",
                 "!typescript-language-server",
                 "!deno",
-                "!angular",
                 "..."
             ],
             "prettier": { "allowed": false },
@@ -313,7 +309,6 @@
             "formatter": { "language_server": { "name": "oxfmt" } }
         },
         "HTML": {
-            "language_servers": ["!angular", "..."],
             "prettier": { "allowed": false },
             "formatter": { "language_server": { "name": "oxfmt" } }
         },
