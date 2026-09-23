@@ -60,7 +60,21 @@
             "editor.gutter.background": "#06070A",
             "editor.subheader.background": "#0C0E13",
             "editor.active_line.background": "#817c9c1f",
-            "editor.highlighted_line.background": "#817c9c1f"
+            "editor.highlighted_line.background": "#817c9c1f",
+            // Git, in Sequoia's own palette: it has no green, its terminal
+            // maps green to blue and red to pink.
+            "created": "#8EB6F5",
+            "modified": "#FFBB88",
+            "deleted": "#F58EE0",
+            "conflict": "#F58EE0",
+            "renamed": "#C58FFF",
+            "ignored": "#2A2B31",
+            "version_control.added": "#8EB6F5",
+            "version_control.modified": "#FFBB88",
+            "version_control.deleted": "#F58EE0",
+            "version_control.conflict": "#F58EE0",
+            "version_control.renamed": "#C58FFF",
+            "version_control.ignored": "#2A2B31"
         }
     },
 
