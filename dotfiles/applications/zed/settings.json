@@ -1,72 +1,26 @@
-// Zed settings
+// Zed settings — https://zed.dev/docs/reference/all-settings
 //
-// For information on how to configure Zed, see the Zed
-// documentation: https://zed.dev/docs/configuring-zed
-//
-// To see all of Zed's default settings without changing your
-// custom settings, run `zed: open default settings` from the
-// command palette (cmd-shift-p / ctrl-shift-p)
+// Formatting follows @jterrazz/typescript: 100 columns, 4 spaces, LF,
+// oxlint (type-aware, safe fixes only) THEN oxfmt on save; `.astro` is the one
+// shape oxfmt does not parse, so it goes through prettier with the same values.
 {
-    // "project_panel": {
-    //   "dock": "right"
-    // },
-    // "outline_panel": {
-    //   "dock": "right"
-    // },
-    // "collaboration_panel": {
-    //   "dock": "right"
-    // },
-    // "git_panel": {
-    //   "dock": "right"
-    // },
-    // "agent": {
-    //   "dock": "left",
-    //   "tool_permissions": {
-    //     "default": "allow"
-    //   },
-    //   "model_parameters": []
-    // },
-    "semantic_tokens": "combined",
-    "outline_panel": {
-        "dock": "right"
+    // ─── Appearance ──────────────────────────────────────────────────────────
+    "theme": {
+        "mode": "dark",
+        "light": "Polar",
+        "dark": "Sequoia Moonlight"
     },
-    "agent": {
-        "sidebar_side": "right",
-        "dock": "right"
-    },
-    "git_panel": {
-        "dock": "left"
-    },
-    "collaboration_panel": {
-        "dock": "left",
-        "button": true
-    },
-    "project_panel": {
-        "dock": "left"
-    },
-    "agent_ui_font_size": 15.6,
-    "autosave": "on_focus_change",
-    "auto_indent_on_paste": true,
-    "minimap": {
-        "show": "auto"
-    },
-    "terminal": {
-        "font_size": 13.0
-    },
-    "base_keymap": "VSCode",
     "icon_theme": {
         "mode": "dark",
         "light": "Base Charmed Icons",
         "dark": "Base Charmed Icons"
     },
-    "tab_size": 4,
-    "ui_font_size": 15.4,
-    "buffer_font_size": 13,
-    "theme": {
-        "mode": "dark",
-        "light": "Polar",
-        "dark": "Catppuccin Mocha (Blur) [Light]"
-    },
+    "ui_font_size": 16,
+    "buffer_font_size": 14,
+    "agent_ui_font_size": 15,
+
+    // Keyed by theme name: one palette cannot suit both a light and a dark
+    // theme, so each active theme (`theme.light`, `theme.dark`) carries its own.
     "theme_overrides": {
         "Polar": {
             "background": "#D7DBE3",
@@ -93,66 +47,112 @@
             "terminal.background": "#06070A",
             "surface.background": "#101319",
             "elevated_surface.background": "#161922",
+            "element.background": "#161922",
             "drop_target.background": "#161922",
             "title_bar.background": "#0C0E13",
             "status_bar.background": "#0C0E13",
             "toolbar.background": "#06070A",
+            "tab_bar.background": "#0C0E13",
+            "tab.inactive_background": "#0C0E13",
+            "tab.active_background": "#817c9c24",
             "panel.background": "#0C0E13",
             "scrollbar.track.background": "#06070A",
             "editor.gutter.background": "#06070A",
+            "editor.subheader.background": "#0C0E13",
             "editor.active_line.background": "#817c9c1f",
-            "tab.active_background": "#817c9c24"
+            "editor.highlighted_line.background": "#817c9c1f"
         }
     },
-    "auto_install_extensions": {
-        "ansible": true,
-        "bearded-icon-theme": true,
-        "catppuccin": true,
-        "catppuccin-blur": true,
-        "charmed-icons": true,
-        "dockerfile": true,
-        "git-firefly": true,
-        "graphql": true,
-        "html": true,
-        "java": true,
-        "make": true,
-        "nord": true,
-        "nvim-nightfox": true,
-        "opencode": true,
-        "oxc": true,
-        "prisma": true,
-        "scss": true,
-        "serendipity": true,
-        "sql": true,
-        "swift": true,
-        "terraform": true,
-        "tokyo-night": true,
-        "toml": true,
-        "vesper": true,
-        "vue": true,
-        "xml": true,
-        "zig": true
+
+    // ─── Editor ──────────────────────────────────────────────────────────────
+    "base_keymap": "VSCode",
+    "autosave": "on_focus_change",
+    "format_on_save": "on",
+    "auto_indent_on_paste": true,
+    "tab_size": 4,
+    "preferred_line_length": 100,
+    "semantic_tokens": "combined",
+
+    // ─── AI ──────────────────────────────────────────────────────────────────
+    "edit_predictions": {
+        "provider": "ollama"
+    },
+    "agent": {
+        "tool_permissions": {
+            "default": "allow"
+        },
+        "model_parameters": []
     },
     "agent_servers": {
-        "opencode": {
-            "type": "registry"
+        "claude-acp": {
+            "type": "registry",
+            "default_config_options": {
+                "effort": "medium",
+                "mode": "bypassPermissions",
+                "model": "opus[1m]"
+            },
+            "favorite_config_option_values": {
+                "effort": ["medium"],
+                "model": ["opus[1m]"],
+                "mode": ["bypassPermissions", "acceptEdits"]
+            }
         },
         "codex-acp": {
             "type": "registry"
         },
-        "claude-acp": {
-            "type": "registry",
-            "default_mode": "bypassPermissions",
-            "default_model": "default",
-            "favorite_config_option_values": {
-                "mode": ["bypassPermissions"]
-            }
+        "opencode": {
+            "type": "registry"
         },
         "gemini-custom": {
             "type": "custom",
             "command": "gemini"
         }
     },
+
+    // ─── Extensions ──────────────────────────────────────────────────────────
+    // Install-only: `false` never uninstalls anything.
+    "auto_install_extensions": {
+        // Languages & tools
+        "ansible": true,
+        "astro": true,
+        "dockerfile": true,
+        "git-firefly": true,
+        "graphql": true,
+        "hoverfly": true,
+        "html": true,
+        "java": true,
+        "make": true,
+        "oxc": true,
+        "prisma": true,
+        "scss": true,
+        "sql": true,
+        "swift": true,
+        "terraform": true,
+        "toml": true,
+        "vue": true,
+        "xml": true,
+        "zig": true,
+
+        // Themes
+        "catppuccin": true,
+        "catppuccin-blur": true,
+        "everforest": true,
+        "github-dark-default": true,
+        "jetbrains-themes": true,
+        "nord": true,
+        "nvim-nightfox": true,
+        "polar-theme": true,
+        "sequoia": true,
+        "serendipity": true,
+        "tokyo-night": true,
+        "vesper": true,
+
+        // Icon themes
+        "bearded-icon-theme": true,
+        "charmed-icons": true
+    },
+
+    // ─── Language servers ────────────────────────────────────────────────────
     "lsp": {
         "oxlint": {
             "initialization_options": {
@@ -160,8 +160,8 @@
                     "configPath": null,
                     "run": "onType",
                     "disableNestedConfig": false,
-                    "fixKind": "safe_fix",
                     "typeAware": true,
+                    "fixKind": "safe_fix",
                     "unusedDisableDirectives": "deny"
                 }
             }
@@ -169,236 +169,104 @@
         "oxfmt": {
             "initialization_options": {
                 "settings": {
-                    "configPath": null,
+                    "fmt.configPath": null,
                     "run": "onSave"
                 }
             }
         }
     },
+
+    // ─── Languages ───────────────────────────────────────────────────────────
+    // Zed has no multi-language key, so each language names its formatter.
+    // `prettier.allowed: false` stops Zed's bundled prettier (on by default for
+    // these languages) from competing with oxfmt.
     "languages": {
-        "CSS": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "GraphQL": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "Handlebars": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "HTML": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
+        // Lint fixes first, then format — the order `typescript fix` runs them.
         "JavaScript": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
+            "prettier": { "allowed": false },
             "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                },
-                {
-                    "code_action": "source.fixAll.oxc"
-                }
-            ]
-        },
-        "JSX": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "JSON": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "JSON5": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "JSONC": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "Less": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "Markdown": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "MDX": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
-        },
-        "SCSS": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
+                { "code_action": "source.fixAll.oxc" },
+                { "language_server": { "name": "oxfmt" } }
             ]
         },
         "TypeScript": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
+            "prettier": { "allowed": false },
             "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
+                { "code_action": "source.fixAll.oxc" },
+                { "language_server": { "name": "oxfmt" } }
             ]
         },
         "TSX": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
+            "prettier": { "allowed": false },
             "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
+                { "code_action": "source.fixAll.oxc" },
+                { "language_server": { "name": "oxfmt" } }
             ]
         },
         "Vue.js": {
-            "format_on_save": "on",
-            "prettier": {
-                "allowed": false
-            },
+            "prettier": { "allowed": false },
             "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
+                { "code_action": "source.fixAll.oxc" },
+                { "language_server": { "name": "oxfmt" } }
             ]
         },
+
+        // Format only.
+        "CSS": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "SCSS": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "Less": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "HTML": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "GraphQL": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "JSON": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "JSONC": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "JSON5": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "Markdown": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+        "MDX": {
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
         "YAML": {
-            "format_on_save": "on",
+            "prettier": { "allowed": false },
+            "formatter": { "language_server": { "name": "oxfmt" } }
+        },
+
+        // oxfmt does not parse `.astro`: prettier, with the oxfmt values.
+        "Astro": {
+            "formatter": "prettier",
             "prettier": {
-                "allowed": false
-            },
-            "formatter": [
-                {
-                    "language_server": {
-                        "name": "oxfmt"
-                    }
-                }
-            ]
+                "allowed": true,
+                "printWidth": 100,
+                "singleQuote": true,
+                "tabWidth": 4,
+                "trailingComma": "all"
+            }
         }
     }
 }
