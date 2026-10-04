@@ -22,6 +22,6 @@ This corpus is where that knowledge is authored. `AGENTS.md` and the `skills/` e
 
 ## How this documentation is organized
 
-- **Chapters 01–04** are the spine every `@jterrazz` repository carries in the same four numbers: the shape, how it is changed, what proves the change, and how it ships.
+- **Chapters 01–04** are the shape, how it is changed, what proves the change, and how it ships — the four pages [Repo structure](11-repo-structure.md#the-pages-every-manual-holds) requires, still numbered: this manual has not been cut into its sections yet.
 - **Chapters 05–09** follow the five things `j` manages — the verbs, the machines, the configuration, the registries, and the dotfiles.
 - **Chapters 10–11** are doctrine rather than product. They describe every `@jterrazz` repository, not this one, and each ships to agents as a skill: `jterrazz-stack` and `jterrazz-repo-structure`. A change to either chapter updates its skill in the same change.

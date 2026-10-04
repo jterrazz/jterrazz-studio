@@ -12,60 +12,79 @@ An outside corpus holds two things about a repository and no more: a pointer to 
 
 ## The three roles
 
-1. **The corpus** — `docs/` (numbered chapters) plus `README.md`. This is where knowledge is _authored_: prose a human writes and maintains.
-2. **The injection layers** — `AGENTS.md` (agent brief, with `CLAUDE.md` as a symlink) and the `skills/` entries. They **route**, they never author. A skill points at a chapter; it does not restate what the chapter says.
-3. **The compiler** — a repo-specific command that projects a source layer into docs. In `package-typescript`, `typescript docs` projects the source barrel into `docs/reference/`; in `jterrazz-studio`, `make skills` projects the install registry into the toolbelt skill rosters. A repo with nothing to project simply has no compiler.
+1. **The corpus** — `README.md` plus `docs/`, cut into the five sections below. This is where knowledge is _authored_: prose a human writes and maintains.
+2. **The injection layers** — `AGENTS.md` (agent brief, with `CLAUDE.md` as a symlink) and the `skills/` entries. They **route**, they never author. A skill points at a page; it does not restate what the page says.
+3. **The compiler** — a repo-specific command that projects a source layer into the corpus. In `package-typescript`, the rule rows project into the tables of its reference pages; in `jterrazz-studio`, `make skills` projects the install registry into the toolbelt skill rosters. A repo with nothing to project simply has no compiler.
 
 ## Three golden rules
 
-- **A piece of knowledge is written once.** It lives in one chapter. Everything else links to it. No paragraph is duplicated between the README, a skill, and a chapter.
+- **A piece of knowledge is written once.** It lives on one page. Everything else links to it. No paragraph is duplicated between the README, a skill, and a page.
 - **AGENTS.md and skills route without retelling.** They are maps, not territory: a mental model plus a routing table into `docs/`. When they start explaining, the knowledge has leaked out of the corpus.
-- **The compiler projects; it never authors.** Generated files are projections of a source layer, stamped `DO-NOT-EDIT`. You change the source and regenerate — you never edit a projection.
+- **The compiler projects; it never authors.** Generated text is a projection of a source layer, held between `GENERATED` markers or stamped as generated. You change the source and regenerate — you never edit a projection.
 
 ## Committed projections vs presentations
 
 The dividing line is which layers a derived file spans:
 
-- **A projection crosses a layer boundary** — it compiles one layer into another (source code → docs). It is **committed**, so it is diffable, greppable, and agent-readable straight from the tree, and kept honest by a sync check (`typescript docs --check`, the skillsgen sync test).
+- **A projection crosses a layer boundary** — it compiles one layer into another (rule rows → a reference table, a registry → a skill roster). It is **committed**, so it is diffable, greppable, and agent-readable straight from the tree, and kept honest by a sync check.
 - **A presentation re-packages within one layer** — it re-arranges docs into another docs shape (an `llms.txt` concatenation, a rendered HTML site). It authors no new knowledge, so it is never committed; it is **built in CI only if a delivery target exists** (a hosted site, an agent-ingestion endpoint). With no such target, no presentation is produced at all — the committed corpus is read directly.
 
-## Canonical layout
+## The manual's shape
 
-| Path              | Role                                                                                          |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| `README.md`       | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.                |
-| `AGENTS.md`       | The agent brief — mental model + routing table into `docs/`. Routes, does not retell.         |
-| `CLAUDE.md`       | A symlink to `AGENTS.md`.                                                                     |
-| `TODO.md`         | The working backlog, when one is kept.                                                        |
-| `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                           |
-| `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.                     |
-| `docs/decisions/` | The repo-local decision records, `NNN-title.md`, beside the `_template.md` they are cut from. |
-| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                          |
-| `docs/_assets/`   | Files a chapter embeds. Underscored, because it is ground rather than a subject.              |
-| `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.                   |
+A reader comes to a manual in one of four moods, and each mood wants a different page. The newcomer wants to be walked to a first success; the practitioner wants the steps of one task; the curious wants to understand why; the expert wants to look one fact up. A page that serves two moods serves both badly: a tutorial interrupted by an option table loses the newcomer, a reference padded with rationale buries the fact. So the manual is cut by mood — the [Diátaxis](https://diataxis.fr) pattern — into four sections, plus the record of decisions:
 
-The list is exhaustive for the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. Those three subfolders are exhaustive too — a fourth folder under `docs/` means a subject is hiding from the numbering.
+| Path              | Holds                                                                                                                                                               |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `README.md`       | The front door — what the thing is, why it exists, and a 30-second example that works when pasted. Then a pointer to `docs/README.md`. Not a manual.                |
+| `docs/README.md`  | The map — one sentence, then every page of the four sections, grouped by section, each with what it answers.                                                        |
+| `docs/start/`     | Tutorials — the first success, from nothing, step by step, every file complete as written. For the newcomer.                                                        |
+| `docs/guides/`    | How-to guides — one task each, for a reader who knows what they want to do. A maintainer's tasks are guides like any other: `develop.md`, `test.md`, `release.md`.  |
+| `docs/concepts/`  | Explanation — the ideas, the shape and why the lines are drawn where they are. `architecture.md` opens it.                                                          |
+| `docs/reference/` | Lookup — every command, option, rule, finding and word, exhaustive and dry, in the order a reader searches them. A generated table lives here, between its markers. |
+| `docs/decisions/` | The records of the decisions this repository alone took, `NNN-kebab.md`, beside the `_template.md` they are cut from.                                               |
+| `docs/_assets/`   | Files a page embeds. Underscored, because it is ground rather than a section.                                                                                       |
 
-`docs/README.md` is the one file an outside corpus points at. It is the entry every reader lands on, so a chapter can be renumbered or split without breaking a link held somewhere else.
+There is no `contributing/` section: how to change, prove and ship the repository is what its maintainer does, and a maintainer is a reader with a task. Those pages are guides.
 
-### The spine
+### The pages every manual holds
 
-Every repository's `docs/` opens on the same four numbers, whatever the language and whatever the product. A reader landing on an unfamiliar repository knows where the shape is before opening a file, and so does an agent.
+A reader landing on an unfamiliar repository knows where its shape is, how it is changed, what proves a change and how it ships, before opening a file — and so does an agent:
 
-| Chapter              | Owns                                                                                      |
-| -------------------- | ----------------------------------------------------------------------------------------- |
-| `01-architecture.md` | The shape of the thing — its parts, their boundaries, and why the lines are drawn there.  |
-| `02-developing.md`   | How a change is made — the toolchain, the loop, which file a change opens, what it owes.  |
-| `03-testing.md`      | What proves a change — the suites, the ground they stand on, how a golden is regenerated. |
-| `04-operating.md`    | How it ships and how it runs — the release or the deploy, and the footprint it leaves.    |
+| Page                       | Owns                                                                                                     | When                                          |
+| -------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `concepts/architecture.md` | The shape of the thing — its parts, their boundaries, and why the lines are drawn there.                 | always                                        |
+| `guides/develop.md`        | How a change is made — the toolchain, the loop, which file a change opens, what it owes.                 | always                                        |
+| `guides/test.md`           | What proves a change — the suites, the ground they stand on, how a golden is regenerated.                | always                                        |
+| `guides/release.md`        | How it ships and how it runs — the publish or the deploy, what leaves the tree, the footprint it leaves. | when the repository ships something that runs |
 
-The repository's own subjects follow, numbered contiguously from `05`: one subject per chapter, in whatever order the repository reads best. A chapter's name is a subject, never a moment — `exploration`, `review`, `notes`, `draft`, `wip` name a date rather than a thing, and what happened on a date is a decision record or git's history, not a chapter.
+`architecture`, `develop` and `test` are required of every repository: everything has a shape, a way of being changed, and something that proves the change — a repository that cannot fill one of them has found a real hole, not an exemption. `release` is required when the repository ships something that runs — an image it deploys, a package it publishes, a binary it releases, a platform it provisions. The rule only ever requires it; it never forbids it. A repository that ships in a way its tree does not show — a tagged release in `.github/` — writes its `release.md` unasked, and a library that writes a hollow one gets a review comment, not a red gate.
 
-`01`, `02` and `03` are required of every repository: everything has a shape, a way of being changed, and something that proves the change — a repository that cannot fill one of them has found a real hole, not an exemption.
+`start/` is what a repository with outside users opens on: a package, a CLI, a framework. An application nobody installs may leave it empty — its newcomer is a maintainer, and `guides/develop.md` is their first page.
 
-`04-operating.md` is required when the repository ships something that runs — an image it deploys, a package it publishes, a binary it releases, a platform it provisions. The rule only ever requires it; it never forbids it. Whether a repository ships is not reliably readable from its tree — a tagged release or a deploy workflow lives in `.github/`, in a dialect a checker has no business parsing — so a repository that ships that way writes its `04` and nothing has to ask it to, and a library that writes a hollow one gets a review comment, not a red gate.
+### How a page is named and placed
 
-This chapter owns the spine. Where a checker holds part of it mechanically, the rule ids and the sentence each one prints belong to that checker, so that the message and the rule cannot drift apart — this page never lists them.
+- **A page is named for its subject**, in kebab case, with no number: `guides/adopt-a-stricter-release.md`, `reference/configuration.md`. The map gives the order; the name never does, so a page can move without renaming its neighbours. A name never names a moment — `exploration`, `review`, `notes`, `draft`, `wip` name a date rather than a thing, and what happened on a date is a decision record or git's history.
+- **A guide is named for its task** — a verb first where the language allows it — and a concept or a reference page for its thing.
+- **A section is flat.** A page sits directly in its section; a sub-folder means a section is hiding inside another.
+- **Nothing else sits in `docs/`.** The map, the five sections and `_assets/` — a loose file or a sixth folder is a page that has not found its section.
+- **The map routes to its own pages and nothing else.** It lists every page of the four sections, once, and links `decisions/`; it is the one file an outside corpus points at, so a page can be split or moved without breaking a link held somewhere else.
+
+When a page starts serving a second mood — a guide growing an option table, a reference page arguing for itself — the second half moves to its section and the first links to it. That is the one-owner rule applied inside the corpus: the option is owned by the reference, the reason by the concept, and the guide links both.
+
+This chapter owns the shape. Where a checker holds part of it mechanically, the rule ids and the sentence each one prints belong to that checker, so that the message and the rule cannot drift apart — this page never lists them.
+
+## Canonical layout of the root
+
+| Path        | Role                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------- |
+| `README.md` | The front door — what, why, a 30-second example, a pointer into `docs/`.              |
+| `AGENTS.md` | The agent brief — mental model + routing table into `docs/`. Routes, does not retell. |
+| `CLAUDE.md` | A symlink to `AGENTS.md`.                                                             |
+| `TODO.md`   | The working backlog, when one is kept.                                                |
+| `docs/`     | The corpus, in the shape above.                                                       |
+| `skills/`   | Injection layer for agents — one skill per capability, routes into `docs/`.           |
+
+The list is exhaustive for the knowledge at the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md` and no `CONTRIBUTING.md`.
 
 ## Decision records
 
@@ -77,11 +96,11 @@ A decision that spans two or more repositories is not recorded here. It belongs 
 
 ## Packages vs applications
 
-A `docs/reference/` API projection exists for **packages** — a published library has a public API surface that others consume, and the compiler keeps its readable form in lockstep with the code (see `package-typescript` [Docs pipeline](https://github.com/jterrazz/package-typescript/blob/main/docs/08-docs-pipeline.md)). An **application** (an API server, a product CLI, a web app) has no API consumers: it adopts the doctrine in full — the corpus, the routing layers, the single-home rule — and never generates `docs/reference/`. An application may still have its own compiler when it holds another source layer worth projecting, as this repo does with its install registry.
+A package's reference documents what its types cannot say — the commands, the options a config takes, the rules and findings it prints, the words it uses. The API itself is the types the package publishes: the declarations an editor resolves are the one copy, so no reference page restates a signature and no API dump is generated into `docs/`. An **application** (an API server, a product CLI, a web app) adopts the doctrine in full — the corpus, the routing layers, the single-home rule — and its `reference/` holds what its operators look up. An application may still have its own compiler when it holds a source layer worth projecting, as this repo does with its install registry.
 
 ## Language specifics
 
-The doctrine applies in full to every repo: a written corpus, thin routing layers, and knowledge that lives in exactly one place. Only the _compiler_ half is language-specific — TypeScript packages use `typescript docs`; a Go, Rust, or infra repo substitutes its own generator or has none. The projection-vs-presentation criterion is unchanged: a cross-layer compile is committed, a same-layer re-packaging is a presentation built only when a delivery target exists.
+The doctrine applies in full to every repo: a written corpus in the shape above, thin routing layers, and knowledge that lives in exactly one place. Only the _compiler_ half is language-specific. The projection-vs-presentation criterion is unchanged: a cross-layer compile is committed, a same-layer re-packaging is a presentation built only when a delivery target exists.
 
 ## Related
 

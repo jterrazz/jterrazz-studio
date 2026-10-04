@@ -27,7 +27,7 @@ The corpus is `docs/` + `README.md`, mapped by `docs/README.md`. Do not duplicat
 | `@jterrazz` stack conventions             | `docs/10-stack.md`            |
 | Repo doctrine (corpus/injection/compiler) | `docs/11-repo-structure.md`   |
 
-The repo-structure doctrine is authored **here** (`docs/11-repo-structure.md`) and ships to agents as the `jterrazz-repo-structure` skill. This repo is an application: it adopts the corpus + injection layers and never generates a `docs/reference/` projection. Its one compiler is `make skills` (`src/cmd/skillsgen/`), which projects the config registries into the `jterrazz-toolbelt` skill rosters — see `docs/08-tools-and-skills.md`.
+The repo-structure doctrine is authored **here** (`docs/11-repo-structure.md`) and ships to agents as the `jterrazz-repo-structure` skill. This repo is an application: it adopts the corpus + injection layers, and generates no API reference. Its one compiler is `make skills` (`src/cmd/skillsgen/`), which projects the config registries into the `jterrazz-toolbelt` skill rosters — see `docs/08-tools-and-skills.md`.
 
 ## Setup & commands
 

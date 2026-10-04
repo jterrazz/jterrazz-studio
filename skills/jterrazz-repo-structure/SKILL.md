@@ -1,6 +1,6 @@
 ---
 name: jterrazz-repo-structure
-description: Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs — where knowledge lives, the four-chapter spine every docs/ opens on, what gets committed, corpus vs injection layers vs compiler, projections vs presentations.
+description: Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs — where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations.
 ---
 
 # Repo structure
@@ -11,65 +11,54 @@ The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical
 
 A repo is three distinct roles — conflating them is the failure mode this skill guards against:
 
-1. **The corpus** — `docs/` (numbered chapters) + `README.md`. Where knowledge is _authored_.
+1. **The corpus** — `README.md` + `docs/`. Where knowledge is _authored_.
 2. **The injection layers** — `AGENTS.md`/`CLAUDE.md` (agent brief), `skills/` entries. They **route**, they never author.
-3. **The compiler** — a repo-specific projector, when there is a source layer worth projecting: `typescript docs` → `docs/reference/` in TypeScript packages, `make skills` → the toolbelt rosters in jterrazz-studio. No source layer, no compiler.
+3. **The compiler** — a repo-specific projector, when there is a source layer worth projecting: rule rows → the generated tables of `package-typescript`'s reference, `make skills` → the toolbelt rosters in jterrazz-studio. No source layer, no compiler.
 
 The corpus belongs to the repository: anything a change in this repo would make false — its architecture, its conventions, its runbook, its quirks, the decisions it alone took — is authored in its `docs/`. An outside corpus (the OS wiki) keeps only a pointer to the repo and the contracts between repos. A decision this repo alone took goes to `docs/decisions/NNN-title.md`; one that spans several repos is recorded by the corpus that spans them and linked from here.
 
-Scope: an API-reference projection applies to **packages** (a public API surface to project). An **application** adopts roles 1–2 in full and never generates `docs/reference/` — though it may run its own compiler over another source layer. Non-TypeScript repos: same doctrine, the compiler half substitutes the language's own generator or is absent.
-
 Three golden rules, compressed:
 
-- **Written once** — a piece of knowledge lives in one chapter; everything else links to it. No duplication between README, a skill, and a chapter.
+- **Written once** — a piece of knowledge lives on one page; everything else links to it. No duplication between README, a skill, and a page.
 - **Route, don't retell** — AGENTS.md/CLAUDE.md and skills are maps: a mental model + a routing table into `docs/`. When they start explaining, knowledge has leaked out of the corpus.
-- **The compiler projects, never authors** — generated files are projections, stamped `DO-NOT-EDIT`. Change the source and regenerate; never hand-edit a projection.
+- **The compiler projects, never authors** — generated text sits between `GENERATED` markers or is stamped as generated. Change the source and regenerate; never hand-edit a projection.
 
-Projection vs presentation — the line is which layers a derived file spans. A **projection crosses a layer** (source code → docs): it is **committed** and sync-checked, diffable and agent-readable from the tree. A **presentation re-packages within the docs layer** (an `llms.txt` concatenation, a rendered HTML site): it authors nothing new, is never committed, and is built in CI only if a delivery target exists — with none, no presentation is produced and the corpus is read directly.
+Projection vs presentation — the line is which layers a derived file spans. A **projection crosses a layer** (source → docs): it is **committed** and sync-checked. A **presentation re-packages within the docs layer** (an `llms.txt` concatenation, a rendered site): never committed, built in CI only if a delivery target exists.
 
-## Canonical layout
+## The shape — Diátaxis
 
-| Path              | Role                                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------- |
-| `README.md`       | The vitrine — what the repo is, install, a pointer into `docs/`. Not a manual.        |
-| `AGENTS.md`       | The agent brief — mental model + routing table into `docs/`. Routes, does not retell. |
-| `CLAUDE.md`       | A symlink to `AGENTS.md`.                                                             |
-| `TODO.md`         | The working backlog, when one is kept.                                                |
-| `docs/README.md`  | The map of the corpus — one sentence, then a table of the chapters.                   |
-| `docs/NN-*.md`    | The chapters, numbered, one subject each, plus any committed projections.             |
-| `docs/decisions/` | The repo-local decision records, `NNN-title.md`, beside their `_template.md`.         |
-| `docs/reference/` | Committed projections — a compiler's output, never authored by hand.                  |
-| `docs/_assets/`   | Files a chapter embeds.                                                               |
-| `skills/`         | Injection layer for agents — one skill per capability, routes into `docs/`.           |
+A page serves one reader's mood. The manual is cut by mood:
 
-The list is exhaustive for the root, and those three are the only subfolders `docs/` carries: a file or folder that is not on it does not belong there, and a repository carries no `CHANGELOG.md`. `docs/README.md` is the one file an outside corpus points at, so chapters can be renumbered without breaking an outside link.
+| Path              | Holds                                                                                              |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| `README.md`       | The front door: what, why, a 30-second example that works pasted, a pointer to `docs/README.md`.   |
+| `docs/README.md`  | The map — every page of the four sections, grouped by section, each with what it answers.          |
+| `docs/start/`     | Tutorials — the first success from nothing, every file complete.                                   |
+| `docs/guides/`    | How-to guides — one task each. Maintainer tasks are guides: `develop.md`, `test.md`, `release.md`. |
+| `docs/concepts/`  | Explanation — ideas, shape, why. `architecture.md` opens it.                                       |
+| `docs/reference/` | Lookup — commands, options, rules, findings, words; exhaustive, dry; generated tables live here.   |
+| `docs/decisions/` | `NNN-kebab.md` records beside `_template.md`.                                                      |
+| `docs/_assets/`   | Files a page embeds.                                                                               |
 
-## The spine
+No `contributing/` section, no `CONTRIBUTING.md`, no `CHANGELOG.md`. Required pages: `concepts/architecture.md`, `guides/develop.md`, `guides/test.md` always; `guides/release.md` when the repo ships something that runs. Pages are kebab-case, unnumbered, named for a subject (a guide for its task), flat inside their section; the map orders them. Nothing else sits in `docs/`.
 
-Every `docs/` opens on the same four numbers, whatever the language:
-
-- `01-architecture.md` — the shape: the parts, their boundaries, why the lines are drawn there.
-- `02-developing.md` — how a change is made: toolchain, loop, which file a change opens.
-- `03-testing.md` — what proves a change: the suites and the ground they stand on.
-- `04-operating.md` — how it ships and runs: the release or the deploy, and the footprint.
-
-The repository's own subjects are numbered contiguously from `05`, one subject each, named for a subject and never for a moment (`exploration`, `review`, `notes`, `draft`, `wip` name a date — that is an ADR or git's history). `01`–`03` are required of every repository; `04` is required when the repository ships something that runs, and never forbidden when it does not. The full rule, and why the forbidding half is a reviewer's rather than a gate's, is the doctrine chapter.
+A page growing a second mood splits: the option table to `reference/`, the why to `concepts/`, the guide links both. The API is the types — no page restates a signature, no API dump is generated.
 
 ## Where to look
 
-| Task                                                             | Read                                            |
-| ---------------------------------------------------------------- | ----------------------------------------------- |
-| The doctrine itself (three roles, golden rules, layout)          | `jterrazz-studio` `docs/11-repo-structure.md`   |
-| The spine — the four fixed chapters, and when `04` is required   | `jterrazz-studio` `docs/11-repo-structure.md`   |
-| TypeScript compiler mechanics (`typescript docs`, sync-checking) | `package-typescript` `docs/05-docs-pipeline.md` |
-| The studio's own compiler (`make skills`, the toolbelt rosters)  | `jterrazz-studio` `docs/08-tools-and-skills.md` |
+| Task                                                            | Read                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| The doctrine itself (three roles, golden rules, root layout)    | `jterrazz-studio` `docs/11-repo-structure.md`                                   |
+| The manual's shape — the sections, the required pages, naming   | `jterrazz-studio` `docs/11-repo-structure.md`                                   |
+| The rule ids the gate prints for that shape                     | `package-typescript` `docs/reference/quality-checks.md`, the Docs (layout) pass |
+| The studio's own compiler (`make skills`, the toolbelt rosters) | `jterrazz-studio` `docs/08-tools-and-skills.md`                                 |
 
 How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
 
 ## Always
 
-- Never restate a chapter's content in a skill or in AGENTS.md/CLAUDE.md — link to it instead.
-- Never hand-edit a projection — regenerate it (`typescript docs`, `make skills`).
+- Never restate a page's content in a skill or in AGENTS.md/CLAUDE.md — link to it instead.
+- Never hand-edit a projection — regenerate it (`TEST_UPDATE=1`, `make skills`).
 - Regenerate a projection in the same change that touches its source, so the sync check stays green.
-- One skill per capability, split by genuinely distinct trigger conditions — not one skill restating two chapters.
-- Never renumber a chapter without moving every inbound link in the same change — the map, the cross-links, `AGENTS.md`, and the skills.
+- One skill per capability, split by genuinely distinct trigger conditions — not one skill restating two pages.
+- Move or rename a page together with every inbound link in the same change — the map, the cross-links, `AGENTS.md`, the skills, the `read:` of every finding.
