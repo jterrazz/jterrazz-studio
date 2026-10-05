@@ -122,6 +122,18 @@ Same as library but with these differences:
 
 No `exports` or `publishConfig` needed.
 
+**The composition root.** An application is hexagonal — `typescript: { architecture: { hexagonal: true } }` in `jterrazz.config.ts` — and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
+
+```ts
+// src/index.ts
+import { compose } from './composition/compose.js';
+
+await using app = compose();
+await app.server.start(app.configuration.http);
+```
+
+The law and its why are `@jterrazz/typescript`'s [The composition root](https://github.com/jterrazz/package-typescript/blob/main/docs/concepts/the-composition-root.md); how a spec runner builds the app is `@jterrazz/test`'s [API specs](https://github.com/jterrazz/package-test/blob/main/docs/guides/api-specs.md#how-the-runner-builds-the-app).
+
 ## CI workflows
 
 **.github/workflows/validate.yaml:**
@@ -171,5 +183,5 @@ A new project starts with the corpus + injection layout, not just code. Do not a
 
 - Never use pnpm or yarn
 - Never skip the Makefile
-- Never put business logic in `src/index.ts` — it's only for exports
+- Never put business logic in `src/index.ts` — a library's only exports, an application's only composes and serves
 - Never author repo-layout advice in a skill — route to `jterrazz-repo-structure`
