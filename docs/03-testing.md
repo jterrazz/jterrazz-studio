@@ -4,7 +4,7 @@ Two suites prove a change: Go unit tests over the packages, and end-to-end specs
 
 | Section                  | Answers                                               |
 | ------------------------ | ----------------------------------------------------- |
-| The two suites           | What `make test` and `make test-e2e` each run         |
+| The two suites           | What `make test` runs, and in which order             |
 | A scenario is a document | The `<case>.spec.yaml` form and how it is regenerated |
 | What the host decides    | The tokens that stand for a host's verdicts           |
 | What CI runs             | The gate a pull request passes                        |
@@ -12,13 +12,13 @@ Two suites prove a change: Go unit tests over the packages, and end-to-end specs
 ## The two suites
 
 ```sh
-make test      # go test ./src/...
-make test-e2e  # npm install + rebuild j + vitest --run
+make test      # go test ./src/..., then the specs against a fresh build of j
+npm test       # the specs alone
 ```
 
-`make test` is the fast one: colocated `*_test.go` files next to the code they judge — the registry's parsing and validation (`src/internal/config/`), version parsing and the skill lock (`src/internal/domain/`), the TUI's section and update logic (`src/internal/presentation/views/`). One of them is a sync test over the projection: `src/cmd/skillsgen/main_test.go` fails when `skills/jterrazz-toolbelt/SKILL.md` no longer matches the registry, which is why a registry change and its `make skills` land together.
+The Go module tests come first: `*_test.go` files next to the code they judge — the registry's parsing and validation (`src/internal/config/`), version parsing and the skill lock (`src/internal/domain/`), the TUI's section and update logic (`src/internal/presentation/views/`). One of them is a sync test over the projection: `src/cmd/skillsgen/main_test.go` fails when `skills/jterrazz-toolbelt/SKILL.md` no longer matches the registry, which is why a registry change and its `make skills` land together.
 
-`make test-e2e` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/j-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `J_FORCE_REBUILD=1` is set (what the Makefile target does), or when any `src/**/*.go` is newer than the binary — an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
+Then `make test` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/j-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `J_FORCE_REBUILD=1` is set (what `make test` does), or when any `src/**/*.go` is newer than the binary — an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
 
 `vitest.config.ts` is the one line `@jterrazz/test` derives from `jterrazz.config.ts`: its `cli` project collects `specs/cli/`, and every `*.spec.yaml` there becomes a one-test module driving that runner. The runner also gives every run a `HOME` of its own — the spec's working directory — so `j` never reads the developer's `~/.jterrazz/` registry.
 
@@ -41,7 +41,7 @@ runs:
 
 A document may stand on ground of its own: `fixture: ./__fixtures__/server-registry/` spreads `specs/cli/machine/__fixtures__/server-registry/` into the working directory, which is the run's `HOME`, so the binary reads the registry inside it — which is how the server-role rows are exercised deterministically on a client laptop. Ground sits in a special folder spelt with double underscores; a subject folder never starts with one.
 
-`TEST_UPDATE=1 make test-e2e` rewrites the `exit:` and the streams of every document from what the binary actually printed — deliberately, after a change to a command's output, and never as a way to make a red suite go green. Nothing else in the file is touched.
+`TEST_UPDATE=1 npm test` rewrites the `exit:` and the streams of every document from what the binary actually printed — deliberately, after a change to a command's output, and never as a way to make a red suite go green. Nothing else in the file is touched.
 
 ## What the host decides
 
@@ -53,7 +53,7 @@ The full grammar is `@jterrazz/test`'s [Spec documents](https://github.com/jterr
 
 ## What CI runs
 
-`.github/workflows/validate.yaml` calls the shared `jterrazz-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](10-stack.md)'s. Locally the same gate is `make build`, `make lint`, `make test`, `make test-e2e`.
+`.github/workflows/validate.yaml` calls the shared `jterrazz-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](10-stack.md)'s. Locally the same gate is `make build` then `make check`.
 
 The npm half is linted by the same toolchain as every other repository: `npm run lint` is `typescript check`, and `make lint` runs it after the Go half ([Developing](02-developing.md)).
 

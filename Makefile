@@ -1,8 +1,4 @@
-.PHONY: build install uninstall check test test-e2e clean fmt vet lint skills help
-
-# ==============================================================================
-# Configuration
-# ==============================================================================
+.PHONY: help install build lint fix test check provision deprovision skills clean
 
 BINARY          := j
 BUILD_PATH      := .artifacts/go/$(BINARY)
@@ -13,8 +9,8 @@ ZSHRC_SOURCE    := dotfiles/applications/zsh/zshrc.sh
 OLD_CONFIG_DIR  := $(HOME)/.config/jterrazz
 OLD_INSTALL     := /usr/local/bin/$(BINARY)
 
-# The linter is pinned: an unpinned `@latest` makes a green run a fact about the
-# day it ran. Bump this line, read what the new release finds, land both together.
+# hazard: an unpinned `@latest` makes a green run a fact about the day it ran.
+# Bump this line, read what the new release finds, land both together.
 GOLANGCI_VERSION := v2.13.2
 GOLANGCI         := $(shell go env GOPATH)/bin/golangci-lint
 
@@ -23,20 +19,44 @@ GREEN := \033[32m
 DIM   := \033[2m
 RESET := \033[0m
 
-# ==============================================================================
-# Targets
-# ==============================================================================
-
 help: ## Show available targets
 	@printf "$(CYAN)jterrazz-studio$(RESET)\n"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "$(CYAN)%-12s$(RESET) %s\n", $$1, $$2}'
 
+node_modules/.install: package.json package-lock.json
+	@npm ci --silent
+	@touch node_modules/.install
+
+install: node_modules/.install ## Install the dependencies of both halves
+	@go mod download
+
 build: ## Build the binary
 	@go build -o $(BUILD_PATH) ./src/cmd/j
 	@printf "$(GREEN)✓$(RESET) Built $(BUILD_PATH)\n"
 
-install: build ## Build and install to ~/.jterrazz/bin
+lint: node_modules/.install ## Both halves: gofmt and golangci-lint (pinned) over Go, typescript check over the rest
+	@unformatted=$$(gofmt -l ./src/); \
+		if [ -n "$$unformatted" ]; then printf "gofmt would rewrite:\n%s\n" "$$unformatted"; exit 1; fi
+	@$(GOLANGCI) --version 2>/dev/null | grep -q "$(GOLANGCI_VERSION:v%=%)" || \
+		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_VERSION)
+	@$(GOLANGCI) run ./src/...
+	@printf "$(GREEN)✓$(RESET) Go lint passed\n"
+	@npm run --silent lint
+
+fix: node_modules/.install ## Every fixer: gofmt over Go, then typescript fix
+	@status=0; \
+	gofmt -w ./src/ || status=1; \
+	npx typescript fix || status=1; \
+	exit $$status
+
+test: node_modules/.install ## The Go module tests, then the CLI specs against a fresh build of j
+	@go test ./src/...
+	@J_FORCE_REBUILD=1 npm test
+
+check: lint test ## Every gate a change passes
+
+provision: build ## Put this build on the machine: ~/.jterrazz/bin, and the zshrc line
 	@mkdir -p $(BIN_DIR)
 	@cp $(BUILD_PATH) $(INSTALL_PATH)
 	@chmod +x $(INSTALL_PATH)
@@ -62,7 +82,7 @@ install: build ## Build and install to ~/.jterrazz/bin
 	fi
 	@printf "$(GREEN)✓$(RESET) Done — run $(DIM)source ~/.zshrc$(RESET) then $(DIM)j help$(RESET)\n"
 
-uninstall: ## Remove binary from ~/.jterrazz/bin
+deprovision: ## Remove the binary from ~/.jterrazz/bin; the user data stays
 	@if [ -f "$(INSTALL_PATH)" ]; then \
 		rm "$(INSTALL_PATH)"; \
 		printf "$(GREEN)✓$(RESET) Removed $(INSTALL_PATH)\n"; \
@@ -73,47 +93,10 @@ uninstall: ## Remove binary from ~/.jterrazz/bin
 		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL) — run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
 	fi
 
-check: ## Verify installation
-	@if command -v $(BINARY) >/dev/null 2>&1; then \
-		printf "$(GREEN)✓$(RESET) $(BINARY) $(DIM)$$(which $(BINARY))$(RESET)\n"; \
-	else \
-		printf "✗ $(BINARY) not found in PATH\n"; \
-	fi
-	@if [ -d "$(JTERRAZZ_DIR)" ]; then \
-		printf "$(GREEN)✓$(RESET) ~/.jterrazz $(DIM)exists$(RESET)\n"; \
-	else \
-		printf "✗ ~/.jterrazz not found\n"; \
-	fi
-
-test: ## Run Go unit tests
-	@go test ./src/...
-
-test-e2e: node_modules/.install ## Run end-to-end tests (requires npm)
-	@J_FORCE_REBUILD=1 npx vitest --run
-
-fmt: ## Format Go source files
-	@gofmt -w ./src/
-	@printf "$(GREEN)✓$(RESET) Formatted\n"
-
-vet: ## Run go vet
-	@go vet ./src/...
-	@printf "$(GREEN)✓$(RESET) Vet passed\n"
-
-node_modules/.install: package.json package-lock.json
-	@npm install --silent
-	@touch node_modules/.install
-
-lint: node_modules/.install ## Lint both halves: golangci-lint over Go, `typescript check` over the harness
-	@$(GOLANGCI) --version 2>/dev/null | grep -q "$(GOLANGCI_VERSION:v%=%)" || \
-		go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_VERSION)
-	@$(GOLANGCI) run ./src/...
-	@printf "$(GREEN)✓$(RESET) Go lint passed\n"
-	@npm run --silent lint
+skills: ## Regenerate the toolbelt skill rosters
+	@go run ./src/cmd/skillsgen
+	@printf "$(GREEN)✓$(RESET) Regenerated skills/jterrazz-toolbelt/SKILL.md\n"
 
 clean: ## Remove build artifacts
 	@rm -rf .artifacts
 	@printf "$(GREEN)✓$(RESET) Cleaned\n"
-
-skills: ## Regenerate the toolbelt skill rosters
-	@go run ./src/cmd/skillsgen
-	@printf "$(GREEN)✓$(RESET) Regenerated skills/jterrazz-toolbelt/SKILL.md\n"

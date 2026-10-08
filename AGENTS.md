@@ -32,13 +32,14 @@ The repo-structure doctrine is authored **here** (`docs/11-repo-structure.md`) a
 ## Setup & commands
 
 ```bash
-make build     # Build .artifacts/go/j
-make test      # Go unit tests
-make test-e2e  # npm install + rebuild j + vitest --run (the specs/cli suite)
-make lint      # golangci-lint (pinned) + typescript check
+make install    # Go modules + the npm half
+make build      # Build .artifacts/go/j
+make check      # lint (gofmt, golangci-lint pinned, typescript check) then test (go test, the specs/cli suite)
+make fix        # gofmt -w, then typescript fix
+make provision  # put this build on the machine as the real j
 ```
 
-The e2e specs need `@jterrazz/test` (npm) and rebuild `j` via an mtime check — see `specs/cli/cli.specification.ts`. `make lint` installs the npm half itself, so both linters run from one gesture.
+The specs rebuild `j` via an mtime check — see `specs/cli/cli.specification.ts`. `make install` never touches the machine; `make provision` does.
 
 ## Standing rules
 

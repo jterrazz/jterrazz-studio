@@ -6,7 +6,7 @@ This repository ships one artefact — the `j` binary — and it reaches a machi
 | ------------------------- | ----------------------------------------------- |
 | The tagged release        | What a `v*` tag builds and publishes            |
 | How a machine installs it | The one-line install, and what it leaves behind |
-| From a checkout           | `make install`, `make check`, `make uninstall`  |
+| From a checkout           | `make provision`, `make deprovision`            |
 | The footprint             | Everything `j` writes outside the repository    |
 
 ## The tagged release
@@ -39,13 +39,13 @@ Upgrading is re-running the same script: it overwrites the binary and leaves the
 ```sh
 git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz/jterrazz-studio
 cd ~/Developer/jterrazz/jterrazz-studio
-make install
+make provision
 source ~/.zshrc
 ```
 
-`make install` builds and copies the binary to `~/.jterrazz/bin/j`, appends the `zshrc.sh` source line if it is missing, and migrates what an older layout left behind — `~/.config/jterrazz/jrc.json` becomes `~/.jterrazz/config.json`, and the Tailscale state directory moves with it, both only when the new location is empty. It also removes a stale `/usr/local/bin/j` from the install that predates `~/.jterrazz/bin`, and says what to run with `sudo` when it cannot.
+`make provision` builds and copies the binary to `~/.jterrazz/bin/j`, appends the `zshrc.sh` source line if it is missing, and migrates what an older layout left behind — `~/.config/jterrazz/jrc.json` becomes `~/.jterrazz/config.json`, and the Tailscale state directory moves with it, both only when the new location is empty. It also removes a stale `/usr/local/bin/j` from the install that predates `~/.jterrazz/bin`, and says what to run with `sudo` when it cannot.
 
-`make check` answers whether the machine is equipped: `j` on `PATH`, and `~/.jterrazz` present. `make uninstall` removes the binary from both locations and touches nothing else — the user data survives.
+`make deprovision` removes the binary from both locations and touches nothing else — the user data survives.
 
 ## The footprint
 
