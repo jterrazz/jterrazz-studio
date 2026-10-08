@@ -73,7 +73,7 @@ export default defineConfig(base);
 
 **.gitignore:**
 
-```
+```text
 node_modules/
 dist
 .DS_Store

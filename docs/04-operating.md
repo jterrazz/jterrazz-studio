@@ -51,7 +51,7 @@ source ~/.zshrc
 
 Everything `j` owns on a machine lives under `~/.jterrazz/`:
 
-```
+```text
 ~/.jterrazz/
 ├── bin/           # the binary
 ├── config.json    # the machine registry and the remote settings

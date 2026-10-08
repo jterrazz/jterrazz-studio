@@ -16,7 +16,7 @@ Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, releas
 
 ## Project types and naming
 
-```
+```text
 {product}-{role}             # applications: signews-api, signews-web, signews-mobile…
 package-{name}               # shared libraries, published as @jterrazz/*
 ```
