@@ -1,0 +1,91 @@
+description: adds, lists and removes machines, keeping the registry and the managed ssh blocks in step
+runs:
+    - command: machine add mac-mini --role server --ssh agent@192.168.1.106
+      exit: 0
+      stdout: |
+          ✓ Added machine "mac-mini" (role=server)
+          ✓ Wrote ~/.ssh/config block for mac-mini
+      files:
+          .ssh/config:
+              equals: |
+                  # >>> jterrazz machine mac-mini >>>
+                  Host mac-mini
+                    HostName 192.168.1.106
+                    User agent
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine mac-mini <<<
+    - command: machine add macbook --role client
+      exit: 0
+      stdout: |
+          ✓ Added machine "macbook" (role=client)
+    - command: machine add worker --role server --ssh deploy@10.0.0.2
+      exit: 0
+      stdout: |
+          ✓ Added machine "worker" (role=server)
+          ✓ Wrote ~/.ssh/config block for worker
+    - command: machine add mac-mini --role server
+      exit: 1
+      stdout: |
+          Error: machine "mac-mini" already exists (remove it first to change it)
+    - command: machine add bad
+      exit: 1
+      stdout: |
+          Error: --role is required (client or server)
+    - command: machine add bad --role nope
+      exit: 1
+      stdout: |
+          Error: invalid role "nope" (expected client or server)
+    - command: machine add bad --role server --ssh no-at-sign
+      exit: 1
+      stdout: |
+          Error: ssh endpoint "no-at-sign" must be user@host
+    - command: machine list
+      exit: 0
+      stdout: |4
+          
+           j machine list                                                  (unregistered)
+           ───────────────────────────────────────────────────────────────────────────────
+
+            ALIAS           ROLE       ENDPOINT                         SELF
+            mac-mini        server     agent@192.168.1.106              
+            macbook         client     (local)                          
+            worker          server     deploy@10.0.0.2                  
+    - command: machine remove mac-mini
+      exit: 0
+      stdout: |
+          ✓ Removed machine "mac-mini"
+      files:
+          .jterrazz/config.json:
+              equals: |
+                  {
+                    "remote": {
+                      "mode": "userspace",
+                      "auth_method": "oauth"
+                    },
+                    "machines": {
+                      "macbook": {
+                        "role": "client"
+                      },
+                      "worker": {
+                        "role": "server",
+                        "ssh": "deploy@10.0.0.2"
+                      }
+                    }
+                  }
+          .ssh/config:
+              equals: |
+
+                  # >>> jterrazz machine worker >>>
+                  Host worker
+                    HostName 10.0.0.2
+                    User deploy
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine worker <<<
+    - command: machine remove ghost
+      exit: 1
+      stdout: |
+          Error: machine "ghost" not found

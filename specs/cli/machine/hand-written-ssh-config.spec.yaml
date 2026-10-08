@@ -1,0 +1,51 @@
+description: refuses to shadow a Host it does not manage, and refreshes the block it does
+fixture: ./__fixtures__/hand-written-ssh-config/
+runs:
+    - command: machine add mac-mini --role server --ssh agent@1.2.3.4
+      exit: 1
+      stdout: |
+          ✓ Added machine "mac-mini" (role=server)
+          Error: ssh config update failed (registry rolled back): refusing to modify {{workdir}}/.ssh/config: Host mac-mini already defined at line 1 (outside any managed block)
+      files:
+          .ssh/config:
+              equals: |
+                  Host mac-mini
+                    HostName legacy
+                    User legacy
+
+                  # >>> jterrazz machine worker >>>
+                  Host worker
+                    HostName 10.0.0.1
+                    User old
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine worker <<<
+          .jterrazz/config.json:
+              equals: |
+                  {
+                    "remote": {
+                      "mode": "userspace",
+                      "auth_method": "oauth"
+                    }
+                  }
+    - command: machine add worker --role server --ssh deploy@10.0.0.2 --identity '~/.ssh/deploy_key'
+      exit: 0
+      stdout: |
+          ✓ Added machine "worker" (role=server)
+          ✓ Wrote ~/.ssh/config block for worker
+      files:
+          .ssh/config:
+              equals: |
+                  Host mac-mini
+                    HostName legacy
+                    User legacy
+
+                  # >>> jterrazz machine worker >>>
+                  Host worker
+                    HostName 10.0.0.2
+                    User deploy
+                    IdentityFile ~/.ssh/deploy_key
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine worker <<<

@@ -1,0 +1,18 @@
+description: refuses to remove the machine it runs on
+fixture: ./__fixtures__/server-registry/
+runs:
+    - command: machine remove testbox
+      exit: 1
+      stdout: |
+          Error: refusing to remove "testbox" while it is set as self; use `j machine init` to point self elsewhere first
+      files:
+          .jterrazz/config.json:
+              equals: |
+                  {
+                      "self": "testbox",
+                      "machines": {
+                          "testbox": {
+                              "role": "server"
+                          }
+                      }
+                  }
