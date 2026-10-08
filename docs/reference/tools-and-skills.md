@@ -4,7 +4,7 @@
 
 ## The tools registry
 
-92 tools across 18 families — package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](05-commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
+The catalogue is grouped in families — package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
 
 ## The skills registry
 
@@ -35,11 +35,11 @@ The `@jterrazz` skills are the opposite. Every repository the estate declares ei
 
 ## The toolbelt skill — a committed projection
 
-The registries are also projected into an agent-facing skill: [`skills/jterrazz-toolbelt/`](../skills/jterrazz-toolbelt/SKILL.md) carries the full tool roster and the modern-replacement table, so any agent starting work on a jterrazz machine knows what is available. (The curated skills list is deliberately not projected — an installed skill is already injected into the agent.) The sections between its `GENERATED` markers are compiled from `src/internal/config/` by **`make skills`** (`src/cmd/skillsgen/`) — never edited by hand — and a Go sync test run by `make test` fails when the registry and the skill drift. Change a registry, run `make skills`, commit both in the same change.
+The registries are also projected into an agent-facing skill: [`skills/jterrazz-toolbelt/`](../../skills/jterrazz-toolbelt/SKILL.md) carries the full tool roster and the modern-replacement table, so any agent starting work on a jterrazz machine knows what is available. (The curated skills list is deliberately not projected — an installed skill is already injected into the agent.) The sections between its `GENERATED` markers are compiled from `src/internal/config/` by **`make skills`** (`src/cmd/skillsgen/`) — never edited by hand — and a Go sync test run by `make test` fails when the registry and the skill drift. Change a registry, run `make skills`, commit both in the same change.
 
 This is the repo's one compiler in the sense of the repo-structure doctrine: the registry is the source layer, the skill roster is its committed, diffable projection.
 
 ## Related
 
-- [Commands](05-commands.md) — `j install` / `j upgrade` / `j clean`.
-- [Configuration](07-configuration.md) — the Skills tab.
+- [Commands](commands.md) — `j install` / `j upgrade` / `j clean`.
+- [Configuration](configuration.md) — the Skills tab.

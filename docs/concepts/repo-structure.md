@@ -71,7 +71,7 @@ A reader landing on an unfamiliar repository knows where its shape is, how it is
 
 When a page starts serving a second mood — a guide growing an option table, a reference page arguing for itself — the second half moves to its section and the first links to it. That is the one-owner rule applied inside the corpus: the option is owned by the reference, the reason by the concept, and the guide links both.
 
-This chapter owns the shape. Where a checker holds part of it mechanically, the rule ids and the sentence each one prints belong to that checker, so that the message and the rule cannot drift apart — this page never lists them.
+This page owns the shape. Where a checker holds part of it mechanically, the rule ids and the sentence each one prints belong to that checker, so that the message and the rule cannot drift apart — this page never lists them.
 
 ## Canonical layout of the root
 
@@ -104,5 +104,5 @@ The doctrine applies in full to every repo: a written corpus in the shape above,
 
 ## Related
 
-- [The stack](10-stack.md) — how `@jterrazz` projects compose.
-- [Tools and skills](08-tools-and-skills.md) — this repo's own compiler, `make skills`.
+- [The stack](stack.md) — how `@jterrazz` projects compose.
+- [Tools and skills](../reference/tools-and-skills.md) — this repo's own compiler, `make skills`.

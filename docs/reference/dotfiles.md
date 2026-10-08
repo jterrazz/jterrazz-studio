@@ -11,9 +11,9 @@
 | `zed`       | `settings.json` + `.oxfmtrc.json` — the formatter values Zed applies when it saves its own settings           |
 | `zsh`       | `zshrc.sh` — sourced into `~/.zshrc` by `make install`; defines the `jj` / `jc` / `jo` / `jg` shell shortcuts |
 
-The relevant `j config` items (Terminal, Editor categories) point at these files — see [Configuration](07-configuration.md). The shell shortcuts are listed in [Commands](05-commands.md).
+The relevant `j config` items (Terminal, Editor categories) point at these files — see [Configuration](configuration.md). The shell shortcuts are listed in [Commands](commands.md).
 
 ## Related
 
-- [Configuration](07-configuration.md) — the items that install these configs.
-- [Operating](04-operating.md) — how `zshrc.sh` gets sourced onto a machine.
+- [Configuration](configuration.md) — the items that install these configs.
+- [Release](../guides/release.md) — how `zshrc.sh` gets sourced onto a machine.

@@ -1,9 +1,11 @@
 ---
 name: jterrazz-new-project
-description: Scaffolds a new @jterrazz project with all conventions — package.json, tsconfig, Makefile, CI workflows, linting. Use when creating a new app or library from scratch.
+description: Scaffolds a new @jterrazz project with all conventions — jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch.
 ---
 
 # Create a new @jterrazz project
+
+A project is born declared: one `jterrazz.config.ts`, the derived editor files, a Makefile answering the six gestures. How each is written — the steps, the files whole, the first `make check` — is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md), and where a test lives is `@jterrazz/test`'s [Set up a project](https://github.com/jterrazz/package-test/blob/main/docs/start/set-up-a-project.md). Follow them; this skill holds only what the estate adds.
 
 ## For a new library (package-{name})
 
@@ -13,7 +15,7 @@ git init
 npm init -y
 ```
 
-**package.json:**
+The identity `package.json` carries beside what Getting started writes:
 
 ```json
 {
@@ -22,105 +24,16 @@ npm init -y
     "author": "Jean-Baptiste Terrazzoni <contact@jterrazz.com>",
     "type": "module",
     "files": ["dist"],
-
-    "exports": {
-        ".": {
-            "require": "./dist/index.cjs",
-            "import": "./dist/index.js"
-        }
-    },
     "publishConfig": { "registry": "https://registry.npmjs.org/" },
-    "repository": { "type": "git", "url": "https://github.com/jterrazz/package-{name}" },
-
-    "scripts": {
-        "build": "typescript bundle",
-        "lint": "typescript check",
-        "lint:fix": "typescript fix",
-        "test": "vitest --run"
-    },
-    "devDependencies": {
-        "@jterrazz/test": "latest",
-        "@jterrazz/typescript": "latest",
-        "@types/node": "latest",
-        "vitest": "latest"
-    }
+    "repository": { "type": "git", "url": "https://github.com/jterrazz/package-{name}" }
 }
 ```
 
-**tsconfig.json:**
-
-```json
-{ "extends": "@jterrazz/typescript/tsconfig/node" }
-```
-
-**oxlint.config.ts:**
-
-```ts
-import { defineConfig, node } from '@jterrazz/typescript/oxlint';
-
-export default defineConfig({ extends: [node] });
-```
-
-Swap `node` for the profile the project picked, and compose `testing` from `@jterrazz/test/oxlint` where it has specs. Both `defineConfig` and the preset arrive from `@jterrazz/typescript` — a config naming `oxlint` itself asks the project to declare the tool as well.
-
-**oxfmt.config.ts:**
-
-```ts
-import { base, defineConfig } from '@jterrazz/typescript/oxfmt';
-
-export default defineConfig(base);
-```
-
-**.gitignore:**
-
-```text
-node_modules/
-dist
-.DS_Store
-.idea
-```
-
-**Makefile:**
-
-```makefile
-.PHONY: build lint test install
-
-node_modules/.install: package-lock.json
-	npm ci
-	@touch node_modules/.install
-
-install: node_modules/.install
-
-build: node_modules/.install
-	npm run build
-
-lint: node_modules/.install
-	npm run lint
-
-test: node_modules/.install
-	npm test
-```
-
-**Create `src/index.ts`**, then `npm install && npm run build`.
+`jterrazz.config.ts` declares `kind: 'library'`, the platform it runs on, and `presets: [test()]`.
 
 ## For a new application ({product}-{role})
 
-Same as library but with these differences:
-
-**package.json scripts:**
-
-```json
-{
-    "build": "typescript build",
-    "start": "typescript start",
-    "dev": "typescript dev",
-    "lint": "typescript check",
-    "lint:fix": "typescript fix",
-    "test": "vitest --run"
-}
-```
-
-No `exports` or `publishConfig` needed.
+`"private": true`, no `exports` or `publishConfig`; `jterrazz.config.ts` declares the application's kind — `api`, `cli`, `website` or `mobile` — and its platform.
 
 **The composition root.** An application is hexagonal — `typescript: { architecture: { hexagonal: true } }` in `jterrazz.config.ts` — and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
 
@@ -172,12 +85,11 @@ jobs:
 
 ## Repo structure — born structured
 
-A new project starts with the corpus + injection layout, not just code. Do not author layout advice here — follow the **`jterrazz-repo-structure`** skill / `package-typescript` `docs/06-repo-structure.md`:
+A new project starts with the corpus + injection layout, not just code. Do not author layout advice here — follow the **`jterrazz-repo-structure`** skill, whose canonical page is `jterrazz-studio` `docs/concepts/repo-structure.md`:
 
 - `README.md` — the vitrine (what it is, install, a pointer into `docs/`), not a manual.
 - `AGENTS.md` — the agent brief (mental model + routing table into `docs/`); `CLAUDE.md` is a **symlink** to it (`ln -s AGENTS.md CLAUDE.md`).
-- `docs/` — the corpus of numbered chapters; write only real authored knowledge.
-- Packages generate the `docs/reference/` projection with `typescript docs`; applications skip it.
+- `docs/` — the manual cut by mood: `start/`, `guides/`, `concepts/`, `reference/`, `decisions/`; `concepts/architecture.md`, `guides/develop.md` and `guides/test.md` from day one.
 
 ## Never
 

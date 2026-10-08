@@ -12,14 +12,14 @@ curl -fsSL https://raw.githubusercontent.com/jterrazz/jterrazz-studio/main/scrip
 source ~/.zshrc
 ```
 
-The binary lives at `~/.jterrazz/bin/j`; all user data goes under `~/.jterrazz/`. What the install leaves on a machine, and the release it comes from, are in [Operating](docs/04-operating.md); building it from a checkout is [Developing](docs/02-developing.md).
+The binary lives at `~/.jterrazz/bin/j`; all user data goes under `~/.jterrazz/`. The first steps after it are [Getting started](docs/start/getting-started.md); what the install leaves on a machine is [Footprint](docs/reference/footprint.md), and the release it comes from [Release](docs/guides/release.md).
 
 ## What it does
 
 ```sh
 j status      # Full-screen dashboard (system, workspace, apps, config)
 j machine     # Machine registry, remote actions, server config
-j install     # Install from a 100+ tool catalogue
+j install     # Install from the tool catalogue
 j config      # Configure the local machine (terminal, security, editor, skills)
 j remote      # Tailscale connect / disconnect
 j run         # git + docker shortcuts
@@ -27,7 +27,7 @@ j run         # git + docker shortcuts
 
 ## Documentation
 
-The corpus lives in [`docs/`](docs/README.md) — start at its map, which lists every chapter.
+The corpus lives in [`docs/`](docs/README.md) — start at its map, which lists every page.
 
 For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills — `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project`, `jterrazz-repo-structure` — the reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
 

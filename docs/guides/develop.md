@@ -18,7 +18,7 @@ make build                # .artifacts/go/j
 ./.artifacts/go/j status  # run the build without installing it
 ```
 
-Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Testing](03-testing.md)). `make provision` puts the build on the machine as the real `j` — that gesture, and everything else about a machine that has `j` on it, is [Operating](04-operating.md)'s.
+Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j` — that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
 
 ## The make targets
 
@@ -39,7 +39,7 @@ The first six are the gestures every repository of the estate answers, so a sess
 
 ## Where a change goes
 
-Most changes are a registry entry, not new code — that is the shape [Architecture](01-architecture.md) describes. The file to open:
+Most changes are a registry entry, not new code — that is the shape [Architecture](../concepts/architecture.md) describes. The file to open:
 
 | Change                               | File                                                                              |
 | ------------------------------------ | --------------------------------------------------------------------------------- |
@@ -57,13 +57,13 @@ Most changes are a registry entry, not new code — that is the shape [Architect
 
 Four things land in the same commit as the change that makes them true:
 
-- **A registry change regenerates the projection.** Run `make skills`; the sync test in `make test` fails otherwise, and the sections between the `GENERATED` markers are never edited by hand ([Tools and skills](08-tools-and-skills.md)).
-- **A change to a command's output regenerates the specs.** `TEST_UPDATE=1 npm test` rewrites the `exit:` and the streams of the affected documents, and nothing else ([Testing](03-testing.md)).
-- **A change to behaviour updates its chapter.** The corpus is where this repository's knowledge is authored; a page left saying what is no longer true is a bug that shipped.
-- **A change to a doctrine chapter updates its skill.** [The stack](10-stack.md) ships as `jterrazz-stack` and [Repo structure](11-repo-structure.md) as `jterrazz-repo-structure`; skills route, they never author.
+- **A registry change regenerates the projection.** Run `make skills`; the sync test in `make test` fails otherwise, and the sections between the `GENERATED` markers are never edited by hand ([Tools and skills](../reference/tools-and-skills.md)).
+- **A change to a command's output regenerates the specs.** `TEST_UPDATE=1 npm test` rewrites the `exit:` and the streams of the affected documents, and nothing else ([Test](test.md)).
+- **A change to behaviour updates its page.** The corpus is where this repository's knowledge is authored; a page left saying what is no longer true is a bug that shipped.
+- **A change to a doctrine page updates its skill.** [The stack](../concepts/stack.md) ships as `jterrazz-stack` and [Repo structure](../concepts/repo-structure.md) as `jterrazz-repo-structure`; skills route, they never author.
 
 ## Related
 
-- [Architecture](01-architecture.md) — the shape a change lands in.
-- [Testing](03-testing.md) — the two suites, and the document form of a spec.
-- [Operating](04-operating.md) — installing, and the tagged release.
+- [Architecture](../concepts/architecture.md) — the shape a change lands in.
+- [Test](test.md) — the two suites, and the document form of a spec.
+- [Release](release.md) — installing, and the tagged release.

@@ -5,25 +5,25 @@ description: Overview of the @jterrazz ecosystem — shared npm packages, projec
 
 # @jterrazz Stack
 
-The map of the `@jterrazz` ecosystem: composable packages, one set of conventions, interchangeable repos. Canonical home: `jterrazz-studio` `docs/10-stack.md`.
+The map of the `@jterrazz` ecosystem: composable packages, one set of conventions, interchangeable repos. Canonical home: `jterrazz-studio` `docs/concepts/stack.md`.
 
 ## Mental model
 
-- **Five shared packages, one concern each** — `@jterrazz/typescript` (toolchain), `@jterrazz/test` (testing), `@jterrazz/logger`, `@jterrazz/intelligence`, `@jterrazz/broadcast`. CI/CD is shared workflows from `jterrazz-actions`; infra is `jterrazz-infrastructure`.
+- **Shared packages, one concern each** — `@jterrazz/typescript` (toolchain) and `@jterrazz/test` (testing) under every project; `telemetry`, `intelligence`, `analytics`, `broadcast`, `manifest`, `attestation` where a project needs them. CI/CD is shared workflows from `jterrazz-actions`; infra is `jterrazz-infrastructure`.
 - **Two project shapes** — libraries (`package-*`, published `@jterrazz/*`, ports & adapters) and applications (`{product}-{role}`, hexagonal). Both build/lint/test through `@jterrazz/typescript` and `@jterrazz/test`.
-- **Same required files everywhere** — Makefile (`build`/`lint`/`test`), tsconfig + lint configs extending the shared presets, the validate workflow, and the root files the repo-structure doctrine mandates.
+- **A project declares what it is once** — `jterrazz.config.ts` (kind, platform, presets, exceptions with reasons); the editor files are one-line derivations, the Makefile answers the six gestures (`install`, `build`, `lint`, `fix`, `test`, `check`), the validate workflow is shared, and the root files are the repo-structure doctrine's.
 
 ## Where to look
 
-| Task                                                | Read                                 |
-| --------------------------------------------------- | ------------------------------------ |
-| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/10-stack.md` |
-| Build / lint / format / API docs                    | `jterrazz-typescript` skill          |
-| Testing conventions and structure                   | `jterrazz-test` skill                |
-| Scaffolding a new project                           | `jterrazz-new-project` skill         |
-| CI/CD workflows                                     | `jterrazz-workflows` skill           |
-| Where knowledge lives in a repo                     | `jterrazz-repo-structure` skill      |
-| What is installed on the machine                    | `jterrazz-toolbelt` skill            |
+| Task                                                | Read                                       |
+| --------------------------------------------------- | ------------------------------------------ |
+| The whole picture: packages, naming, required files | `jterrazz-studio` `docs/concepts/stack.md` |
+| Build / lint / format / API docs                    | `jterrazz-typescript` skill                |
+| Testing conventions and structure                   | `jterrazz-test` skill                      |
+| Scaffolding a new project                           | `jterrazz-new-project` skill               |
+| CI/CD workflows                                     | `jterrazz-workflows` skill                 |
+| Where knowledge lives in a repo                     | `jterrazz-repo-structure` skill            |
+| What is installed on the machine                    | `jterrazz-toolbelt` skill                  |
 
 ## Always
 

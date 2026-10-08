@@ -5,7 +5,7 @@ description: Use when organizing or restructuring a repository's documentation, 
 
 # Repo structure
 
-The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/11-repo-structure.md`.
+The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/concepts/repo-structure.md`.
 
 ## Mental model
 
@@ -46,12 +46,12 @@ A page growing a second mood splits: the option table to `reference/`, the why t
 
 ## Where to look
 
-| Task                                                            | Read                                                                            |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| The doctrine itself (three roles, golden rules, root layout)    | `jterrazz-studio` `docs/11-repo-structure.md`                                   |
-| The manual's shape — the sections, the required pages, naming   | `jterrazz-studio` `docs/11-repo-structure.md`                                   |
-| The rule ids the gate prints for that shape                     | `package-typescript` `docs/reference/quality-checks.md`, the Docs (layout) pass |
-| The studio's own compiler (`make skills`, the toolbelt rosters) | `jterrazz-studio` `docs/08-tools-and-skills.md`                                 |
+| Task                                                            | Read                                                                                                                                                                            |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The doctrine itself (three roles, golden rules, root layout)    | `jterrazz-studio` `docs/concepts/repo-structure.md`                                                                                                                             |
+| The manual's shape — the sections, the required pages, naming   | `jterrazz-studio` `docs/concepts/repo-structure.md`                                                                                                                             |
+| The rule ids the gate prints for that shape                     | `package-typescript`'s [Quality checks](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/quality-checks.md#the-docs-layout-pass), the Docs (layout) pass |
+| The studio's own compiler (`make skills`, the toolbelt rosters) | `jterrazz-studio` `docs/reference/tools-and-skills.md`                                                                                                                          |
 
 How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
 

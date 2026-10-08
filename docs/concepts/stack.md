@@ -1,16 +1,19 @@
 # The stack
 
-How every `@jterrazz` project composes: the shared packages, the naming scheme, the required files, and the conventions that make repos interchangeable. Deep knowledge stays in each package's own corpus — this chapter is the map of the whole.
+How every `@jterrazz` project composes: the shared packages, the naming scheme, the required files, and the conventions that make repositories interchangeable. Deep knowledge stays in each package's own manual — this page is the map of the whole.
 
 ## Shared packages
 
-| Package                  | Owns                                                         | Corpus                     |
-| ------------------------ | ------------------------------------------------------------ | -------------------------- |
-| `@jterrazz/typescript`   | Toolchain — build, quality checks, lint presets, API docs    | `package-typescript/docs/` |
-| `@jterrazz/test`         | Testing — conventions, structure, mocking, service factories | `package-test/docs/`       |
-| `@jterrazz/logger`       | Structured logging (pino)                                    | `package-logger`           |
-| `@jterrazz/intelligence` | AI toolkit (OpenRouter, Langfuse)                            | `package-intelligence`     |
-| `@jterrazz/broadcast`    | Multi-channel announcements (App Store, push)                | `package-broadcast/docs/`  |
+| Package                  | Owns                                                                                   | Manual                       |
+| ------------------------ | -------------------------------------------------------------------------------------- | ---------------------------- |
+| `@jterrazz/typescript`   | The toolchain — the settings file, build, quality checks, lint presets, mutation       | `package-typescript/docs/`   |
+| `@jterrazz/test`         | Testing — the specifications, the conventions and where a test lives, the doubles      | `package-test/docs/`         |
+| `@jterrazz/telemetry`    | Logs, traces and metrics over OpenTelemetry, behind ports                              | `package-telemetry/docs/`    |
+| `@jterrazz/intelligence` | The AI SDK composition layer — providers, cost, fallback, logging middleware           | `package-intelligence/docs/` |
+| `@jterrazz/analytics`    | Product analytics behind a port — typed events, the OpenPanel adapter                  | `package-analytics/docs/`    |
+| `@jterrazz/broadcast`    | Multi-channel announcements — App Store in-app events, push notifications              | `package-broadcast/docs/`    |
+| `@jterrazz/manifest`     | A site's machine-facing presence declared once — metadata, JSON-LD, sitemap, its audit | `package-manifest/docs/`     |
+| `@jterrazz/attestation`  | Article attestation — an EIP-712 signature anchored to Bitcoin                         | `package-attestation/docs/`  |
 
 Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/jterrazz-infrastructure` (K3s, Helm, Traefik).
 
@@ -23,36 +26,37 @@ package-{name}               # shared libraries, published as @jterrazz/*
 
 Roles: `-api`, `-web`, `-mobile`, `-broadcast`, `-blueprint`, `-landing`.
 
-**Library** npm scripts: `build: typescript bundle`, `lint: typescript check`, `lint:fix: typescript fix`, `test: vitest --run`.
-**Application** adds `start: typescript start` and `dev: typescript dev`, and builds with `typescript build` instead of `bundle`.
+A project declares what it is once, in `jterrazz.config.ts`: its `kind` — `library`, `api`, `cli`, `website`, `mobile` or `workspace` — and its `platform`, from which the toolchain derives the rest. The two lists, and what each kind and platform imply, are `@jterrazz/typescript`'s [Configuration](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/configuration.md).
 
 ## Required files
 
 Every project carries:
 
-- `Makefile` with `build`, `lint`, `test` targets.
-- `tsconfig.json` extending `@jterrazz/typescript/tsconfig/node`.
-- `oxlint.config.ts` + `oxfmt.config.ts` importing the `@jterrazz/typescript` presets.
-- `.github/workflows/validate.yaml` using the shared workflow (runs `make build`, `make lint`, `make test`).
-- The root files mandated by the [repo-structure doctrine](11-repo-structure.md): README vitrine, `AGENTS.md` (+ `CLAUDE.md` symlink), a `docs/` corpus.
+- `jterrazz.config.ts` — the kind, the platform, the presets it is held to, and every exception with its reason.
+- The editor files the toolchain derives and `typescript fix` writes — `tsconfig.json`, `oxlint.config.ts`, `oxfmt.config.ts`, and `vitest.config.ts` from `@jterrazz/test`'s preset — each one line. No other tool keeps a config at the root.
+- A `Makefile` answering the six gestures — `install`, `build`, `lint`, `fix`, `test`, `check` — with `check` the whole gate.
+- `.github/workflows/validate.yaml` calling the shared workflow, which runs `make build`, `make lint`, `make test`, then `make mutation` where the Makefile has one.
+- The root files mandated by the [repo-structure doctrine](repo-structure.md): the README front door, `AGENTS.md` (+ the `CLAUDE.md` symlink), a `docs/` manual cut by mood.
 
-A repository whose product is not TypeScript carries them all the same, for the half that is: `j` is a Go binary with an end-to-end harness under `specs/`, and that harness names the `node` profile composed with `@jterrazz/test`'s `testing` fragment like any other project. Its own language answers to its own linter — `.golangci.yml`, at the pinned version the Makefile names — and `make lint` runs both, in that order.
+How each is written is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md); scaffolding one from nothing is the `jterrazz-new-project` skill.
+
+A repository whose product is not TypeScript carries them all the same, for the half that is: `j` is a Go binary whose end-to-end harness under `specs/` declares itself a `cli` on `node` held to `@jterrazz/test`'s preset. Its own language answers to its own linter — `.golangci.yml`, at the version the Makefile pins — and each gesture runs both halves.
 
 ## Testing
 
-The convention is defined by `@jterrazz/test`, and every project follows it: the SUBJECT decides where a test lives and what it is called — one unit beside its code as `<file>.test.ts` (a rendered one `.test.tsx`), the assembled product met through an entry under `specs/<facet>/<domain>/` as `<aspect>.spec.ts`, and a terminal session as a `<case>.spec.yaml` document. What a spec stands on — `_fixtures/`, `_expected/`, `_requests/`, `_seeds/` — carries a leading underscore; a spec's own folder never does. The full convention lives in `package-test`'s corpus — route there, don't restate it.
+The convention is `@jterrazz/test`'s, and every project follows it: the SUBJECT decides where a test lives. A module test proves one unit from the `__tests__/` folder of its module's folder (`dir/__tests__/foo.test.ts` for `dir/foo.ts`); the assembled product is specified from outside, under `specs/<kind>/`, through the runner its `<kind>.specification.ts` builds, and a terminal session is a `<case>.spec.yaml` document. What a spec stands on sits in the closed list of special folders — `__setup__/`, `__fixtures__/`, `__expected__/`, `__requests__/`, `__seeds__/` — at the lowest folder its readers share. The full convention is `package-test`'s manual — route there, don't restate it.
 
 ## Architecture
 
-Libraries use **ports & adapters** (`src/ports/` interfaces, `src/adapters/` implementations, `src/index.ts` barrel). Applications use **hexagonal** (`src/domain/`, `src/application/`, `src/infrastructure/`) — enforced by the `hexagonal` oxlint preset, documented in `package-typescript/docs/07-lint-presets.md`.
+Libraries use **ports & adapters** (`src/ports/` interfaces, `src/adapters/` implementations, `src/index.ts` the entry). Applications are **hexagonal** (`src/domain/`, `src/application/`, `src/infrastructure/`), built in one place, the composition root `src/composition/compose.ts`, with no DI container — the layer map is `@jterrazz/typescript`'s [hexagonal map](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/quality-checks.md#the-hexagonal-map), the law and [The composition root](https://github.com/jterrazz/package-typescript/blob/main/docs/concepts/the-composition-root.md).
 
 ## Standing conventions
 
-- `npm` only — never pnpm or yarn; every repo commits `package-lock.json`.
+- `npm` only — never pnpm or yarn; every repo commits `package-lock.json`. A unit on the `bun` platform is the one exception, and declares it.
 - Node.js 24, ESM only (`"type": "module"`), `.js` extensions in Node imports.
 - Author: `Jean-Baptiste Terrazzoni <contact@jterrazz.com>`.
 
 ## Related
 
-- [Repo structure](11-repo-structure.md) — where knowledge lives in every repo.
-- [Tools and skills](08-tools-and-skills.md) — the machine-side registries that distribute the skills.
+- [Repo structure](repo-structure.md) — where knowledge lives in every repo.
+- [Tools and skills](../reference/tools-and-skills.md) — the machine-side registries that distribute the skills.

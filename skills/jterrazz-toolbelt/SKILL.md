@@ -185,11 +185,11 @@ Modern replacements are on every machine — prefer them over the defaults:
 
 ## Where knowledge lives
 
-| Question                                   | Read (in jterrazz-studio)     |
-| ------------------------------------------ | ----------------------------- |
-| How the registries work, adding a tool     | `docs/08-tools-and-skills.md` |
-| Install / upgrade / status commands        | `docs/05-commands.md`         |
-| What is actually installed on this machine | run `j status`                |
+| Question                                   | Read (in jterrazz-studio)            |
+| ------------------------------------------ | ------------------------------------ |
+| How the registries work, adding a tool     | `docs/reference/tools-and-skills.md` |
+| Install / upgrade / status commands        | `docs/reference/commands.md`         |
+| What is actually installed on this machine | run `j status`                       |
 
 ## Always
 

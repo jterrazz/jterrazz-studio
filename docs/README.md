@@ -1,27 +1,40 @@
-# j — documentation
+# j — the manual
 
-`j` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine. It installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants on top of what the estate's own repositories already supply.
+`j` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine — it installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants. This repository also authors two doctrines every `@jterrazz` repository follows, shipped to agents as skills. This page lists every page of the manual, by what the reader came to do.
 
-This corpus is where that knowledge is authored. `AGENTS.md` and the `skills/` entries route into it; they never restate it.
+## Start
 
-## Table of contents
+| Page                                        | Answers                                                        |
+| ------------------------------------------- | -------------------------------------------------------------- |
+| [Getting started](start/getting-started.md) | From a fresh Mac to a registered, configured machine, in order |
 
-| Chapter                                         | Covers                                                                                |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [01 — Architecture](01-architecture.md)         | The binary, the four packages, why a feature is a registry entry                      |
-| [02 — Developing](02-developing.md)             | Working from source, the make targets, which file a change opens                      |
-| [03 — Testing](03-testing.md)                   | The Go units, the `specs/cli` documents, `make test-e2e`                              |
-| [04 — Operating](04-operating.md)               | The tagged release, how a machine installs `j`, its footprint                         |
-| [05 — Commands](05-commands.md)                 | `status`, `install`, `upgrade`, `clean`, `run`, and the shell shortcuts               |
-| [06 — Machines](06-machines.md)                 | The machine registry, the `config.json` model, roles, remote access                   |
-| [07 — Configuration](07-configuration.md)       | The `j config` TUI: items, categories, and what each one writes                       |
-| [08 — Tools and skills](08-tools-and-skills.md) | The tool and skill registries, the `skills` CLI integration, the toolbelt projection  |
-| [09 — Dotfiles](09-dotfiles.md)                 | The versioned application configs under `dotfiles/applications/`                      |
-| [10 — The stack](10-stack.md)                   | How `@jterrazz` projects compose: packages, naming, required files, conventions       |
-| [11 — Repo structure](11-repo-structure.md)     | Where knowledge lives in every `@jterrazz` repo — the canonical home of that doctrine |
+## Guides
 
-## How this documentation is organized
+| Page                         | Answers                                                                          |
+| ---------------------------- | -------------------------------------------------------------------------------- |
+| [Develop](guides/develop.md) | Working from source: the gestures, which file a change opens, what a change owes |
+| [Test](guides/test.md)       | The Go module tests, the `specs/cli` documents, how a host's verdict is written  |
+| [Release](guides/release.md) | The tagged release, how a machine takes it, provisioning from a checkout         |
 
-- **Chapters 01–04** are the shape, how it is changed, what proves the change, and how it ships — the four pages [Repo structure](11-repo-structure.md#the-pages-every-manual-holds) requires, still numbered: this manual has not been cut into its sections yet.
-- **Chapters 05–09** follow the five things `j` manages — the verbs, the machines, the configuration, the registries, and the dotfiles.
-- **Chapters 10–11** are doctrine rather than product. They describe every `@jterrazz` repository, not this one, and each ships to agents as a skill: `jterrazz-stack` and `jterrazz-repo-structure`. A change to either chapter updates its skill in the same change.
+## Concepts
+
+| Page                                         | Answers                                                                                          |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [Architecture](concepts/architecture.md)     | The binary, the four packages, why a feature is a registry entry, the one compiler               |
+| [The stack](concepts/stack.md)               | How `@jterrazz` projects compose: packages, naming, required files — shipped as `jterrazz-stack` |
+| [Repo structure](concepts/repo-structure.md) | Where knowledge lives in every `@jterrazz` repository — shipped as `jterrazz-repo-structure`     |
+
+## Reference
+
+| Page                                              | Answers                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------- |
+| [Commands](reference/commands.md)                 | `status`, `install`, `upgrade`, `clean`, `run`, and the shell shortcuts   |
+| [Machines](reference/machines.md)                 | The machine registry, the `config.json` model, roles, remote access       |
+| [Configuration](reference/configuration.md)       | The `j config` TUI: its tabs, items, categories, and what each one writes |
+| [Tools and skills](reference/tools-and-skills.md) | The tool and skill registries, the `skills` CLI, the toolbelt projection  |
+| [Dotfiles](reference/dotfiles.md)                 | The versioned application configs under `dotfiles/applications/`          |
+| [Footprint](reference/footprint.md)               | Everything `j` writes on a machine                                        |
+
+## Decisions
+
+The records of decisions this repository alone took go in [`decisions/`](decisions/), numbered in the order they were taken, the mold `_template.md` beside them. A decision spanning several repositories is recorded by the corpus that spans them.

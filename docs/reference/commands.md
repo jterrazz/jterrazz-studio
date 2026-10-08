@@ -1,6 +1,6 @@
 # Commands
 
-The everyday verbs. Machine management is in [Machines](06-machines.md); the interactive configurator in [Configuration](07-configuration.md).
+The everyday verbs. Machine management is in [Machines](machines.md); the interactive configurator in [Configuration](configuration.md).
 
 ## `j status`
 
@@ -8,7 +8,7 @@ Full-screen TUI dashboard, organised into 4 tabs (`←/→` to cycle, `1..4` to 
 
 - **System** — live CPU/Memory/GPU/Network sparklines, top processes, network, Tailscale peers, and system health (firewall, DNS, etc.)
 - **Workspace** — tracked git repos, Docker containers, project dependencies
-- **Applications** — 100+ tracked tools with versions, by category
+- **Applications** — every catalogue tool with its version, by category
 - **Configuration** — every `j config` item with its current state, grouped by category (Terminal / Security / Editor / System / Server / Network / Identity). Server subsection only shows on a server-registered machine.
 
 Everything loads in parallel with a progress bar; the System tab's live readings refresh every second.
@@ -27,7 +27,7 @@ j install ghostty tmux zed         # Terminal + editor
 
 Falls back to the plain-text catalog listing (the classic `✓`/`✗` table by category) when stdout isn't a terminal — scripts, CI, piped output — or when `--list` is passed. `j install <tool> [tool...]` (the direct, non-interactive form) is unchanged either way.
 
-The tool catalogue and its categories live in [Tools and skills](08-tools-and-skills.md).
+The tool catalogue and its categories live in [Tools and skills](tools-and-skills.md).
 
 ## `j upgrade [package...]`
 
@@ -59,7 +59,7 @@ j run docker clean          # System prune
 
 ## Shell shortcuts
 
-Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](09-dotfiles.md)):
+Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](dotfiles.md)):
 
 | Command | Action                     |
 | ------- | -------------------------- |
@@ -70,6 +70,6 @@ Sourced via `dotfiles/applications/zsh/zshrc.sh` (see [Dotfiles](09-dotfiles.md)
 
 ## Related
 
-- [Machines](06-machines.md) — `j machine` and `j remote`.
-- [Configuration](07-configuration.md) — `j config`.
-- [Tools and skills](08-tools-and-skills.md) — what `install`/`upgrade`/`clean` act on.
+- [Machines](machines.md) — `j machine` and `j remote`.
+- [Configuration](configuration.md) — `j config`.
+- [Tools and skills](tools-and-skills.md) — what `install`/`upgrade`/`clean` act on.
