@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
@@ -143,8 +144,8 @@ func renderToolsBlock() string {
 			continue
 		}
 
-		lines := make([]string, 0, len(tools)+1)
-		lines = append(lines, "### "+string(category))
+		lines := make([]string, 0, len(tools)+2)
+		lines = append(lines, "### "+string(category), "")
 		for _, t := range tools {
 			lines = append(lines, formatToolLine(t))
 		}
@@ -164,17 +165,36 @@ func formatToolLine(t config.Tool) string {
 }
 
 // renderPreferBlock renders the "Reach for these first" markdown table, one
-// row per tool that declares a Replaces value, in registry order.
+// row per tool that declares a Replaces value, in registry order. The columns
+// are padded to their widest cell, the shape the repository's formatter writes,
+// so the formatter and the sync test agree on every byte.
 func renderPreferBlock() string {
-	lines := []string{
-		"| Instead of… | Use |",
-		"| --- | --- |",
-	}
+	rows := [][2]string{{"Instead of…", "Use"}}
 	for _, t := range config.GetAllTools() {
 		if t.Replaces == "" {
 			continue
 		}
-		lines = append(lines, fmt.Sprintf("| %s | `%s` — %s |", t.Replaces, t.Name, t.Description))
+		rows = append(rows, [2]string{t.Replaces, fmt.Sprintf("`%s` — %s", t.Name, t.Description)})
+	}
+
+	widths := [2]int{}
+	for _, row := range rows {
+		for column, cell := range row {
+			widths[column] = max(widths[column], utf8.RuneCountInString(cell))
+		}
+	}
+
+	lines := make([]string, 0, len(rows)+1)
+	for i, row := range rows {
+		lines = append(lines, fmt.Sprintf("| %s | %s |", pad(row[0], widths[0]), pad(row[1], widths[1])))
+		if i == 0 {
+			lines = append(lines, fmt.Sprintf("| %s | %s |", strings.Repeat("-", widths[0]), strings.Repeat("-", widths[1])))
+		}
 	}
 	return strings.Join(lines, "\n")
+}
+
+// pad right-pads cell with spaces to width runes.
+func pad(cell string, width int) string {
+	return cell + strings.Repeat(" ", width-utf8.RuneCountInString(cell))
 }
