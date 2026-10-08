@@ -1,4 +1,3 @@
 {
-    "extends": "@jterrazz/typescript/tsconfig/node",
-    "include": ["specs/**/*.ts", "*.config.ts"]
+    "extends": "@jterrazz/typescript/tsconfig/node"
 }

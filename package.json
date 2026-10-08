@@ -5,12 +5,11 @@
     "scripts": {
         "lint": "typescript check",
         "lint:fix": "typescript fix",
-        "test": "vitest --run",
-        "test:e2e": "vitest --run"
+        "test": "vitest --run"
     },
     "devDependencies": {
-        "@jterrazz/test": "^16.1.0",
-        "@jterrazz/typescript": "^10.3.1",
+        "@jterrazz/test": "file:../package-test",
+        "@jterrazz/typescript": "file:../package-typescript",
         "@types/node": "^25.5.0",
         "vitest": "^5.0.1"
     }
