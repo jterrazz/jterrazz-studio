@@ -99,23 +99,6 @@ func TestRemoveSelfRefused(t *testing.T) {
 	}
 }
 
-func TestUpdateMachine(t *testing.T) {
-	t.Setenv("HOME", t.TempDir())
-
-	if err := UpdateMachine("ghost", Machine{Role: RoleClient}); err == nil {
-		t.Fatal("UpdateMachine on unknown alias should fail, got nil")
-	}
-
-	_ = AddMachine("mac-mini", Machine{Role: RoleServer, SSH: "old@host"})
-	if err := UpdateMachine("mac-mini", Machine{Role: RoleServer, SSH: "new@host"}); err != nil {
-		t.Fatalf("UpdateMachine error = %v", err)
-	}
-	got, _ := GetMachine("mac-mini")
-	if got.SSH != "new@host" {
-		t.Fatalf("UpdateMachine didn't take, got SSH=%q", got.SSH)
-	}
-}
-
 func TestMachineIsLocal(t *testing.T) {
 	if !(Machine{Role: RoleClient}).IsLocal() {
 		t.Fatal("client without SSH should be local")

@@ -110,23 +110,7 @@ func AddMachine(alias string, m Machine) error {
 		cfg.Machines = map[string]Machine{}
 	}
 	if _, exists := cfg.Machines[alias]; exists {
-		return fmt.Errorf("machine %q already exists (use update instead)", alias)
-	}
-	cfg.Machines[alias] = m
-	return SaveJRC(cfg)
-}
-
-// UpdateMachine replaces an existing machine entry. Errors if the alias is unknown.
-func UpdateMachine(alias string, m Machine) error {
-	if err := m.Validate(); err != nil {
-		return err
-	}
-	cfg, err := LoadJRC()
-	if err != nil {
-		return err
-	}
-	if _, exists := cfg.Machines[alias]; !exists {
-		return fmt.Errorf("machine %q does not exist", alias)
+		return fmt.Errorf("machine %q already exists (remove it first to change it)", alias)
 	}
 	cfg.Machines[alias] = m
 	return SaveJRC(cfg)
