@@ -8,9 +8,8 @@ const REPO_ROOT = resolve(import.meta.dirname, '../..');
 const J_BIN = resolve(REPO_ROOT, '.artifacts/go/j-test');
 const GO_SRC = resolve(REPO_ROOT, 'src');
 
-// A stale binary silently tests old behaviour. Rebuild when it is missing, when
-// a rebuild is forced, or when any `src/**/*.go` is newer than the binary — an
-// mtime check so editing the CLI and re-running the suite exercises the change.
+// hazard: a stale binary silently tests old behaviour — the suite rebuilds when
+// any `src/**/*.go` is newer than the binary, so an edit to the CLI is what a rerun exercises.
 function binaryIsStale(): boolean {
     if (!existsSync(J_BIN)) {
         return true;
@@ -27,8 +26,6 @@ function binaryIsStale(): boolean {
     return false;
 }
 
-// The ONE real runner: every spec drives the built `j` binary. Build it once,
-// before any spec runs, so the whole suite shares a single compilation.
 if (process.env.J_FORCE_REBUILD === '1' || binaryIsStale()) {
     execSync(`go build -o ${J_BIN} ./src/cmd/j`, {
         cwd: REPO_ROOT,
@@ -36,6 +33,10 @@ if (process.env.J_FORCE_REBUILD === '1' || binaryIsStale()) {
     });
 }
 
-export const { cleanup, cli } = await specification.cli(J_BIN);
+// invariant: `j` reads its machine registry from `~/.jterrazz/`, so every run
+// gets a HOME of its own and never the developer's.
+export const { cleanup, cli } = await specification.cli(J_BIN, {
+    defaults: { HOME: '$WORKDIR' },
+});
 
 afterAll(cleanup);

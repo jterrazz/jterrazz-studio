@@ -1,0 +1,13 @@
+description: reports the machine checks of an unregistered host
+runs:
+    - command: machine status
+      exit: 0
+      stdout: |4+
+          
+           j machine status                                                (unregistered)
+           ───────────────────────────────────────────────────────────────────────────────
+
+          Machine
+            {{string}} FileVault {{string}}
+            {{string}} SSH {{string}}
+

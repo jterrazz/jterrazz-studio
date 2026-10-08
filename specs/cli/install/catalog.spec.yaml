@@ -1,0 +1,120 @@
+description: prints the tool catalog, family by family, when stdout is no terminal
+runs:
+    - command: install
+      exit: 0
+      stdout: |4
+          
+           j install                                                       (unregistered)
+           ───────────────────────────────────────────────────────────────────────────────
+
+          Package Managers
+           {{string}} uv             brew
+           {{string}} cocoapods      brew
+           {{string}} homebrew       sh
+           {{string}} npm            nvm
+           {{string}} nvm            brew
+           {{string}} pnpm           brew
+          Runtimes
+           {{string}} bun            brew
+           {{string}} go             brew
+           {{string}} node           nvm
+           {{string}} openjdk        brew
+           {{string}} python         sh
+           {{string}} rust           brew
+          Shell & Terminal
+           {{string}} ghostty        brew
+           {{string}} ohmyzsh        sh
+           {{string}} tmux           brew
+           {{string}} starship       brew
+           {{string}} zoxide         brew
+          CLI Tools
+           {{string}} yazi           brew
+           {{string}} bat            brew
+           {{string}} dust           brew
+           {{string}} eza            brew
+           {{string}} fd             brew
+           {{string}} ripgrep        brew
+           {{string}} tgrep          brew
+           {{string}} sd             brew
+           {{string}} difftastic     brew
+          Git
+           {{string}} gpg            brew
+           {{string}} lazygit        brew
+           {{string}} git            xcode
+           {{string}} gh             brew
+          Editors & IDEs
+           {{string}} zed            brew
+           {{string}} android-studio brew
+           {{string}} cursor         brew
+           {{string}} xcode          mas
+          Containers & VMs
+           {{string}} multipass      brew
+           {{string}} orbstack       brew
+           {{string}} lens           brew
+           {{string}} utm            brew
+          Deploy
+           {{string}} ansible        brew
+           {{string}} eas            bun
+           {{string}} pulumi         brew
+           {{string}} terraform      brew
+          AI Agents
+           {{string}} claude         sh
+           {{string}} codex          bun
+           {{string}} gemini         brew
+           {{string}} opencode       brew
+           {{string}} hermes         sh
+           {{string}} conductor      brew
+          AI Tooling
+           {{string}} ollama         brew
+           {{string}} qmd            bun
+           {{string}} rtk            brew
+           {{string}} skills         bun
+           {{string}} browser-use    uv
+           {{string}} markitdown     uv
+           {{string}} playwright-mcp npm
+           {{string}} playwright-browsers -
+           {{string}} inferrs        brew
+           {{string}} agent-browser  bun
+           {{string}} plannotator    sh
+          AI Apps
+           {{string}} chatgpt        brew
+           {{string}} claude-desktop brew
+           {{string}} typewhisper    sh
+          Browsers
+           {{string}} brave          brew
+           {{string}} dia            mas
+          Communication
+           {{string}} discord        brew
+           {{string}} slack          brew
+           {{string}} whatsapp       brew
+           {{string}} messenger      mas
+          Productivity
+           {{string}} linear         brew
+           {{string}} notion         brew
+           {{string}} obsidian       brew
+           {{string}} keynote        mas
+           {{string}} numbers        mas
+           {{string}} pages          mas
+           {{string}} raindrop       mas
+          Media
+           {{string}} broadcasts     mas
+           {{string}} compressor     mas
+           {{string}} final-cut-pro  mas
+           {{string}} lightroom      mas
+           {{string}} logic-pro      mas
+          Remote Access
+           {{string}} jump-desktop-connect brew
+           {{string}} jump-desktop   brew
+           {{string}} tailscale      brew
+          Security
+           {{string}} bitwarden      brew
+           {{string}} adguard        mas
+           {{string}} passepartout   mas
+          System Utilities
+           {{string}} mole           brew
+           {{string}} betterdisplay  brew
+           {{string}} pipifier       mas
+           {{string}} snippety       mas
+           {{string}} speedtest      mas
+
+          Usage: j install <tool> [tool...]

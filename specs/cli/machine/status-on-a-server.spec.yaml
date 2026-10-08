@@ -1,0 +1,22 @@
+description: reports the service checks too when the registry declares this host a server
+fixture: ./__fixtures__/server-registry/
+runs:
+    - command: machine status
+      exit: 0
+      stdout: |4+
+          
+           j machine status                                              testbox  server 
+           ───────────────────────────────────────────────────────────────────────────────
+
+          Machine
+            {{string}} FileVault {{string}}
+            {{string}} SSH {{string}}
+
+          Services
+            {{string}} OpenClaw runtime {{string}}
+            ❌ OpenClaw config        missing            {{workdir}}/.openclaw/openclaw.json
+            ⚠️  Channels               unknown            -
+            {{string}} Hermes runtime {{string}}
+            ❌ Hermes config          missing            {{workdir}}/.hermes/config.yaml
+            {{string}} OrbStack {{string}}
+
