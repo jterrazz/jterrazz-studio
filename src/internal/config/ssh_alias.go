@@ -163,7 +163,16 @@ func removeSSHAliasBlock(existing []byte, alias string) []byte {
 	if endLine < len(text) && text[endLine] == '\n' {
 		endLine++
 	}
-	return []byte(text[:beginIdx] + text[endLine:])
+	// The blank line upsertSSHAliasBlock wrote before an appended block goes
+	// with it, so adding and removing a machine leaves the file as it was.
+	before, after := text[:beginIdx], text[endLine:]
+	switch {
+	case strings.HasSuffix(before, "\n\n"):
+		before = before[:len(before)-1]
+	case before == "" && strings.HasPrefix(after, "\n"):
+		after = after[1:]
+	}
+	return []byte(before + after)
 }
 
 // findForeignHostAlias returns a human-readable description if a `Host <alias>`

@@ -76,7 +76,6 @@ runs:
                   }
           .ssh/config:
               equals: |
-
                   # >>> jterrazz machine worker >>>
                   Host worker
                     HostName 10.0.0.2
