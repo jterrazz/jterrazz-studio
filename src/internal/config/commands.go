@@ -23,9 +23,6 @@ type RunSubcommand struct {
 
 // RunCommands is the list of all `j run` command groups
 var RunCommands = []RunCommand{
-	// =========================================================================
-	// Docker
-	// =========================================================================
 	{
 		Name:        "docker",
 		Description: "Docker container and image management",
@@ -67,13 +64,11 @@ var RunCommands = []RunCommand{
 				Name:        "reset",
 				Description: "Remove all containers and images",
 				RunFn: func(_ []string) error {
-					// Remove containers (ignore errors, continue cleaning)
 					out, _ := exec.Command("docker", "ps", "-aq").Output()
 					if strings.TrimSpace(string(out)) != "" {
 						containers := strings.Fields(string(out))
 						_ = ExecCommand("docker", append([]string{"rm", "-vf"}, containers...)...)
 					}
-					// Remove images (ignore errors, continue cleaning)
 					out, _ = exec.Command("docker", "images", "-aq").Output()
 					if strings.TrimSpace(string(out)) != "" {
 						images := strings.Fields(string(out))
@@ -84,9 +79,6 @@ var RunCommands = []RunCommand{
 			},
 		},
 	},
-	// =========================================================================
-	// Git
-	// =========================================================================
 	{
 		Name:        "git",
 		Description: "Git workflow shortcuts",
@@ -120,7 +112,7 @@ var RunCommands = []RunCommand{
 				Name:        "sync",
 				Description: "Fetch and pull from remote",
 				RunFn: func(_ []string) error {
-					// fetch -p can fail if no remote configured, continue anyway
+					// outside: fetch -p fails when no remote is configured; the cleanup goes on.
 					_ = ExecCommand("git", "fetch", "-p")
 					return ExecCommand("git", "pull")
 				},
@@ -170,7 +162,6 @@ var RunCommands = []RunCommand{
 	},
 }
 
-// gitCommit stages all changes and commits with a prefixed message
 func gitCommit(prefix string, args []string) error {
 	if err := ExecCommand("git", "add", "."); err != nil {
 		return fmt.Errorf("git add failed: %w", err)

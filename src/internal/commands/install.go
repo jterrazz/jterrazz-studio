@@ -13,8 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// installListOnly forces the plain-text catalog listing even when stdout is
-// a terminal — the --list escape hatch out of the TUI.
 var installListOnly bool
 
 var installCmd = &cobra.Command{
@@ -70,7 +68,6 @@ func init() {
 func listAvailableTools() {
 	print.Header("j install", machineContext())
 
-	// Check all tools in parallel
 	results := make(map[string]config.CheckResult, len(config.Tools))
 	var mu sync.Mutex
 	var wg sync.WaitGroup
@@ -101,7 +98,7 @@ func listAvailableTools() {
 		}
 	}
 
-	// Fallback: show any tools using categories not listed in ToolCategories.
+	// invariant: a tool whose category ToolCategories does not list is still shown, last.
 	currentCategory := config.ToolCategory("")
 	for _, t := range config.Tools {
 		if knownCategories[t.Category] {
@@ -119,7 +116,6 @@ func listAvailableTools() {
 }
 
 func installToolByName(name string) {
-	// Handle "brew" as alias for "homebrew"
 	if name == "brew" {
 		name = "homebrew"
 	}
@@ -136,7 +132,6 @@ func installToolByName(name string) {
 		return
 	}
 
-	// Check dependencies
 	for _, depName := range t.Dependencies {
 		depTool := config.GetToolByName(depName)
 		if depTool == nil {
@@ -154,7 +149,6 @@ func installToolByName(name string) {
 		print.Error(fmt.Sprintf("Failed to install %s: %v", t.Name, err))
 	} else {
 		print.Row(true, t.Name, "installed")
-		// Run post-install scripts
 		for _, scriptName := range t.Scripts {
 			runScript(scriptName)
 		}

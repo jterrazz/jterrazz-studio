@@ -1,20 +1,13 @@
 package commands
 
-// kcpasswordCipher is the public XOR cipher macOS loginwindow uses to obfuscate
-// /etc/kcpassword. It has been stable since Mac OS X 10.4 and is documented in
-// numerous open-source auto-login tools (e.g. python-kcpassword). The bytes are
-// not secret — they are just an obfuscation, not encryption — so storing them
-// in source is fine.
+// outside: the public XOR cipher loginwindow uses to obfuscate /etc/kcpassword, stable
+// since Mac OS X 10.4: obfuscation, not a secret.
 var kcpasswordCipher = [...]byte{
 	0x7D, 0x89, 0x52, 0x23, 0xD2, 0xBC, 0xDD, 0xEA, 0xA3, 0xB9, 0x1F,
 }
 
-// encodeKCPassword returns the bytes that go into /etc/kcpassword for the given
-// account password. Format:
-//   - XOR each password byte with cipher[i % len(cipher)]
-//   - Pad with cipher bytes (continuing the cycle) up to the next multiple of 12,
-//     and at least 12 bytes total — this ensures loginwindow can detect end-of-string
-//     when the password length is exactly a multiple of 12.
+// outside: each byte XORs with cipher[i % len], padded with the cycle to a multiple of
+// 12 and at least 12 bytes, so loginwindow finds the end of a 12-multiple password.
 func encodeKCPassword(password string) []byte {
 	pw := []byte(password)
 	out := make([]byte, len(pw), len(pw)+12)

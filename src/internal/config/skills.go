@@ -130,8 +130,7 @@ func GetFavoriteSkills() []Skill {
 	return FavoriteSkills
 }
 
-// IsFavoriteSkill checks if a skill is in the favorites list
-// If repo is empty, only the skill name is checked
+// IsFavoriteSkill reports whether a skill is a favorite; an empty repo matches by name alone.
 func IsFavoriteSkill(repo, skill string) bool {
 	for _, fav := range FavoriteSkills {
 		if fav.Skill == skill {

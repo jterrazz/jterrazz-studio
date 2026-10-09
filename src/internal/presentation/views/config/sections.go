@@ -6,17 +6,14 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// Section is a category of scripts grouped under one collapsible header in
-// the j config TUI. The order of sections in a Model.sections slice is the
-// vertical order they're rendered in.
+// Section is one category of scripts under a collapsible header of the j config TUI.
 type Section struct {
 	Category  config.ScriptCategory
 	Scripts   []*config.Script
 	Collapsed bool
 }
 
-// sectionOrder defines how the standard categories stack. Categories not in
-// this list (future ones) get appended after, in alphabetical order.
+// invariant: a category not listed here is appended after, alphabetically.
 var sectionOrder = []config.ScriptCategory{
 	config.ScriptCategoryTerminal,
 	config.ScriptCategorySecurity,
@@ -25,17 +22,11 @@ var sectionOrder = []config.ScriptCategory{
 	config.ScriptCategoryServer,
 }
 
-// buildSections groups config.Scripts by Category, applies role filtering,
-// sorts items within each section by name, and returns sections in the
-// canonical order (sectionOrder first, then any extras alphabetically).
 func buildSections(role config.Role) []Section {
 	return buildSectionsFrom(config.Scripts, role)
 }
 
-// buildSectionsFrom is the testable variant: takes the script list explicitly
-// instead of pulling from the package-level config.Scripts.
-//
-// Scripts without a Category are dropped — every config item must declare one.
+// invariant: a script without a Category is dropped: every config item declares one.
 func buildSectionsFrom(scripts []config.Script, role config.Role) []Section {
 	groups := map[config.ScriptCategory][]*config.Script{}
 	for i := range scripts {
@@ -65,7 +56,6 @@ func buildSectionsFrom(scripts []config.Script, role config.Role) []Section {
 		}
 	}
 
-	// Append any extra categories not in sectionOrder, alphabetically.
 	var extras []config.ScriptCategory
 	for cat := range groups {
 		if !seen[cat] {
@@ -82,9 +72,7 @@ func buildSectionsFrom(scripts []config.Script, role config.Role) []Section {
 	return sections
 }
 
-// installedCount returns how many of the section's scripts are currently
-// installed according to their CheckFn. Scripts without a CheckFn are
-// ignored (they have no checkable state).
+// invariant: a script without a CheckFn has no state and is not counted.
 func (s Section) installedCount() (installed, total int) {
 	for _, sc := range s.Scripts {
 		if sc.CheckFn == nil {

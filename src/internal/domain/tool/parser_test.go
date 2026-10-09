@@ -9,70 +9,53 @@ func TestVersionParsers(t *testing.T) {
 		given    string
 		expected string
 	}{
-		// TrimVersion
 		{"TrimVersion basic", TrimVersion, "1.2.3", "1.2.3"},
 		{"TrimVersion with v prefix", TrimVersion, "v1.2.3", "1.2.3"},
 		{"TrimVersion with newline", TrimVersion, "v1.2.3\n", "1.2.3"},
 
-		// ParseBrewVersion
 		{"ParseBrewVersion multiline", ParseBrewVersion, "Homebrew 4.2.0\nHomebrew/homebrew-core", "4.2.0"},
 		{"ParseBrewVersion single line", ParseBrewVersion, "Homebrew 5.0.7", "5.0.7"},
 
-		// ParseGitVersion
 		{"ParseGitVersion basic", ParseGitVersion, "git version 2.39.0", "2.39.0"},
 		{"ParseGitVersion apple", ParseGitVersion, "git version 2.39.0 (Apple Git-145)", "2.39.0"},
 
-		// ParseTmuxVersion
 		{"ParseTmuxVersion basic", ParseTmuxVersion, "tmux 3.6a", "3.6a"},
 		{"ParseTmuxVersion with newline", ParseTmuxVersion, "tmux 3.5a\n", "3.5a"},
 
-		// ParseTailscaleVersion
 		{"ParseTailscaleVersion single line", ParseTailscaleVersion, "1.86.2", "1.86.2"},
 		{"ParseTailscaleVersion multi line", ParseTailscaleVersion, "1.86.2\ntailscale commit: abc", "1.86.2"},
 
-		// ParseGoVersion
 		{"ParseGoVersion darwin", ParseGoVersion, "go version go1.21.0 darwin/arm64", "1.21.0"},
 		{"ParseGoVersion linux", ParseGoVersion, "go version go1.22.5 linux/amd64", "1.22.5"},
 
-		// ParsePythonVersion
 		{"ParsePythonVersion basic", ParsePythonVersion, "Python 3.12.0", "3.12.0"},
 		{"ParsePythonVersion with newline", ParsePythonVersion, "Python 3.11.5\n", "3.11.5"},
 
-		// ParseRustVersion
 		{"ParseRustVersion", ParseRustVersion, "rustc 1.84.0 (9fc6b4312 2025-01-07)", "1.84.0"},
 
-		// ParseTerraformVersion
 		{"ParseTerraformVersion", ParseTerraformVersion, "Terraform v1.5.7\non darwin_arm64", "1.5.7"},
 
-		// ParseAnsibleVersion
 		{"ParseAnsibleVersion core", ParseAnsibleVersion, "ansible [core 2.15.0]", "2.15.0"},
 		{"ParseAnsibleVersion simple", ParseAnsibleVersion, "ansible 2.14.0", "2.14.0"},
 
-		// ParseMultipassVersion
 		{"ParseMultipassVersion", ParseMultipassVersion, "multipass 1.12.0+mac\nmultipassd 1.12.0+mac", "1.12.0+mac"},
 
-		// ParseCodexVersion
 		{"ParseCodexVersion with prefix", ParseCodexVersion, "codex 0.1.0", "0.1.0"},
 		{"ParseCodexVersion simple", ParseCodexVersion, "0.1.0", "0.1.0"},
 
-		// ParseMoleVersion
 		{"ParseMoleVersion with leading newline", ParseMoleVersion, "\nMole version 1.14.5\nmacOS: 14.0", "1.14.5"},
 		{"ParseMoleVersion no leading newline", ParseMoleVersion, "Mole version 1.13.0\nmacOS: 13.0", "1.13.0"},
 
-		// ParseClaudeVersion
 		{"ParseClaudeVersion with suffix", ParseClaudeVersion, "2.0.76 (Claude Code)", "2.0.76"},
 		{"ParseClaudeVersion simple", ParseClaudeVersion, "1.0.0", "1.0.0"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Given: version output string
 			input := tt.given
 
-			// When: parsing version
 			result := tt.parser(input)
 
-			// Then: correct version should be extracted
 			if result != tt.expected {
 				t.Errorf("got %q, want %q", result, tt.expected)
 			}
@@ -94,13 +77,10 @@ func TestStripAnsi(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Given: string with ANSI codes
 			input := tt.given
 
-			// When: stripping ANSI codes
 			result := StripAnsi(input)
 
-			// Then: clean string should be returned
 			if result != tt.expected {
 				t.Errorf("StripAnsi(%q) = %q, want %q", input, result, tt.expected)
 			}

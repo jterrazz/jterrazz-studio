@@ -9,7 +9,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
-// State icons for each item row.
 const (
 	iconInstalled = "✓"
 	iconMissing   = "✗"
@@ -34,9 +33,6 @@ func (m Model) View() string {
 	return b.String()
 }
 
-// renderModal renders the uninstall-confirmation form. Frames huh's output
-// with the standard header (re-titled to formTitle) so the user keeps
-// context, plus a footer hint.
 func (m Model) renderModal() string {
 	var b strings.Builder
 	b.WriteString(m.renderHeader("j install"))
@@ -53,8 +49,6 @@ func (m Model) renderModal() string {
 	return b.String()
 }
 
-// renderHeader builds the canonical j install header. The right-side context
-// shows which machine the TUI is operating on (alias + color-coded role).
 func (m Model) renderHeader(command string) string {
 	var context string
 	if m.selfRole == "" {
@@ -73,7 +67,6 @@ func (m Model) renderDivider() string {
 	return dividerStyle.Render(strings.Repeat("─", w))
 }
 
-// renderBody renders the sections belonging to the active page only.
 func (m Model) renderBody() string {
 	page := m.tabs.Active
 	var b strings.Builder
@@ -117,10 +110,6 @@ func (m Model) renderSectionHeader(s Section) string {
 	return fmt.Sprintf(" %s %s   %s", dividerStyle.Render(caret), name, count)
 }
 
-// renderItem renders one tool row: cursor + state icon + name + muted
-// description on the left, right-aligned version + method label (plus a
-// "(read-only)" marker for entries that are neither Installable nor
-// Uninstallable).
 func (m Model) renderItem(t *config.Tool, sectionIdx, itemIdx int) string {
 	isCursor := m.cursor.section == sectionIdx && m.cursor.item == itemIdx
 	installed := m.installed(t)
@@ -175,8 +164,6 @@ func (m Model) renderItem(t *config.Tool, sectionIdx, itemIdx int) string {
 	return row
 }
 
-// rightLabel builds the right-aligned "version  method  (read-only)" segment
-// of an item row.
 func (m Model) rightLabel(t *config.Tool) string {
 	var parts []string
 	if v := m.displayVersion(t); v != "" {
@@ -189,9 +176,7 @@ func (m Model) rightLabel(t *config.Tool) string {
 	return sectionCountStyle.Render(strings.Join(parts, "  "))
 }
 
-// displayVersion reads the cached version for t and trims it the same way
-// the status TUI's renderToolRowCompact does: strip a leading "name " or
-// "name/" prefix, then cap the length.
+// invariant: trimmed as status's renderToolRowCompact trims, so both TUIs show one version.
 func (m Model) displayVersion(t *config.Tool) string {
 	version := m.cachedCheck(t).Version
 	if version == "" {
@@ -209,8 +194,6 @@ func (m Model) displayVersion(t *config.Tool) string {
 	return version
 }
 
-// renderDetail renders the expanded detail panel for a tool: description,
-// Replaces (if set), method, formula, dependencies, post-install scripts.
 func (m Model) renderDetail(t *config.Tool) string {
 	var lines []string
 	lines = append(lines, "│")
@@ -236,8 +219,6 @@ func (m Model) renderDetail(t *config.Tool) string {
 	return detailFrameStyle.Render(strings.Join(lines, "\n"))
 }
 
-// renderFooter shows contextual i/u/space/tab hints for the highlighted row,
-// a busy line while an action runs, and the last result/error banner.
 func (m Model) renderFooter() string {
 	if m.busy {
 		return contextStyle.Render(" " + iconBusy + " " + m.busyAction + "…")
@@ -293,7 +274,6 @@ func (m Model) contentWidth() int {
 	return m.width
 }
 
-// padToWidth right-pads text with spaces so the visible width matches `w`.
 func padToWidth(text string, w int) string {
 	current := lipgloss.Width(text)
 	if current >= w {
@@ -302,8 +282,6 @@ func padToWidth(text string, w int) string {
 	return text + strings.Repeat(" ", w-current)
 }
 
-// wrapText word-wraps `s` to lines no wider than `width`. Preserves any
-// pre-existing newlines.
 func wrapText(s string, width int) string {
 	if width <= 0 {
 		return s

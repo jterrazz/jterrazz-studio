@@ -23,7 +23,6 @@ func TestEncodeKCPasswordRoundtrip(t *testing.T) {
 		if len(out) < 12 {
 			t.Errorf("%q: output length %d < 12", pw, len(out))
 		}
-		// Decode by XORing with the same cipher and confirm the prefix matches.
 		decoded := make([]byte, len(out))
 		for i, b := range out {
 			decoded[i] = b ^ kcpasswordCipher[i%len(kcpasswordCipher)]

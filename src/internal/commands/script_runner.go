@@ -5,14 +5,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
-// runScript runs a script by name from a non-TUI context — currently used by
-// `j install` for post-install scripts attached to a Tool. The j config TUI
-// dispatches actions itself (with proper Inputs collection); this helper is
-// the headless fallback and ignores any Inputs the script declares.
-//
-// The dispatch logic (install vs. uninstall, toggle convention) lives in
-// config.RunScript, shared with the install TUI's post-install wiring — this
-// wrapper only adds the CLI's print-based reporting on top.
 func runScript(name string) {
 	verb, err := config.RunScript(name)
 	if err == nil {

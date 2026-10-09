@@ -9,7 +9,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
-// checkApp returns a CheckFn for a macOS .app bundle, using the plist for version info.
 func checkApp(appName string) func() CheckResult {
 	return func() CheckResult {
 		if _, err := os.Stat("/Applications/" + appName + ".app"); err != nil {
@@ -20,7 +19,6 @@ func checkApp(appName string) func() CheckResult {
 	}
 }
 
-// checkAppWithCask is like checkApp but uses brew cask for version info.
 func checkAppWithCask(appName, caskName string) func() CheckResult {
 	return func() CheckResult {
 		if _, err := os.Stat("/Applications/" + appName + ".app"); err != nil {
@@ -33,9 +31,6 @@ func checkAppWithCask(appName, caskName string) func() CheckResult {
 
 // Tools is the single source of truth for all installable software
 var Tools = []Tool{
-	// ==========================================================================
-	// Package Managers
-	// ==========================================================================
 	{
 		Name:         "uv",
 		Description:  "Fast Python package and project manager",
@@ -71,8 +66,8 @@ var Tools = []Tool{
 				return Installed()
 			}
 			version := tool.ParseBrewVersion(string(out))
-			formulaeOut, _ := exec.Command("brew", "list", "--formula", "-1").Output() // non-critical
-			caskOut, _ := exec.Command("brew", "list", "--cask", "-1").Output()        // non-critical
+			formulaeOut, _ := exec.Command("brew", "list", "--formula", "-1").Output()
+			caskOut, _ := exec.Command("brew", "list", "--cask", "-1").Output()
 			formulaeCount := 0
 			caskCount := 0
 			if strings.TrimSpace(string(formulaeOut)) != "" {
@@ -164,9 +159,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("pnpm", []string{"--version"}, tool.TrimVersion),
 	},
 
-	// ==========================================================================
-	// Runtimes
-	// ==========================================================================
 	{
 		Name:         "bun",
 		Description:  "Fast JavaScript runtime and package manager",
@@ -242,9 +234,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("rustc", []string{"--version"}, tool.ParseRustVersion),
 	},
 
-	// ==========================================================================
-	// Shell & Terminal
-	// ==========================================================================
 	{
 		Name:         "ghostty",
 		Description:  "GPU-accelerated terminal emulator",
@@ -316,9 +305,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("zoxide", []string{"--version"}, tool.ParseBrewVersion),
 	},
 
-	// ==========================================================================
-	// CLI Tools
-	// ==========================================================================
 	{
 		Name:         "yazi",
 		Description:  "Terminal file manager",
@@ -419,9 +405,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("difft", []string{"--version"}, tool.ParseBrewVersion),
 	},
 
-	// ==========================================================================
-	// Git
-	// ==========================================================================
 	{
 		Name:         "gpg",
 		Description:  "GNU Privacy Guard for encryption and signing",
@@ -465,9 +448,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("gh", []string{"--version"}, tool.ParseGhVersion),
 	},
 
-	// ==========================================================================
-	// Editors & IDEs
-	// ==========================================================================
 	{
 		Name:         "zed",
 		Description:  "Zed code editor",
@@ -498,9 +478,6 @@ var Tools = []Tool{
 	},
 	{Name: "xcode", Description: "Apple development IDE", Method: InstallMAS, Category: CategoryEditorsIDEs, CheckFn: checkApp("Xcode")},
 
-	// ==========================================================================
-	// Containers & VMs
-	// ==========================================================================
 	{
 		Name:         "multipass",
 		Description:  "Lightweight Ubuntu VMs on demand",
@@ -549,9 +526,6 @@ var Tools = []Tool{
 		CheckFn:      checkAppWithCask("UTM", "utm"),
 	},
 
-	// ==========================================================================
-	// Deploy
-	// ==========================================================================
 	{
 		Name:         "ansible",
 		Description:  "Agentless IT automation and configuration management",
@@ -593,9 +567,6 @@ var Tools = []Tool{
 		VersionFn:    tool.VersionFromCmd("terraform", []string{"--version"}, tool.ParseTerraformVersion),
 	},
 
-	// ==========================================================================
-	// AI Agents
-	// ==========================================================================
 	{
 		Name:        "claude",
 		Description: "Claude Code CLI for agentic coding",
@@ -666,9 +637,6 @@ var Tools = []Tool{
 		CheckFn:      checkAppWithCask("Conductor", "conductor"),
 	},
 
-	// ==========================================================================
-	// AI Tooling
-	// ==========================================================================
 	{
 		Name:         "ollama",
 		Description:  "Run large language models locally",
@@ -809,9 +777,6 @@ var Tools = []Tool{
 		VersionFn: tool.VersionFromCmd("plannotator", []string{"--version"}, tool.TrimVersion),
 	},
 
-	// ==========================================================================
-	// AI Apps
-	// ==========================================================================
 	{
 		Name:         "chatgpt",
 		Description:  "OpenAI ChatGPT desktop app",
@@ -838,9 +803,6 @@ var Tools = []Tool{
 		CheckFn:     checkApp("TypeWhisper"),
 	},
 
-	// ==========================================================================
-	// Browsers
-	// ==========================================================================
 	{
 		Name:         "brave",
 		Description:  "Privacy-focused web browser",
@@ -852,9 +814,6 @@ var Tools = []Tool{
 	},
 	{Name: "dia", Description: "The Browser Company's AI-first browser", Method: InstallMAS, Category: CategoryBrowsers, CheckFn: checkApp("Dia")},
 
-	// ==========================================================================
-	// Communication
-	// ==========================================================================
 	{
 		Name:         "discord",
 		Description:  "Voice and text chat",
@@ -884,9 +843,6 @@ var Tools = []Tool{
 	},
 	{Name: "messenger", Description: "Facebook Messenger", Method: InstallMAS, Category: CategoryCommunication, CheckFn: checkApp("Messenger")},
 
-	// ==========================================================================
-	// Productivity
-	// ==========================================================================
 	{
 		Name:         "linear",
 		Description:  "Project management tool",
@@ -919,18 +875,12 @@ var Tools = []Tool{
 	{Name: "pages", Description: "Apple word processor", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Pages")},
 	{Name: "raindrop", Description: "Bookmark manager", Method: InstallMAS, Category: CategoryProductivity, CheckFn: checkApp("Save to Raindrop.io")},
 
-	// ==========================================================================
-	// Media
-	// ==========================================================================
 	{Name: "broadcasts", Description: "Internet radio and stream player", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Broadcasts")},
 	{Name: "compressor", Description: "Apple video compression tool", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Compressor")},
 	{Name: "final-cut-pro", Description: "Professional video editor", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Final Cut Pro")},
 	{Name: "lightroom", Description: "Adobe photo editor", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Adobe Lightroom")},
 	{Name: "logic-pro", Description: "Professional music production", Method: InstallMAS, Category: CategoryMedia, CheckFn: checkApp("Logic Pro")},
 
-	// ==========================================================================
-	// Remote Access
-	// ==========================================================================
 	{
 		Name:         "jump-desktop-connect",
 		Description:  "Remote GUI recovery host service for headless Macs",
@@ -976,9 +926,6 @@ var Tools = []Tool{
 		},
 	},
 
-	// ==========================================================================
-	// Security
-	// ==========================================================================
 	{
 		Name:         "bitwarden",
 		Description:  "Password manager",
@@ -991,9 +938,6 @@ var Tools = []Tool{
 	{Name: "adguard", Description: "Ad blocker for Safari", Method: InstallMAS, Category: CategorySecurity, CheckFn: checkApp("AdGuard for Safari")},
 	{Name: "passepartout", Description: "VPN client", Method: InstallMAS, Category: CategorySecurity, CheckFn: checkApp("Passepartout")},
 
-	// ==========================================================================
-	// System Utilities
-	// ==========================================================================
 	{
 		Name:         "mole",
 		Description:  "Clean, uninstall, analyze, and optimize macOS from the terminal",

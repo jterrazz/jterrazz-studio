@@ -77,7 +77,7 @@ var IdentityChecks = []IdentityCheck{
 			if err != nil {
 				return NotInstalled()
 			}
-			// Parse "Logged in to github.com account username (...)"
+			// outside: gh prints "Logged in to github.com account <user> (...)".
 			text := string(out)
 			if idx := strings.Index(text, "account "); idx >= 0 {
 				rest := text[idx+len("account "):]

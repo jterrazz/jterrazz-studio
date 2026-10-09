@@ -7,9 +7,7 @@ import (
 	"strings"
 )
 
-// Role is the function a machine plays in the user's setup. The role drives which
-// status checks run, which `j config` Server items are visible, and how the
-// TUI groups things.
+// Role is the function a machine plays: it drives the status checks and the visible Server items.
 type Role string
 
 const (
@@ -17,8 +15,7 @@ const (
 	RoleServer Role = "server"
 )
 
-// Machine is a single entry in the registry. A machine is "local" (the one this
-// CLI is running on) when SSH is empty.
+// Machine is one registry entry; an empty SSH makes it the local machine.
 type Machine struct {
 	Role     Role   `json:"role"`
 	SSH      string `json:"ssh,omitempty"`
@@ -116,8 +113,7 @@ func AddMachine(alias string, m Machine) error {
 	return SaveJRC(cfg)
 }
 
-// RemoveMachine deletes the entry for the given alias. No-op if it doesn't exist.
-// Refuses to remove the alias currently marked as self.
+// RemoveMachine deletes an alias's entry, refusing the one marked as self.
 func RemoveMachine(alias string) error {
 	cfg, err := LoadJRC()
 	if err != nil {

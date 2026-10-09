@@ -7,9 +7,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
 )
 
-// makeSection builds a Section with `names` tools installable via
-// InstallBrewFormula (and thus also Uninstallable), all reporting
-// installed=false unless overridden by the caller.
 func makeSection(page int, cat config.ToolCategory, names ...string) Section {
 	tools := make([]*config.Tool, len(names))
 	for i, n := range names {
@@ -159,11 +156,8 @@ func TestStartInstallNoOpWhenNotInstallable(t *testing.T) {
 }
 
 func TestStartInstallDependencyGate(t *testing.T) {
-	// "homebrew" resolves against the real catalog (config.GetToolByName),
-	// so dependencyInstalled finds a non-nil dep and then consults
-	// checkCache first — seeding checkCache here keeps the test
-	// deterministic regardless of whether homebrew is actually installed
-	// on the machine running the test.
+	// invariant: homebrew resolves against the real catalog, so the cache is seeded and the
+	// test holds whether or not the machine has homebrew.
 	tools := []*config.Tool{{
 		Name: "needs-brew", Category: config.CategoryGit, Method: config.InstallBrewFormula,
 		CheckFn:      checkInstalled(false),

@@ -12,17 +12,13 @@ type Cleanable struct {
 	Name        string
 	Description string
 
-	// Location
 	Path   string        // Static path
 	PathFn func() string // Dynamic path (overrides Path)
 
-	// Info
 	SizeFn func() int64 // Get current size in bytes
 
-	// Clean
 	CleanFn func() error // How to clean it
 
-	// Dependencies
 	RequiresCmd string // Only show if this command exists (e.g., "docker")
 }
 
@@ -71,7 +67,7 @@ var Cleanables = []Cleanable{
 		Description: "Remove all Multipass instances",
 		RequiresCmd: "multipass",
 		CleanFn: func() error {
-			_ = exec.Command("multipass", "delete", "--all").Run() // ok if no instances
+			_ = exec.Command("multipass", "delete", "--all").Run() // outside: fails when no instance exists, which is the goal
 			cmd := exec.Command("multipass", "purge")
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
@@ -96,10 +92,6 @@ var Cleanables = []Cleanable{
 		},
 	},
 }
-
-// =============================================================================
-// Cleanable Functions
-// =============================================================================
 
 // GetAllCleanables returns all cleanables
 func GetAllCleanables() []Cleanable {

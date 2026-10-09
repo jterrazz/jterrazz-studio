@@ -9,19 +9,17 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// keymap groups every key the model reacts to so the view can render hints
-// from a single source of truth. Mirrors configview's keymap.
 type keymap struct {
 	Up        key.Binding
 	Down      key.Binding
-	TabPrev   key.Binding // ← / shift+tab — previous page
-	TabNext   key.Binding // → — next page
-	Toggle    key.Binding // tab — collapse/expand current section
-	Details   key.Binding // space — toggle inline detail panel
-	Install   key.Binding // i
-	Uninstall key.Binding // u
-	Quit      key.Binding // q / esc
-	Cancel    key.Binding // ctrl+c (always quits)
+	TabPrev   key.Binding
+	TabNext   key.Binding
+	Toggle    key.Binding
+	Details   key.Binding
+	Install   key.Binding
+	Uninstall key.Binding
+	Quit      key.Binding
+	Cancel    key.Binding
 }
 
 var keys = keymap{
@@ -58,19 +56,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Modal owns key handling while it's up. Route everything to huh, then
-	// react to its terminal state (completed → run uninstall, aborted →
-	// close).
 	if m.modalActive() {
 		return m.updateModal(msg)
 	}
 
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
-		// Ctrl+C always quits, even when busy.
 		if key.Matches(keyMsg, keys.Cancel) {
 			return m, tea.Quit
 		}
-		// Block other keys while an action is running.
 		if m.busy {
 			return m, nil
 		}
@@ -79,9 +72,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// updateModal forwards the message to the huh form and reacts when the form
-// reaches a terminal state. On completion, runs the closure stashed by
-// buildConfirmModal. On abort, just closes the modal.
 func (m Model) updateModal(msg tea.Msg) (tea.Model, tea.Cmd) {
 	form, cmd := m.form.Update(msg)
 	if f, ok := form.(*huh.Form); ok {
@@ -104,13 +94,11 @@ func (m Model) updateModal(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case huh.StateNormal:
-		// Still being filled: the form keeps the keystrokes, nothing to settle.
 	}
 	return m, cmd
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	// Number keys 1..4 jump to a page directly.
 	if s := msg.String(); len(s) == 1 && s[0] >= '1' && s[0] <= '9' {
 		idx := int(s[0] - '1')
 		if idx < len(PageLabels) {
@@ -165,7 +153,6 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// toggleCurrentSection collapses or expands the section the cursor is in.
 func (m *Model) toggleCurrentSection() {
 	if m.cursor.section < 0 || m.cursor.section >= len(m.sections) {
 		return
@@ -173,9 +160,6 @@ func (m *Model) toggleCurrentSection() {
 	m.sections[m.cursor.section].Collapsed = !m.sections[m.cursor.section].Collapsed
 }
 
-// moveCursorUp moves to the previous visible item on the current page,
-// skipping over collapsed sections and sections belonging to other pages.
-// No-op at the top of the page.
 func (m *Model) moveCursorUp() {
 	if m.cursor.section < 0 {
 		return
@@ -198,9 +182,6 @@ func (m *Model) moveCursorUp() {
 	}
 }
 
-// moveCursorDown moves to the next visible item on the current page,
-// skipping over collapsed sections and sections belonging to other pages.
-// No-op at the bottom of the page.
 func (m *Model) moveCursorDown() {
 	if m.cursor.section < 0 {
 		return
@@ -224,11 +205,8 @@ func (m *Model) moveCursorDown() {
 	}
 }
 
-// startInstall fires the install action for the current item, if applicable.
-// Refuses if already installed or the tool isn't Installable(). If any
-// declared Dependency isn't installed, sets lastErr instead of running
-// anything. On success, runs the tool's post-install Scripts (config.RunScripts)
-// as part of the same action so a script failure surfaces as an install failure.
+// invariant: post-install scripts run inside the same action, so a script failure
+// surfaces as an install failure.
 func (m Model) startInstall() (tea.Model, tea.Cmd) {
 	t := m.currentTool()
 	if t == nil || !t.Installable() {
@@ -258,9 +236,6 @@ func (m Model) startInstall() (tea.Model, tea.Cmd) {
 	})
 }
 
-// startUninstall opens a Yes/No confirm modal for the current item, if
-// applicable. Refuses unless the item is currently installed AND
-// Uninstallable(). The actual Uninstall() only runs after the user confirms.
 func (m Model) startUninstall() (tea.Model, tea.Cmd) {
 	t := m.currentTool()
 	if t == nil || !m.installed(t) || !t.Uninstallable() {

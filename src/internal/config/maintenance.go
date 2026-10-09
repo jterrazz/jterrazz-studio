@@ -9,9 +9,6 @@ import (
 	"time"
 )
 
-// MaintenanceCheck is the same shape as IdentityCheck and SecurityCheck —
-// repeated locally instead of generalised because each domain wants its own
-// loader plumbing and I want clear blast radius when one probe goes wrong.
 type MaintenanceCheck struct {
 	Name        string
 	Description string
@@ -19,27 +16,23 @@ type MaintenanceCheck struct {
 	GoodWhen    bool
 }
 
-// MaintenanceChecks groups passive system-state probes that don't fit
-// Identity, Security, or per-Script categories. Each Detail is short
-// enough to fit a typical Configuration box's right column.
 var MaintenanceChecks = []MaintenanceCheck{
 	{
 		Name:        "macOS",
 		Description: "Pending macOS software updates",
 		CheckFn:     checkMacOSUpdates,
-		GoodWhen:    false, // healthy when no updates pending
+		GoodWhen:    false,
 	},
 	{
 		Name:        "brew",
 		Description: "Outdated Homebrew formulae and casks",
 		CheckFn:     checkBrewOutdated,
-		GoodWhen:    false, // healthy when no outdated packages
+		GoodWhen:    false,
 	},
 }
 
-// /Library/Updates/index.plist is touched by softwareupdate when an update
-// has been downloaded and is awaiting install. Reading it directly avoids
-// a `softwareupdate -l` network round-trip.
+// outside: softwareupdate touches /Library/Updates/index.plist once an update is
+// downloaded, so reading it spares a `softwareupdate -l` network round trip.
 func checkMacOSUpdates() CheckResult {
 	info, err := os.Stat("/Library/Updates/index.plist")
 	if err != nil {
@@ -49,9 +42,8 @@ func checkMacOSUpdates() CheckResult {
 	return CheckResult{Installed: true, Detail: "pending · " + age + " old"}
 }
 
-// `brew outdated --quiet` lists outdated package names, one per line, on
-// stdout. Stderr noise (permission warnings, JSON cache messages) is
-// discarded — we only care about the count.
+// outside: `brew outdated --quiet` prints one outdated name per line on stdout; its
+// stderr is noise (permission warnings, cache messages).
 func checkBrewOutdated() CheckResult {
 	if _, err := exec.LookPath("brew"); err != nil {
 		return CheckResult{}
@@ -80,21 +72,16 @@ func humanizeAge(d time.Duration) string {
 	}
 }
 
-// DaemonCheck represents a single user-installed LaunchAgent we care about.
-// Discovered dynamically — anything in ~/Library/LaunchAgents matching
-// daemonNamePrefixes is included.
+// DaemonCheck is one LaunchAgent of ~/Library/LaunchAgents whose name matches daemonNamePrefixes.
 type DaemonCheck struct {
 	Label string // e.g. "ai.jterrazz.lock-after-login"
 	Path  string // full plist path
 }
 
-// daemonNamePrefixes filters LaunchAgents to just our own. macOS ships
-// dozens of agents and third-party apps add more; we don't want to surface
-// Google Updater or Adobe in the j status view.
+// value: only the estate's own agents: macOS and third-party apps ship dozens more.
 var daemonNamePrefixes = []string{"ai.jterrazz.", "com.jterrazz.", "ai.openclaw.", "ai.hermes."}
 
-// DiscoverDaemons enumerates ~/Library/LaunchAgents for plists matching
-// daemonNamePrefixes. Sorted by label so the rendered list is stable.
+// DiscoverDaemons lists the matching LaunchAgents, sorted by label.
 func DiscoverDaemons() []DaemonCheck {
 	dir := filepath.Join(os.Getenv("HOME"), "Library", "LaunchAgents")
 	entries, err := os.ReadDir(dir)
@@ -123,13 +110,7 @@ func DiscoverDaemons() []DaemonCheck {
 	return out
 }
 
-// CheckDaemonState returns Installed=true when the agent is loaded into
-// launchd. Detail describes its state: "running PID …", "idle", or
-// "exit N" when launchd recorded a non-zero exit from the last invocation.
-//
-// We parse `launchctl list` output rather than `launchctl print` because
-// list is cheap (one fork) and gives all three datapoints we need: PID,
-// last exit code, and label.
+// CheckDaemonState reads launchctl list: loaded is Installed, Detail is running PID, idle or exit N.
 func CheckDaemonState(label string) CheckResult {
 	out, err := exec.Command("launchctl", "list").Output()
 	if err != nil {

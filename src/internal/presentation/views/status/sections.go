@@ -15,23 +15,9 @@ import (
 
 const minColumnWidth = 44
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Main renderer
-// ─────────────────────────────────────────────────────────────────────────────
-
-// TabLabels enumerates the j status tabs in display order. Index in this
-// slice maps to Model.activeTab.
-//
-// Configuration sits last because it's the slowest-changing of the four —
-// you scroll past Activity / Workspace / Applications way more often.
+// TabLabels lists the j status tabs in display order; an index here is Model.activeTab.
 var TabLabels = []string{"System", "Workspace", "Applications", "Configuration"}
 
-// renderContent renders the active tab's content. Section dividers are gone —
-// the tab bar above the viewport now plays that role.
-//
-// The "System" tab merges live activity (sparklines, top processes) with the
-// static system view (network, Tailscale, health) — they're conceptually
-// the same dashboard ("how is this machine doing right now?").
 func (m Model) renderContent() string {
 	w := m.width
 	if w < minColumnWidth {
@@ -41,36 +27,27 @@ func (m Model) renderContent() string {
 	sections := m.groupBySection()
 
 	switch m.activeTab {
-	case 0: // System
+	case 0:
 		return m.renderActivity(sections, w) + "\n" + m.renderEnvironment(sections, w)
-	case 1: // Workspace
+	case 1:
 		return m.renderWorkspace(sections, w)
-	case 2: // Applications
+	case 2:
 		return m.renderTools(sections, w)
-	case 3: // Configuration
+	case 3:
 		return m.renderConfig(sections, w)
 	}
 	return ""
 }
 
-// renderTabBar renders the horizontal tab strip shown under the page header.
-// Delegates to the shared components.Tabs so the strip looks identical
-// across every tabbed TUI in the project.
 func (m Model) renderTabBar(width int) string {
 	return components.Tabs{Labels: TabLabels, Active: m.activeTab}.Render(width)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ACTIVITY — sparklines + CPU/Memory columns
-// ─────────────────────────────────────────────────────────────────────────────
-
 func (m Model) renderActivity(sections sectionMap, w int) string {
 	var b strings.Builder
 
-	// Activity box: System column | Sparklines column
-	innerW := w - 4 // box border + padding
+	innerW := w - 4
 
-	// System info (left column)
 	sysItems := m.getSubsectionItems(sections, "Environment", "Health")
 	var sysRows []string
 	for _, item := range sysItems {
@@ -81,16 +58,15 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 		}
 	}
 
-	// Sparklines (right column)
 	sysColW := innerW / 4
 	if sysColW < 24 {
 		sysColW = 24
 	}
-	sparkColW := innerW - sysColW - 1 // -1 for divider
+	sparkColW := innerW - sysColW - 1
 
-	// All sparkline rows use: " LABEL " (7) + padding + graph + " VALUE " (8)
-	const slLabelW = 7 // " CPU  " or " NET ↓"
-	const slValueW = 8 // " 109%  " or "  3.4K "
+	// value: a sparkline row is " LABEL " (7) + padding + graph + " VALUE " (8).
+	const slLabelW = 7
+	const slValueW = 8
 	graphW := sparkColW * 40 / 100
 	if graphW < 15 {
 		graphW = 15
@@ -103,7 +79,6 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 		slPad = 0
 	}
 
-	// Helper to build a sparkline row
 	buildSparkRow := func(label string, history []float64, colored bool) string {
 		row := fmt.Sprintf(" %-6s", label)
 		if len(history) > 0 {
@@ -135,10 +110,9 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 	}
 
 	var activityRows []string
-	activityRows = append(activityRows, "") // breathing room
+	activityRows = append(activityRows, "")
 
 	if innerW >= minColWidthResponsive*2 {
-		// Wide: 2 asymmetric columns (system ~25% | graphs ~75%)
 		divider := theme.SectionBorder.Render("│")
 
 		activityRows = append(activityRows,
@@ -155,19 +129,17 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 			activityRows = append(activityRows, padTo(left, sysColW)+divider+right)
 		}
 	} else {
-		// Narrow: stacked
 		activityRows = append(activityRows, " "+theme.SubSection.Render("HEALTH"), "")
 		activityRows = append(activityRows, sysRows...)
 		activityRows = append(activityRows, "", " "+theme.SubSection.Render("GRAPHS"), "")
 		activityRows = append(activityRows, sparkLines...)
 	}
 
-	activityRows = append(activityRows, "") // breathing room
+	activityRows = append(activityRows, "")
 
 	b.WriteString(components.SubsectionBox("System", activityRows, w))
 	b.WriteString("\n")
 
-	// CPU | MEMORY in a box
 	cpuItems := m.getSubsectionItems(sections, "System", "CPU")
 	memItems := m.getSubsectionItems(sections, "System", "Memory")
 
@@ -182,19 +154,15 @@ func (m Model) renderActivity(sections sectionMap, w int) string {
 
 	procLines := strings.Split(strings.TrimRight(procContent, "\n"), "\n")
 	boxRows := make([]string, 0, len(procLines)+2)
-	boxRows = append(boxRows, "") // breathing room
+	boxRows = append(boxRows, "")
 	boxRows = append(boxRows, procLines...)
-	boxRows = append(boxRows, "") // breathing room
+	boxRows = append(boxRows, "")
 
 	b.WriteString(components.SubsectionBox("Processes", boxRows, w))
 	b.WriteString("\n")
 
 	return b.String()
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ENVIRONMENT — Network | Services | System (3-column)
-// ─────────────────────────────────────────────────────────────────────────────
 
 func (m Model) renderEnvironment(sections sectionMap, w int) string {
 	numCols := 2
@@ -203,7 +171,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 	}
 	colWidth := w / numCols
 
-	// Network box
 	netItems := m.getSubsectionItems(sections, "Environment", "Network")
 	netInnerW := colWidth - 4
 	var netRows []string
@@ -227,7 +194,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 		}
 	}
 
-	// Tailscale box
 	tsItems := m.getSubsectionItems(sections, "Environment", "Tailscale")
 	tsInnerW := colWidth - 4
 	var tsBox string
@@ -236,10 +202,9 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 		case item.Kind == status.KindTailscale && item.Loaded && item.Available && item.TailscaleStatus != nil:
 			st := item.TailscaleStatus
 
-			// Top rows: status, ip, exit node
 			var tsTopRows []string
 
-			// Status row — connected is neutral (mesh only, not privacy)
+			// value: a connected tailnet reads neutral: it is a mesh, not privacy.
 			statusVal := strings.ToLower(st.BackendState)
 			if st.Daemon != "" {
 				statusVal += " (" + string(st.Daemon) + ")"
@@ -252,7 +217,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 			}
 			tsTopRows = append(tsTopRows, left+strings.Repeat(" ", gap)+right)
 
-			// IP row
 			if st.IP != "" {
 				left = " ip"
 				right = theme.Muted.Render(st.IP)
@@ -263,7 +227,7 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 				tsTopRows = append(tsTopRows, left+strings.Repeat(" ", gap)+right)
 			}
 
-			// Exit node row — ✓ only when active (real VPN), ⚠ when none (traffic exposed)
+			// value: the exit node reads ✓ only when active (a real VPN), ⚠ when none (traffic exposed).
 			exitVal := "none"
 			exitIcon := theme.Warning.Render("⚠") + " "
 			if st.ExitNode != "" {
@@ -278,7 +242,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 			}
 			tsTopRows = append(tsTopRows, left+strings.Repeat(" ", gap)+right)
 
-			// Peer rows
 			var tsPeerRows []string
 			if len(st.Peers) > 0 {
 				for _, peer := range st.Peers {
@@ -291,7 +254,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 						onlineIcon = " " + components.Badge(true)
 					}
 
-					// Format: " name          100.98.133.10 ✓ online"
 					rightPart := theme.Muted.Render(peerIP) + onlineIcon + " " + theme.Muted.Render(onlineLabel)
 					gap = tsInnerW - components.VisibleLen(peerName) - components.VisibleLen(rightPart)
 					if gap < 1 {
@@ -311,7 +273,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 		}
 	}
 
-	// Services box (Containers + Ports)
 	svcItems := m.getSubsectionItems(sections, "Environment", "Services")
 	svcInnerW := colWidth - 4
 	var svcRows []string
@@ -345,7 +306,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 		boxes = append(boxes, components.SubsectionBox("Services", svcRows, colWidth))
 	}
 
-	// Disk Usage box
 	diskItems := m.getSubsectionItems(sections, "Environment", "Disk")
 	diskReady := len(m.diskSortOrder) > 0 && m.diskMaxSize > 0
 	if diskReady {
@@ -393,9 +353,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 		boxes = append(boxes, components.SubsectionBox("Disk Usage", diskRows, colWidth))
 	}
 
-	// Updates box — pending macOS / brew updates, "is this machine drifting?"
-	// Sits next to Network/Tailscale/Services because that's the same scope:
-	// ambient state of the machine right now.
 	if updRows := m.buildCheckRows(m.getSubsectionItems(sections, "Environment", "Updates"), colWidth-4); len(updRows) > 0 {
 		boxes = append(boxes, components.SubsectionBox("Updates", updRows, colWidth))
 	}
@@ -429,10 +386,6 @@ func (m Model) renderEnvironment(sections sectionMap, w int) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, renderedCols...) + "\n"
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// WORKSPACE — Git | Disk (2-column)
-// ─────────────────────────────────────────────────────────────────────────────
-
 func (m Model) renderWorkspace(sections sectionMap, w int) string {
 	numCols := 2
 	if w < minColWidthResponsive*2 {
@@ -441,7 +394,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 	colWidth := w / numCols
 	innerW := colWidth - 4
 
-	// Repositories box (tree-style)
 	repoItems := m.getSubsectionItems(sections, "Workspace", "Repositories")
 	repoInnerW := colWidth - 4
 	var repoRows []string
@@ -453,7 +405,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 			case !item.Available:
 				repoRows = append(repoRows, " "+theme.Muted.Render("no repositories found"))
 			default:
-				// Find max repo name width for alignment
 				maxNameW := 0
 				for _, group := range item.ProjectGroups {
 					for _, repo := range group.Repos {
@@ -465,13 +416,11 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 
 				for gi, group := range item.ProjectGroups {
 					if gi > 0 {
-						repoRows = append(repoRows, "") // spacing between groups
+						repoRows = append(repoRows, "")
 					}
-					// Project header
 					repoRows = append(repoRows, " "+theme.SubSection.Render(group.Prefix+"/"))
 
 					for ri, repo := range group.Repos {
-						// Tree connector
 						connector := "├─"
 						if ri == len(group.Repos)-1 {
 							connector = "└─"
@@ -479,7 +428,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 
 						branchStyle := theme.Muted
 
-						// Status
 						var statusStr string
 						if repo.Clean {
 							statusStr = theme.Success.Render("clean")
@@ -500,14 +448,12 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 		}
 	}
 
-	// Docker box
 	dockerItems := m.getSubsectionItems(sections, "Workspace", "Docker")
 	var dockerBox string
 	for _, item := range dockerItems {
 		if item.Kind == status.KindDocker && item.Loaded && item.Available && item.DockerStatus != nil {
 			ds := item.DockerStatus
 
-			// Section 1: Running containers
 			var containerRows []string
 			if len(ds.Containers) > 0 {
 				for _, c := range ds.Containers {
@@ -523,7 +469,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 				containerRows = append(containerRows, " "+theme.Muted.Render("no containers running"))
 			}
 
-			// Section 2: Images
 			var imageRows []string
 			for _, img := range ds.Images {
 				name := img.Repository
@@ -551,7 +496,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 				imageRows = append(imageRows, " "+theme.Muted.Render("no images"))
 			}
 
-			// Section 3: Summary stats
 			var summaryRow string
 			parts := []string{
 				fmt.Sprintf("images %d", len(ds.Images)),
@@ -571,7 +515,6 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 		}
 	}
 
-	// Dependencies box
 	depItems := m.getSubsectionItems(sections, "Workspace", "Dependencies")
 	var depRows []string
 	for _, item := range depItems {
@@ -660,20 +603,9 @@ func (m Model) renderWorkspace(sections sectionMap, w int) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, renderedCols...) + "\n"
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SETUP — boxes in masonry
-// ─────────────────────────────────────────────────────────────────────────────
-
-// renderConfig renders the Configuration tab. Boxes are organized under
-// intent-based group headers (Identity / Privacy & Security / Server /
-// Workspace) with the dotted-separator pattern shared with the Apps tab —
-// not by raw ScriptCategory, which produces a wall of fragmented boxes.
-//
-// The mapping from script names to boxes is explicit: it's the cheapest way
-// to reshape the layout without changing the data model. Adding a new script
-// means listing its name here too — there's no fallback bucket on purpose,
-// so a forgotten script shows up as missing in code review rather than
-// silently appearing in a "Misc" box.
+// invariant: the script-to-box mapping has no fallback bucket on purpose: a script
+// added to the registry and not listed here shows up missing in review, never
+// silently in a Misc box.
 func (m Model) renderConfig(sections sectionMap, w int) string {
 	numCols := 3
 	if w < minColWidthResponsive*2 {
@@ -688,7 +620,6 @@ func (m Model) renderConfig(sections sectionMap, w int) string {
 		return m.buildCheckRows(items, innerW)
 	}
 
-	// Sources.
 	configSub := func(name string) []status.Item {
 		return m.getSubsectionItems(sections, "Config", name)
 	}
@@ -746,7 +677,6 @@ func (m Model) renderConfig(sections sectionMap, w int) string {
 		}},
 	}
 
-	// Flat list of every item that will be rendered, used for the rollup.
 	var allItems []status.Item
 	for _, group := range groups {
 		for _, bx := range group.boxes {
@@ -776,13 +706,7 @@ func (m Model) renderConfig(sections sectionMap, w int) string {
 	return b.String()
 }
 
-// configHealthRollup is the one-line summary above the Configuration tab:
-// "9 healthy   1 drift   ████████░░ 90%". GoodWhen-aware: a security check
-// with GoodWhen=true counts as healthy when Installed=true; an updates
-// check with GoodWhen=false counts as healthy when Installed=false.
-//
-// Returns empty while items are still loading so we don't paint a
-// misleading 0% bar before probes finish.
+// invariant: empty while items still load, so no 0% bar paints before the probes finish.
 func configHealthRollup(items []status.Item, w int) string {
 	var loaded, healthy int
 	for _, item := range items {
@@ -827,17 +751,12 @@ func configHealthRollup(items []status.Item, w int) string {
 	return left + strings.Repeat(" ", gap) + right
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TOOLS — column layout
-// ─────────────────────────────────────────────────────────────────────────────
-
 func (m Model) renderTools(sections sectionMap, w int) string {
 	subsections, ok := sections["Tools"]
 	if !ok {
 		return ""
 	}
 
-	// 3 groups: Core (foundation), CLI (command-line workflow), Apps (visual applications)
 	type toolGroup struct {
 		label      string
 		categories []string
@@ -848,7 +767,6 @@ func (m Model) renderTools(sections sectionMap, w int) string {
 		{"Apps", []string{"Development", "Creative", "Communication", "Productivity", "AI Apps", "Browse", "Security", "Entertainment", "Utilities"}},
 	}
 
-	// Determine column count
 	numCols := 3
 	if w < minColWidthResponsive*2 {
 		numCols = 1
@@ -858,7 +776,6 @@ func (m Model) renderTools(sections sectionMap, w int) string {
 
 	colWidth := w / numCols
 
-	// Build boxes for a set of categories
 	buildBoxes := func(categories []string) []string {
 		var boxes []string
 		for _, sub := range categories {
@@ -895,11 +812,6 @@ func (m Model) renderTools(sections sectionMap, w int) string {
 	return b.String()
 }
 
-// buildCheckRows renders a list of check items as two-column rows:
-// " ✓ name" left, muted Detail right-aligned, with at least a one-cell gap.
-// GoodWhen-aware so a security check that should be off (GoodWhen=true,
-// Installed=false) still reads as healthy. Used by both the Configuration
-// tab and the System-tab Updates box.
 func (m Model) buildCheckRows(items []status.Item, innerW int) []string {
 	var rows []string
 	for _, item := range items {
@@ -926,9 +838,6 @@ func (m Model) buildCheckRows(items []status.Item, innerW int) []string {
 	return rows
 }
 
-// groupSeparator renders the dotted divider used to introduce a group of
-// boxes: "· Label · · · · · · ·". Shared between the Configuration and
-// Applications tabs so both feel like the same product.
 func groupSeparator(label string, width int) string {
 	text := " " + label + " "
 	remaining := width - len(text)
@@ -940,9 +849,6 @@ func groupSeparator(label string, width int) string {
 		theme.Muted.Render(strings.Repeat(" ·", dots))
 }
 
-// masonry packs already-rendered boxes into `numCols` columns, always feeding
-// the next box into the currently-shortest column. Returns the joined output
-// without trailing newline; callers add their own spacing.
 func masonry(boxes []string, numCols int) string {
 	if len(boxes) == 0 {
 		return ""
@@ -970,11 +876,6 @@ func masonry(boxes []string, numCols int) string {
 	return lipgloss.JoinHorizontal(lipgloss.Top, rendered...)
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Rendering helpers
-// ─────────────────────────────────────────────────────────────────────────────
-
-// renderToolRowCompact renders a tool row with right-aligned version
 func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 	if !item.Loaded {
 		return " " + m.loadingIndicator() + " " + fmt.Sprintf("%-*s", nameW, item.Name)
@@ -983,7 +884,6 @@ func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 	badge := components.Badge(item.Installed)
 	name := fmt.Sprintf("%-*s", nameW, item.Name)
 
-	// Clean up version
 	version := item.Version
 	if strings.HasPrefix(version, item.Name+" ") {
 		version = strings.TrimPrefix(version, item.Name+" ")
@@ -995,10 +895,8 @@ func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 		version = version[:13] + "..."
 	}
 
-	// Left part: " ✓ name"
 	left := " " + badge + " " + name
 
-	// Right part: status icon + method + version
 	right := ""
 	switch item.Status {
 	case "running":
@@ -1011,10 +909,8 @@ func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 		right += theme.Muted.Render(version)
 	}
 
-	// Show install method when there's enough space
 	method := item.Method
 	if method != "" {
-		// Minimum space: left + gap(1) + method + space(1) + version
 		minNeeded := components.VisibleLen(left) + 1 + len(method) + 1 + components.VisibleLen(right)
 		if minNeeded <= rowW {
 			right += " " + theme.Muted.Render(method)
@@ -1035,7 +931,6 @@ func (m Model) renderToolRowCompact(item status.Item, nameW, rowW int) string {
 	return left + strings.Repeat(" ", gap) + right
 }
 
-// getTotalMemoryMB returns total system RAM in MB via sysctl (cached).
 var totalMemoryMB float64
 
 func getTotalMemoryMB() float64 {
@@ -1044,7 +939,7 @@ func getTotalMemoryMB() float64 {
 	}
 	out, err := exec.Command("sysctl", "-n", "hw.memsize").Output()
 	if err != nil {
-		return 16 * 1024 // fallback 16GB
+		return 16 * 1024
 	}
 	var bytes int64
 	_, _ = fmt.Sscanf(strings.TrimSpace(string(out)), "%d", &bytes)
@@ -1056,7 +951,6 @@ func getTotalMemoryMB() float64 {
 	return totalMemoryMB
 }
 
-// renderProcessBars renders process items with colored horizontal bars
 func (m Model) renderProcessBars(items []status.Item, width int) []string {
 	var rows []string
 	for _, item := range items {
@@ -1071,12 +965,11 @@ func (m Model) renderProcessBars(items []status.Item, width int) []string {
 		maxItems := 5
 		barWidth := 15
 		valueWidth := 7
-		nameWidth := width - barWidth - valueWidth - 3 // spaces between
+		nameWidth := width - barWidth - valueWidth - 3
 		if nameWidth < 10 {
 			nameWidth = 10
 		}
 
-		// Find max value for relative scaling (memory uses relative, CPU uses absolute)
 		var maxVal float64
 		isPercent := len(item.Processes) > 0 && strings.HasSuffix(item.Processes[0].Value, "%")
 		if isPercent {
@@ -1093,7 +986,8 @@ func (m Model) renderProcessBars(items []status.Item, width int) []string {
 			maxVal = 1
 		}
 
-		// For memory: color based on % of total system RAM, not relative to top process
+		// value: memory colors by its share of the machine's RAM, not relative to the top
+		// process; CPU by its own value.
 		totalMem := getTotalMemoryMB()
 
 		for i, p := range item.Processes {
@@ -1111,7 +1005,6 @@ func (m Model) renderProcessBars(items []status.Item, width int) []string {
 				sizeRatio = 1.0
 			}
 
-			// Color ratio: for CPU use the value itself, for memory use % of total RAM
 			colorRatio := sizeRatio
 			if !isPercent {
 				colorRatio = v / totalMem
@@ -1127,13 +1020,10 @@ func (m Model) renderProcessBars(items []status.Item, width int) []string {
 	return rows
 }
 
-// renderBar renders a colored horizontal bar (color based on size ratio)
 func renderBar(ratio float64, width int) string {
 	return renderBarWithColor(ratio, ratio, width)
 }
 
-// renderBarWithColor renders a horizontal bar where size and color are independent.
-// sizeRatio controls bar fill, colorRatio controls green→yellow→red color.
 func renderBarWithColor(sizeRatio, colorRatio float64, width int) string {
 	if sizeRatio < 0 {
 		sizeRatio = 0
@@ -1147,7 +1037,6 @@ func renderBarWithColor(sizeRatio, colorRatio float64, width int) string {
 	}
 	empty := width - filled
 
-	// Color based on colorRatio: green → yellow → red
 	var filledStyle lipgloss.Style
 	switch {
 	case colorRatio < 0.5:
@@ -1162,7 +1051,6 @@ func renderBarWithColor(sizeRatio, colorRatio float64, width int) string {
 	return filledStyle.Render(strings.Repeat("█", filled)) + emptyStyle.Render(strings.Repeat("░", empty))
 }
 
-// renderColoredSparkline renders a sparkline with per-block coloring
 func renderColoredSparkline(values []float64, width int) string {
 	blocks := []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
@@ -1184,7 +1072,6 @@ func renderColoredSparkline(values []float64, width int) string {
 
 	var result strings.Builder
 
-	// Pad left with spaces
 	pad := width - len(data)
 	result.WriteString(strings.Repeat(" ", pad))
 
@@ -1212,7 +1099,6 @@ func renderColoredSparkline(values []float64, width int) string {
 	return result.String()
 }
 
-// renderAutoSparkline renders a sparkline that auto-scales to its own max (for bytes/sec)
 func renderAutoSparkline(values []float64, width int) string {
 	blocks := []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
@@ -1249,7 +1135,6 @@ func renderAutoSparkline(values []float64, width int) string {
 	return result.String()
 }
 
-// formatBytesPerSec formats bytes/sec into a fixed 6-char right-aligned string
 func formatBytesPerSec(b float64) string {
 	switch {
 	case b >= 1e9:
@@ -1262,10 +1147,6 @@ func formatBytesPerSec(b float64) string {
 		return fmt.Sprintf("%5.0fB", b)
 	}
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Data helpers
-// ─────────────────────────────────────────────────────────────────────────────
 
 type sectionMap = map[string]map[string][]status.Item
 
@@ -1283,7 +1164,6 @@ func (m Model) groupBySection() sectionMap {
 		sections[item.Section][item.SubSection] = append(sections[item.Section][item.SubSection], item)
 	}
 
-	// Sort tool items A-Z
 	if toolSubs, ok := sections["Tools"]; ok {
 		for sub, items := range toolSubs {
 			sort.Slice(items, func(i, j int) bool {
@@ -1308,7 +1188,7 @@ func (m Model) getSubsectionItems(sections sectionMap, section, subsection strin
 func parseDisplaySize(s string) float64 {
 	s = strings.TrimSpace(s)
 	upper := strings.ToUpper(s)
-	// Check longest suffixes first to avoid "B" matching "GB"
+	// hazard: longest suffixes first, or "B" matches "GB".
 	suffixes := []struct {
 		suffix string
 		mult   float64
@@ -1330,10 +1210,6 @@ func parseDisplaySize(s string) float64 {
 	return 0
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Responsive multi-column layout
-// ─────────────────────────────────────────────────────────────────────────────
-
 type namedColumn struct {
 	title string
 	rows  []string
@@ -1341,10 +1217,6 @@ type namedColumn struct {
 
 const minColWidthResponsive = 30
 
-// renderColumnsImpl renders named columns responsively:
-// wide terminal → all columns side by side with dividers
-// narrow terminal → stacked vertically with headers
-// renderColumnsImpl is the shared column renderer
 func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) string {
 	if len(cols) == 0 {
 		return ""
@@ -1376,7 +1248,6 @@ func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) st
 			b.WriteString("\n")
 		}
 
-		// Headers with space before title
 		for i, col := range group {
 			header := " " + theme.SubSection.Render(strings.ToUpper(col.title))
 			if i < len(group)-1 {
@@ -1387,7 +1258,6 @@ func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) st
 		}
 		b.WriteString("\n")
 
-		// Empty separator line
 		for i := range group {
 			if i < len(group)-1 {
 				b.WriteString(padTo("", colW) + divider)
@@ -1395,7 +1265,6 @@ func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) st
 		}
 		b.WriteString("\n")
 
-		// Content rows
 		maxRows := 0
 		for _, col := range group {
 			if len(col.rows) > maxRows {
@@ -1422,12 +1291,10 @@ func renderColumnsImpl(cols []namedColumn, totalWidth int, outerPadding bool) st
 	return b.String()
 }
 
-// renderColumnsRaw renders columns for embedding in boxes (no outer newlines)
 func renderColumnsRaw(cols []namedColumn, totalWidth int) string {
 	return renderColumnsImpl(cols, totalWidth, false)
 }
 
-// parseProcessValue parses "48.4%", "884M", "1.2G" into a comparable float
 func parseProcessValue(s string) float64 {
 	var v float64
 	switch {

@@ -2,8 +2,6 @@ package configview
 
 import "github.com/charmbracelet/lipgloss"
 
-// Style palette for the j config TUI. Kept in one file so the look can be
-// re-themed by editing constants here without touching layout code.
 var (
 	colorPrimary    = lipgloss.AdaptiveColor{Light: "#005f87", Dark: "#5fafd7"}
 	colorSuccess    = lipgloss.AdaptiveColor{Light: "#2e8540", Dark: "#5fd75f"}

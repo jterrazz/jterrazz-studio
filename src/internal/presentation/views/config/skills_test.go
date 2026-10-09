@@ -37,7 +37,6 @@ func TestSkillInstalledCountsAnyInstalledState(t *testing.T) {
 	if m.skillInstalled(entries["d"]) {
 		t.Error("not-installed should not count as installed")
 	}
-	// Absent from the map entirely — zero value must also read as not installed.
 	if m.skillInstalled(skillEntry{Name: "missing"}) {
 		t.Error("absent entry should default to not installed")
 	}
@@ -76,7 +75,6 @@ func TestInstalledCountAnyInstalledStateCounts(t *testing.T) {
 	states := map[string]skillState{
 		"a": skillStateInstalled,
 		"b": skillStateOutdated,
-		// "c" absent — not installed.
 	}
 	n, total := sec.installedCount(states)
 	if n != 2 || total != 3 {
@@ -102,7 +100,7 @@ func TestApplySkillCurrencyResultsResolvesOutdatedAndUpToDate(t *testing.T) {
 	if m.skillStates["current-skill"] != skillStateInstalled {
 		t.Errorf("current-skill = %v, want skillStateInstalled", m.skillStates["current-skill"])
 	}
-	// StatusUnknown must never be rendered as outdated — settle to installed.
+	// invariant: StatusUnknown never reads outdated; it settles to installed.
 	if m.skillStates["unknown-skill"] != skillStateInstalled {
 		t.Errorf("unknown-skill = %v, want skillStateInstalled", m.skillStates["unknown-skill"])
 	}

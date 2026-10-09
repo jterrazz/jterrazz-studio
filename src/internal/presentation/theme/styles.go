@@ -2,10 +2,6 @@ package theme
 
 import "github.com/charmbracelet/lipgloss"
 
-// =============================================================================
-// Base Styles - Semantic styles for text
-// =============================================================================
-
 var (
 	// Title is for main headings
 	Title = lipgloss.NewStyle().
@@ -63,10 +59,6 @@ var (
 		MarginTop(1)
 )
 
-// =============================================================================
-// Border Styles
-// =============================================================================
-
 var (
 	// Border is for drawing borders
 	Border = lipgloss.NewStyle().
@@ -88,10 +80,6 @@ var (
 		Padding(0, 1)
 )
 
-// =============================================================================
-// Breadcrumb Styles
-// =============================================================================
-
 var (
 	// Breadcrumb is for inactive breadcrumb parts
 	Breadcrumb = lipgloss.NewStyle().
@@ -102,10 +90,6 @@ var (
 				Foreground(lipgloss.Color(ColorSecondary)).
 				Bold(true)
 )
-
-// =============================================================================
-// Progress & Status Styles
-// =============================================================================
 
 var (
 	// ProgressFilled is for filled progress bar segments
@@ -135,10 +119,6 @@ var (
 			Foreground(lipgloss.Color(ColorWarning))
 )
 
-// =============================================================================
-// Service Status Styles
-// =============================================================================
-
 var (
 	// ServiceRunning is for running service indicator
 	ServiceRunning = lipgloss.NewStyle().
@@ -148,10 +128,6 @@ var (
 	ServiceStopped = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(ColorWarning))
 )
-
-// =============================================================================
-// Table Styles
-// =============================================================================
 
 var (
 	// Cell is for table cell text
@@ -166,10 +142,6 @@ var (
 	Method = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("240"))
 )
-
-// =============================================================================
-// Style Resolver - Semantic style names to actual styles
-// =============================================================================
 
 // Resolve returns a lipgloss style for a semantic style name
 func Resolve(styleName string) lipgloss.Style {

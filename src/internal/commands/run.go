@@ -12,7 +12,6 @@ var runCmd = &cobra.Command{
 }
 
 func init() {
-	// Dynamically build commands from config
 	for _, cmdGroup := range config.RunCommands {
 		parentCmd := &cobra.Command{
 			Use:   cmdGroup.Name,

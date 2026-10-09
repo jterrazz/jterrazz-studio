@@ -6,20 +6,10 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// modalActive reports whether the input-collection modal is currently
-// being shown.
 func (m Model) modalActive() bool {
 	return m.form != nil
 }
 
-// buildModal initializes a huh.Form for the script's Inputs and stashes the
-// bindings on the model so values can be read back when the form completes.
-//
-// One *string per input is allocated so huh can write directly into it.
-//
-// The form's onComplete callback runs the script's InstallFn with the
-// collected values — the canonical install-with-inputs flow. For the Remote
-// tab (and any future generic form) use buildFormModal instead.
 func (m *Model) buildModal(s *config.Script) {
 	m.formScript = s
 	m.formBindings = make([]*string, len(s.Inputs))
@@ -46,10 +36,6 @@ func (m *Model) buildModal(s *config.Script) {
 		WithShowHelp(false)
 }
 
-// buildFormModal opens a generic huh form modal not tied to a Script. The
-// supplied onComplete fires when the user submits the form; bindings live
-// in the closure the caller controls. Used by the Remote tab to reconfigure
-// Tailscale settings.
 func (m *Model) buildFormModal(title, help string, fields []huh.Field, onComplete func() tea.Cmd) {
 	m.formScript = nil
 	m.formBindings = nil
@@ -61,8 +47,6 @@ func (m *Model) buildFormModal(title, help string, fields []huh.Field, onComplet
 		WithShowHelp(false)
 }
 
-// buildField turns a ScriptInput into the matching huh.Field, with its
-// value pointer wired up so writes flow back to the binding.
 func buildField(in config.ScriptInput, ptr *string) huh.Field {
 	switch in.Kind {
 	case config.InputPassword:
@@ -86,9 +70,8 @@ func buildField(in config.ScriptInput, ptr *string) huh.Field {
 			Options(opts...).
 			Value(ptr)
 	case config.InputConfirm:
-		// huh's Confirm binds to *bool; we stringify "yes"/"no" so the
-		// binding stays uniformly *string. The InstallFn reads via
-		// values.Get(name) and compares against "yes" / "no".
+		// outside: huh's Confirm binds a *bool; the value is stringified to "yes"/"no" so every
+		// binding stays a *string.
 		return huh.NewSelect[string]().
 			Title(in.Label).
 			Description(in.Help).
@@ -97,7 +80,7 @@ func buildField(in config.ScriptInput, ptr *string) huh.Field {
 				huh.NewOption("No", "no"),
 			).
 			Value(ptr)
-	default: // InputText
+	default:
 		f := huh.NewInput().
 			Title(in.Label).
 			Description(in.Help).
@@ -109,8 +92,6 @@ func buildField(in config.ScriptInput, ptr *string) huh.Field {
 	}
 }
 
-// collectModalValues reads the live form bindings back into a config.InputValues
-// map keyed by Input.Name.
 func (m Model) collectModalValues() config.InputValues {
 	values := config.InputValues{}
 	if m.formScript == nil {
@@ -124,8 +105,6 @@ func (m Model) collectModalValues() config.InputValues {
 	return values
 }
 
-// closeModal clears modal state. Called on completion (after queueing the
-// install action) or on abort (esc).
 func (m *Model) closeModal() {
 	m.form = nil
 	m.formScript = nil

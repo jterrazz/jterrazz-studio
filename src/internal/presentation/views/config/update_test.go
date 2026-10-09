@@ -6,8 +6,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// modelWithSections constructs a Model directly from a synthetic section list,
-// bypassing the package-level config.Scripts.
 func modelWithSections(sections []Section) Model {
 	return Model{
 		sections: sections,
@@ -194,7 +192,6 @@ func TestStartUninstallNoOpWithoutUninstallFn(t *testing.T) {
 		Category:  config.ScriptCategoryTerminal,
 		CheckFn:   checkInstalled(true),
 		InstallFn: noop,
-		// No UninstallFn — item is install-only.
 	}}
 	m := modelWithSections([]Section{{Category: config.ScriptCategoryTerminal, Scripts: scripts}})
 	_, cmd := m.startUninstall()
@@ -227,7 +224,6 @@ func TestCollectModalValues(t *testing.T) {
 }
 
 func TestRebuildSectionsClampsCursor(t *testing.T) {
-	// Cursor starts at (0, 5) but section only has 3 scripts after rebuild.
 	m := Model{
 		sections: []Section{makeSection(config.ScriptCategoryTerminal, "a", "b", "c")},
 		cursor:   cursorPos{section: 0, item: 5},

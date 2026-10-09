@@ -44,7 +44,6 @@ func runMachineProbe(alias string) {
 
 	ip := resolveSSHHostname(target)
 	if ip == "" {
-		// fall back to the host part of user@host so the gateway-port probe still works.
 		if at := strings.Index(target, "@"); at > 0 && at < len(target)-1 {
 			ip = target[at+1:]
 		} else {

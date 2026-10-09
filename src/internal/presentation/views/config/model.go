@@ -12,54 +12,34 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
 )
 
-// TabLabels enumerates the j config tabs in display order. Index in this
-// slice maps to Model.tabs.Active.
+// TabLabels lists the j config tabs in display order; an index here is Model.tabs.Active.
 var TabLabels = []string{"Configuration", "Skills", "Remote"}
 
-// Tab indices, kept as named constants so view code reads cleanly.
 const (
 	tabConfiguration = 0
 	tabSkills        = 1
 	tabRemote        = 2
 )
 
-// Model is the bubbletea model backing `j config`.
-//
-// Hosts three tabs:
-//   - Configuration: install/uninstall items (sections + cursor + modal)
-//   - Skills: install/uninstall AI agent skills
-//   - Remote: configure Tailscale endpoint
-//
-// Per-tab state lives as named fields on the Model rather than a sum type,
-// so each tab's render and update functions read directly from what they
-// need without unwrapping.
+// Model is the Bubble Tea model behind j config: the Configuration, Skills and Remote tabs.
 type Model struct {
 	tabs components.Tabs
 
-	// ── Configuration tab ────────────────────────────────────────────
 	sections []Section
 	cursor   cursorPos
 	expanded map[string]bool
 
-	// checkCache stores the result of each Script's CheckFn so we don't
-	// fork+exec a sub-process (defaults, pmset, systemsetup, gh auth
-	// status, …) on every render. Refreshed at startup and after each
-	// install/uninstall completes — never during navigation.
+	// value: a CheckFn forks a sub-process (defaults, pmset, systemsetup), so its results
+	// are cached and refreshed only at startup and after an install or uninstall.
 	checkCache map[string]config.CheckResult
 
-	// ── Skills tab ───────────────────────────────────────────────────
 	skillSections []skillSection
 	skillCursor   cursorPos
 
-	// skillStates holds each installed skill's currency state. A skill with
-	// no entry here (zero value) is skillStateNotInstalled. Populated
-	// synchronously (fast, offline) from skill.ListInstalled() +
-	// skill.ReadLock() in refreshSkillSections; skillStateChecking entries
-	// are then resolved to installed/outdated by the async currency-check
-	// tea.Cmd fired from Init and after every install/update/remove.
+	// invariant: a skill with no entry is skillStateNotInstalled; checking entries are
+	// resolved by the async currency check fired from Init and after every change.
 	skillStates map[string]skillState
 
-	// ── Cross-tab ────────────────────────────────────────────────────
 	selfAlias string
 	selfRole  config.Role
 
@@ -71,10 +51,6 @@ type Model struct {
 	lastResult string
 	lastErr    error
 
-	// Modal state — non-nil while a huh form is up. Used both for the
-	// install-with-inputs flow (formScript set, bindings auto-collected)
-	// and for generic forms like the Remote-tab reconfigure (formScript
-	// nil, bindings owned by the caller via closure).
 	form           *huh.Form
 	formScript     *config.Script
 	formBindings   []*string
@@ -83,15 +59,11 @@ type Model struct {
 	formOnComplete func() tea.Cmd // fires when the user submits
 }
 
-// cursorPos identifies the highlighted item: section index + item index
-// within that section's Scripts slice.
 type cursorPos struct {
 	section int
 	item    int
 }
 
-// NewModel constructs a fresh Model with all sections expanded, the
-// cursor on the first item, and a fresh check cache.
 func NewModel() Model {
 	alias, m, ok := config.SelfMachine()
 	role := config.Role("")
@@ -118,11 +90,6 @@ func NewModel() Model {
 	return model
 }
 
-// refreshCheckCache invokes every Script's CheckFn once (in parallel) and
-// stores the results. Called at startup and after each install/uninstall
-// lifecycle. CheckFn implementations typically fork+exec macOS commands
-// (10-50ms each), so we deliberately avoid calling them on every render
-// frame and fan them out across goroutines on the rare invalidations.
 func (m *Model) refreshCheckCache() {
 	if m.checkCache == nil {
 		m.checkCache = map[string]config.CheckResult{}
@@ -158,8 +125,6 @@ func (m *Model) refreshCheckCache() {
 	}
 }
 
-// cachedCheck returns the cached CheckResult for s, falling back to a
-// live call if the script isn't in the cache (shouldn't normally happen).
 func (m Model) cachedCheck(s *config.Script) config.CheckResult {
 	if s == nil {
 		return config.CheckResult{}
@@ -173,8 +138,6 @@ func (m Model) cachedCheck(s *config.Script) config.CheckResult {
 	return config.CheckResult{}
 }
 
-// installed reports whether the script is currently installed, reading
-// from the cache.
 func (m Model) installed(s *config.Script) bool {
 	return m.cachedCheck(s).Installed
 }
@@ -184,8 +147,6 @@ func (m Model) Init() tea.Cmd {
 	return tea.Batch(tea.WindowSize(), m.startSkillCurrencyCheck())
 }
 
-// firstItemCursor returns the position of the first item across all sections,
-// or {-1, -1} if there are no items.
 func firstItemCursor(sections []Section) cursorPos {
 	for s := range sections {
 		if len(sections[s].Scripts) > 0 {
@@ -195,8 +156,6 @@ func firstItemCursor(sections []Section) cursorPos {
 	return cursorPos{section: -1, item: -1}
 }
 
-// currentScript returns the script under the cursor, or nil if the cursor
-// isn't on a valid item.
 func (m Model) currentScript() *config.Script {
 	if m.cursor.section < 0 || m.cursor.section >= len(m.sections) {
 		return nil
@@ -208,9 +167,6 @@ func (m Model) currentScript() *config.Script {
 	return sec.Scripts[m.cursor.item]
 }
 
-// sectionInstalledCount returns how many of the section's scripts are
-// currently installed, reading from the check cache. Mirrors the semantic
-// of Section.installedCount but never re-runs CheckFn during render.
 func (m Model) sectionInstalledCount(sec Section) (installed, total int) {
 	for _, sc := range sec.Scripts {
 		if sc.CheckFn == nil {
@@ -224,17 +180,12 @@ func (m Model) sectionInstalledCount(sec Section) (installed, total int) {
 	return
 }
 
-// rebuildSections re-runs buildSections (after an install/uninstall changed
-// state), refreshes the check cache, and clamps the cursor onto a valid item.
 func (m *Model) rebuildSections() {
 	m.sections = buildSections(m.selfRole)
 	m.refreshCheckCache()
 	m.clampCursor()
 }
 
-// clampCursor ensures (m.cursor.section, m.cursor.item) point at a real
-// script. If the cursor falls off the end (because items moved or vanished),
-// snaps it to the closest valid position.
 func (m *Model) clampCursor() {
 	if len(m.sections) == 0 {
 		m.cursor = cursorPos{section: -1, item: -1}
@@ -248,7 +199,6 @@ func (m *Model) clampCursor() {
 	}
 	sec := m.sections[m.cursor.section]
 	if len(sec.Scripts) == 0 {
-		// section emptied; jump to the next non-empty one
 		m.cursor = firstItemCursor(m.sections)
 		return
 	}
@@ -260,9 +210,7 @@ func (m *Model) clampCursor() {
 	}
 }
 
-// fnExecCommand adapts a Go func() error into a tea.ExecCommand so install
-// and uninstall actions can release the terminal (sudo, prompts, key
-// generation all need raw TTY access).
+// outside: sudo, prompts and key generation need the raw TTY, so an action runs as a tea.ExecCommand.
 type fnExecCommand struct {
 	fn func() error
 }
@@ -272,15 +220,12 @@ func (*fnExecCommand) SetStdin(io.Reader)  {}
 func (*fnExecCommand) SetStdout(io.Writer) {}
 func (*fnExecCommand) SetStderr(io.Writer) {}
 
-// actionDoneMsg is dispatched when a tea.Exec'd install/uninstall completes.
 type actionDoneMsg struct {
 	scriptName string
-	verb       string // "install" or "uninstall"
+	verb       string
 	err        error
 }
 
-// runAction returns a tea.Cmd that releases the terminal, runs fn, then
-// emits an actionDoneMsg. Used for both install and uninstall paths.
 func runAction(scriptName, verb string, fn func() error) tea.Cmd {
 	return tea.Exec(&fnExecCommand{fn: fn}, func(err error) tea.Msg {
 		return actionDoneMsg{scriptName: scriptName, verb: verb, err: err}

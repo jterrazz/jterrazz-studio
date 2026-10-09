@@ -16,8 +16,6 @@ type CheckResult struct {
 	Detail    string // Extra detail: path, config location, etc.
 }
 
-// CheckResult constructors for common patterns
-
 // Installed creates a CheckResult for an installed item
 func Installed() CheckResult {
 	return CheckResult{Installed: true}
@@ -113,11 +111,9 @@ type Tool struct {
 	Category    ToolCategory
 	Replaces    string // The default command or workflow this tool supersedes; drives the toolbelt skill's generated prefer-table.
 
-	// Check - how to verify if installed
 	Command string             // CLI command to check existence
 	CheckFn func() CheckResult // Custom check (overrides Command)
 
-	// Install - how to install
 	Method        InstallMethod // brew, npm, manual, etc.
 	Formula       string        // Brew formula or npm package name
 	PythonVersion string        // Python version constraint for uv tools (e.g. "3.13")
@@ -125,16 +121,10 @@ type Tool struct {
 	UninstallFn   func() error  // Custom uninstall (overrides Method); optional
 	Dependencies  []string      // Tool names this depends on
 
-	// Version - how to get version info
 	VersionFn func() string // Returns version string
 
-	// Scripts - post-install or related scripts
 	Scripts []string // Script names to run after install
 }
-
-// =============================================================================
-// Tool Functions
-// =============================================================================
 
 // GetAllTools returns all tools
 func GetAllTools() []Tool {
@@ -237,7 +227,6 @@ func (t Tool) Check() CheckResult {
 		result.Version = t.VersionFn()
 	}
 
-	// Fallback: for bun packages, get version from bun global list if VersionFn returned nothing
 	if result.Version == "" && t.Method == InstallBun && t.Formula != "" {
 		result.Version = tool.VersionFromBunGlobal(t.Formula)()
 	}
@@ -270,10 +259,7 @@ func (t Tool) Install() error {
 	}
 }
 
-// Uninstall removes the tool. Custom UninstallFn wins; otherwise dispatches
-// per Method the same way Install does. Methods with no well-defined
-// uninstall (manual, xcode, mas, nvm) return an error — those tools are
-// check-only from the registry's point of view.
+// Uninstall runs the custom UninstallFn, else the Method's removal; a check-only method errors.
 func (t Tool) Uninstall() error {
 	if t.UninstallFn != nil {
 		return t.UninstallFn()
@@ -295,10 +281,7 @@ func (t Tool) Uninstall() error {
 	}
 }
 
-// Uninstallable reports whether the tool can be removed automatically —
-// either via a custom UninstallFn or one of the five dispatchable methods
-// (brew formula, brew cask, npm, bun, uv). Manual/xcode/mas/nvm entries
-// (and anything else) are check-only unless they set UninstallFn.
+// Uninstallable reports whether the tool has an UninstallFn or a dispatchable method (brew, cask, npm, bun, uv).
 func (t Tool) Uninstallable() bool {
 	if t.UninstallFn != nil {
 		return true
@@ -311,11 +294,7 @@ func (t Tool) Uninstallable() bool {
 	}
 }
 
-// Installable reports whether the tool can be installed automatically —
-// either via a custom InstallFn or one of the five dispatchable methods.
-// Mirrors Uninstallable's method set so the TUI can tell "read-only"
-// (neither installable nor uninstallable) registry entries apart from
-// actionable ones.
+// Installable reports whether the tool has an InstallFn or a dispatchable method, as Uninstallable does.
 func (t Tool) Installable() bool {
 	if t.InstallFn != nil {
 		return true

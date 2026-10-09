@@ -17,15 +17,7 @@ import (
 	"time"
 )
 
-// RemoteDaemon identifies which tailscaled a call talks to. Remote access runs
-// over Tailscale, and two distinct daemons can exist on the same machine:
-//
-//   - userspace: a tailscaled that j starts itself with
-//     --tun=userspace-networking (no root, no kernel extension), keeping its
-//     state, socket and logs under ~/.jterrazz/tailscale/. This is the only
-//     daemon j ever starts.
-//   - system: the daemon owned by the Tailscale.app GUI (or an OS service).
-//     j never starts it, but it can report it and disconnect it.
+// RemoteDaemon names the tailscaled a call talks to: j's userspace one, or the system one j never starts.
 type RemoteDaemon string
 
 const (
@@ -48,11 +40,9 @@ func (d RemoteDaemon) Describe() string {
 type RemoteMode string
 
 const (
-	// RemoteModeAuto connects through j's userspace daemon, but status and
-	// disconnect also cover the system daemon when it holds the connection.
+	// RemoteModeAuto connects through j's userspace daemon; status and disconnect also cover the system daemon.
 	RemoteModeAuto RemoteMode = "auto"
-	// RemoteModeUserspace restricts j to its own userspace daemon; the
-	// system daemon is never touched.
+	// RemoteModeUserspace keeps j to its own userspace daemon; the system daemon is never touched.
 	RemoteModeUserspace RemoteMode = "userspace"
 )
 
@@ -145,7 +135,6 @@ func normalizeRemoteSettings(s RemoteSettings) RemoteSettings {
 	return s
 }
 
-// jterrazDir returns the root of the unified user data directory.
 func jterrazDir() string {
 	return filepath.Join(os.Getenv("HOME"), ".jterrazz")
 }
@@ -279,9 +268,8 @@ func ValidateRemoteSettings(s RemoteSettings) error {
 	return nil
 }
 
-// tailscaleArgs prefixes the CLI args so the command reaches the right
-// daemon: j's userspace daemon listens on its own socket, while the system
-// daemon is whatever the bare `tailscale` CLI finds.
+// outside: j's userspace daemon listens on its own socket; the system daemon is whatever
+// the bare tailscale CLI finds.
 func tailscaleArgs(daemon RemoteDaemon, args ...string) []string {
 	if daemon == RemoteDaemonUserspace {
 		return append([]string{"--socket", userspaceSocketPath()}, args...)
@@ -578,8 +566,6 @@ func buildUpArgs(settings RemoteSettings) []string {
 	return args
 }
 
-// connectUserspace starts j's userspace daemon if needed, runs `tailscale up`
-// against it, and starts the keep-awake guard.
 func connectUserspace(settings RemoteSettings) error {
 	if !CommandExists("tailscale") {
 		return errors.New("tailscale CLI not found")
@@ -596,7 +582,8 @@ func connectUserspace(settings RemoteSettings) error {
 		return nil
 	}
 
-	// Keep existing non-default preferences by retrying with the flags suggested by tailscale.
+	// outside: tailscale up refuses to drop non-default preferences; retrying with the flags
+	// it suggests keeps them.
 	if shouldRetryWithSuggestedFlags(output) {
 		if suggested := parseSuggestedUpFlags(output); len(suggested) > 0 {
 			retryArgs := mergeUpArgsWithSuggestedFlags(upArgs, suggested)
@@ -612,8 +599,6 @@ func connectUserspace(settings RemoteSettings) error {
 	return formatCommandError(err, output)
 }
 
-// detectActiveDaemon reports which daemon to talk to, preferring j's own
-// userspace daemon when it is reachable.
 func detectActiveDaemon() RemoteDaemon {
 	if userspaceDaemonRunning() {
 		return RemoteDaemonUserspace
@@ -621,9 +606,7 @@ func detectActiveDaemon() RemoteDaemon {
 	return RemoteDaemonSystem
 }
 
-// RemoteUp connects remote access using configured settings. Both modes
-// connect through j's userspace daemon — they only differ on the status
-// and disconnect side. Returns the daemon that was used.
+// RemoteUp connects through j's userspace daemon in both modes and returns the daemon used.
 func RemoteUp(settings RemoteSettings) (RemoteDaemon, error) {
 	settings = normalizeRemoteSettings(settings)
 	if err := ValidateRemoteSettings(settings); err != nil {
@@ -636,16 +619,12 @@ func RemoteUp(settings RemoteSettings) (RemoteDaemon, error) {
 	return RemoteDaemonUserspace, nil
 }
 
-// RemoteDownResult lists the daemons a RemoteDown call actually disconnected.
-// Empty means everything was already down.
+// RemoteDownResult lists the daemons RemoteDown disconnected; empty means all were already down.
 type RemoteDownResult struct {
 	Stopped []RemoteDaemon
 }
 
-// RemoteDown disconnects remote access. It always stops j's userspace daemon
-// when it runs; in auto mode it also disconnects the system daemon
-// (Tailscale.app) so status doesn't report the link still up afterwards.
-// Calling it with nothing running is a no-op, not an error.
+// RemoteDown stops j's daemon and, in auto mode, the system one; nothing running is not an error.
 func RemoteDown(settings RemoteSettings) (RemoteDownResult, error) {
 	settings = normalizeRemoteSettings(settings)
 	var result RemoteDownResult
@@ -659,7 +638,7 @@ func RemoteDown(settings RemoteSettings) (RemoteDownResult, error) {
 		}
 		result.Stopped = append(result.Stopped, RemoteDaemonUserspace)
 	} else {
-		// The daemon is gone but a keep-awake guard may have been left behind.
+		// hazard: the daemon can be gone and its keep-awake guard left behind.
 		stopKeepAwake()
 	}
 
@@ -711,8 +690,7 @@ func RemoteStatusInfo(settings RemoteSettings) (RemoteStatus, error) {
 	return result, nil
 }
 
-// GetTailscaleFullStatus returns enriched Tailscale status including peers.
-// It tries configured remote settings first, then falls back to a direct CLI call.
+// GetTailscaleFullStatus returns the Tailscale status with its peers, through the configured daemon first.
 func GetTailscaleFullStatus() (TailscaleFullStatus, error) {
 	daemon := RemoteDaemonSystem
 	if settings, err := LoadRemoteSettings(); err == nil && ValidateRemoteSettings(settings) == nil {
@@ -741,7 +719,6 @@ func GetTailscaleFullStatus() (TailscaleFullStatus, error) {
 		}
 	}
 
-	// Find active exit node and collect peers
 	for _, peer := range st.Peer {
 		if peer == nil {
 			continue
@@ -752,7 +729,6 @@ func GetTailscaleFullStatus() (TailscaleFullStatus, error) {
 		}
 		name := peer.HostName
 		if name == "" || name == "localhost" {
-			// Use DNSName, strip trailing dot and tailnet suffix for readability
 			name = strings.TrimSuffix(peer.DNSName, ".")
 			if parts := strings.SplitN(name, ".", 2); len(parts) > 0 {
 				name = parts[0]
@@ -773,7 +749,6 @@ func GetTailscaleFullStatus() (TailscaleFullStatus, error) {
 		})
 	}
 
-	// Sort peers: online first, then alphabetical
 	sort.Slice(result.Peers, func(i, j int) bool {
 		if result.Peers[i].Online != result.Peers[j].Online {
 			return result.Peers[i].Online

@@ -65,8 +65,8 @@ func init() {
 
 func runMachineUnlock(alias string) {
 	target := resolveRemoteSSH(alias)
-	// Preboot SSH advertises a different host key than the running OS, and
-	// password auth is the only acceptable method (no authorized_keys before FV).
+	// outside: preboot SSH advertises another host key than the running OS and accepts
+	// only password auth: no authorized_keys exist before FileVault unlock.
 	cmd := exec.Command("ssh",
 		"-o", "PreferredAuthentications=password",
 		"-o", "PubkeyAuthentication=no",
@@ -76,12 +76,9 @@ func runMachineUnlock(alias string) {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
-	_ = cmd.Run() // a disconnect after the password is the success path
+	_ = cmd.Run() // outside: ssh disconnects once the password unlocks the disk, the success path
 }
 
-// resolveRemoteSSH looks up the alias in the registry and returns its ssh
-// endpoint (user@host). Exits with an error if the alias is unknown, has no
-// SSH endpoint (it's a local-only machine), or is the alias marked as self.
 func resolveRemoteSSH(alias string) string {
 	selfAlias, _, _ := config.SelfMachine()
 	if alias == selfAlias {
@@ -97,8 +94,6 @@ func resolveRemoteSSH(alias string) string {
 	return m.SSH
 }
 
-// machineSelfRole returns the role of the current machine according to the
-// registry, defaulting to RoleClient when no machine has been declared as self.
 func machineSelfRole() config.Role {
 	if _, m, ok := config.SelfMachine(); ok {
 		return m.Role
@@ -111,15 +106,13 @@ func runMachineStatus() {
 
 	print.Header("j machine status", machineContext())
 
-	// State of the machine itself: encryption + reachability.
 	print.Category("Machine")
 	for _, check := range machineStateChecks() {
 		printMachineCheck(check)
 	}
 	print.Empty()
 
-	// Application state. Only meaningful on server — a client box doesn't
-	// host these services so the rows would always read "not running".
+	// value: only a server hosts these services; on a client every row would read not running.
 	if role == config.RoleServer {
 		print.Category("Services")
 		for _, check := range serviceStateChecks() {
@@ -290,9 +283,8 @@ func checkHermesConfig() machineCheck {
 	return machineCheck{machineStateOK, "Hermes config", model, path}
 }
 
-// scanYAMLDefaultModel pulls `model.default` out of the Hermes config.yaml
-// without taking a yaml dep. The file is small and the layout is stable —
-// `model:\n  default: <value>` — so a two-state line scanner is enough.
+// value: a two-state line scanner reads `model:` then `  default: <value>` without a
+// yaml dependency; the file is small and its layout stable.
 func scanYAMLDefaultModel(s string) string {
 	inModel := false
 	for _, raw := range strings.Split(s, "\n") {

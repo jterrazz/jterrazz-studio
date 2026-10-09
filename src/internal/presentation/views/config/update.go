@@ -9,19 +9,17 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// keymap groups every key the model reacts to so the view can render hints
-// from a single source of truth.
 type keymap struct {
 	Up        key.Binding
 	Down      key.Binding
-	TabPrev   key.Binding // ← / shift+tab — previous tab
-	TabNext   key.Binding // → — next tab
-	Toggle    key.Binding // tab — collapse/expand current section (Configuration tab)
-	Details   key.Binding // space — toggle inline detail panel (Configuration tab)
-	Install   key.Binding // i
-	Uninstall key.Binding // u
-	Quit      key.Binding // q / esc
-	Cancel    key.Binding // ctrl+c (always quits)
+	TabPrev   key.Binding
+	TabNext   key.Binding
+	Toggle    key.Binding
+	Details   key.Binding
+	Install   key.Binding
+	Uninstall key.Binding
+	Quit      key.Binding
+	Cancel    key.Binding
 }
 
 var keys = keymap{
@@ -54,13 +52,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.lastErr = nil
 			m.lastResult = fmt.Sprintf("%sed %s", capitalize(msg.verb), msg.scriptName)
 		}
-		// Refresh both caches — actionDoneMsg doesn't carry the tab origin
-		// and the lookups are cheap. Configuration tab's rebuildSections
-		// also clamps its cursor. refreshSkillSections resets any installed
-		// skill's currency to "checking" (github-sourced) or "installed";
-		// startSkillCurrencyCheck re-runs the async check so the Skills tab
-		// doesn't keep showing a stale outdated/current verdict after an
-		// install, update, or removal.
+		// invariant: actionDoneMsg does not carry its tab, so both caches refresh, and the
+		// currency check reruns so no stale verdict outlives an install, update or removal.
 		m.rebuildSections()
 		m.refreshSkillSections()
 		return m, m.startSkillCurrencyCheck()
@@ -70,18 +63,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	// Modal owns key handling while it's up. Route everything to huh, then
-	// react to its terminal state (completed → run install, aborted → close).
 	if m.modalActive() {
 		return m.updateModal(msg)
 	}
 
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
-		// Ctrl+C always quits, even when busy.
 		if key.Matches(keyMsg, keys.Cancel) {
 			return m, tea.Quit
 		}
-		// Block other keys while an action is running.
 		if m.busy {
 			return m, nil
 		}
@@ -90,9 +79,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// updateModal forwards the message to the huh form and reacts when the form
-// reaches a terminal state. On completion, runs the closure stashed by
-// buildModal/buildFormModal. On abort, just closes the modal.
 func (m Model) updateModal(msg tea.Msg) (tea.Model, tea.Cmd) {
 	form, cmd := m.form.Update(msg)
 	if f, ok := form.(*huh.Form); ok {
@@ -115,14 +101,12 @@ func (m Model) updateModal(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case huh.StateNormal:
-		// Still being filled: the form keeps the keystrokes, nothing to settle.
 	}
 	return m, cmd
 }
 
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	// Number keys 1..N jump to a tab directly. Handled before the per-tab
-	// keys so a stray "1" never lands on a list item.
+	// invariant: handled before the per-tab keys, so a stray digit never lands on a list item.
 	if s := msg.String(); len(s) == 1 && s[0] >= '1' && s[0] <= '9' {
 		idx := int(s[0] - '1')
 		if idx < len(TabLabels) {
@@ -174,10 +158,6 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Per-tab dispatch helpers — each tab owns its own cursor + actions.
-// ─────────────────────────────────────────────────────────────────────────────
-
 func (m *Model) cursorUpForActiveTab() {
 	switch m.tabs.Active {
 	case tabConfiguration:
@@ -227,10 +207,6 @@ func (m Model) uninstallForActiveTab() (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-// startInstall fires the install action for the current item, if applicable.
-// Refuses if already installed or no InstallFn. When the script declares
-// Inputs, opens the modal first to collect them; the install runs after the
-// form completes (see updateModal).
 func (m Model) startInstall() (tea.Model, tea.Cmd) {
 	s := m.currentScript()
 	if s == nil || s.InstallFn == nil {
@@ -251,8 +227,6 @@ func (m Model) startInstall() (tea.Model, tea.Cmd) {
 	return m, runAction(s.Name, "install", func() error { return install(config.InputValues{}) })
 }
 
-// startUninstall fires the uninstall action for the current item, if applicable.
-// Refuses unless the item is currently installed AND has an UninstallFn.
 func (m Model) startUninstall() (tea.Model, tea.Cmd) {
 	s := m.currentScript()
 	if s == nil || s.UninstallFn == nil {
@@ -268,9 +242,8 @@ func (m Model) startUninstall() (tea.Model, tea.Cmd) {
 	return m, runAction(s.Name, "uninstall", s.UninstallFn)
 }
 
-// toggleCurrentSection collapses or expands the section the cursor is in.
-// When collapsing the current section, the cursor stays on its first item so
-// expanding restores the same view.
+// invariant: collapsing keeps the cursor on the section's first item, so expanding
+// restores the view.
 func (m *Model) toggleCurrentSection() {
 	if m.cursor.section < 0 || m.cursor.section >= len(m.sections) {
 		return
@@ -278,18 +251,14 @@ func (m *Model) toggleCurrentSection() {
 	m.sections[m.cursor.section].Collapsed = !m.sections[m.cursor.section].Collapsed
 }
 
-// moveCursorUp moves to the previous visible item, skipping over collapsed
-// sections. No-op at the very top.
 func (m *Model) moveCursorUp() {
 	if m.cursor.section < 0 {
 		return
 	}
-	// Try previous item in current section.
 	if !m.sections[m.cursor.section].Collapsed && m.cursor.item > 0 {
 		m.cursor.item--
 		return
 	}
-	// Walk back through prior sections to find the last visible item.
 	for s := m.cursor.section - 1; s >= 0; s-- {
 		if m.sections[s].Collapsed || len(m.sections[s].Scripts) == 0 {
 			continue
@@ -300,19 +269,15 @@ func (m *Model) moveCursorUp() {
 	}
 }
 
-// moveCursorDown moves to the next visible item, skipping over collapsed
-// sections. No-op at the very bottom.
 func (m *Model) moveCursorDown() {
 	if m.cursor.section < 0 {
 		return
 	}
 	sec := m.sections[m.cursor.section]
-	// Try next item in current section.
 	if !sec.Collapsed && m.cursor.item+1 < len(sec.Scripts) {
 		m.cursor.item++
 		return
 	}
-	// Walk forward to find the first visible item in a later section.
 	for s := m.cursor.section + 1; s < len(m.sections); s++ {
 		if m.sections[s].Collapsed || len(m.sections[s].Scripts) == 0 {
 			continue

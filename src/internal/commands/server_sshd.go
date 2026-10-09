@@ -59,13 +59,9 @@ func uninstallSshd() error {
 	return nil
 }
 
-// checkSshdInstalled reports whether macOS Remote Login is on.
-// Used as a CheckFn for the j config TUI, which runs as the user (not root).
-//
-// `systemsetup -getremotelogin` requires admin and silently exits 0 with an
-// error message in stdout when run as a regular user, so it can't be used here.
-// `launchctl print-disabled system` is readable without root and reports the
-// sshd job's enabled/disabled state set by `systemsetup -setremotelogin`.
+// outside: the TUI runs as the user, and `systemsetup -getremotelogin` then exits 0 with
+// its error on stdout; `launchctl print-disabled system` is readable without root and
+// carries the sshd state systemsetup sets.
 func checkSshdInstalled() config.CheckResult {
 	out, err := runQuiet("/bin/launchctl", "print-disabled", "system")
 	if err != nil {

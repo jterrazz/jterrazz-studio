@@ -16,10 +16,6 @@ const (
 	autologinPasswordEnv = "AGENT_PASSWORD"
 )
 
-// installAutologin enables FileVault-aware GUI auto-login for the agent user.
-// The agent password comes from the InputValues collected via the j config
-// modal (key: "password"). Falls back to the AGENT_PASSWORD env var if the
-// caller bypasses the modal (e.g. during testing).
 func installAutologin(values config.InputValues) error {
 	if err := requireDarwin(); err != nil {
 		return err
@@ -54,19 +50,17 @@ func installAutologin(values config.InputValues) error {
 	}
 	print.Success("DisableFDEAutoLogin = NO")
 
-	// macOS 26 sysadminctl -autoLogin set refuses on FileVault-enabled disks
-	// regardless of DisableFDEAutoLogin or admin auth (the "FileVault is enabled"
-	// message is non-recoverable on Tahoe). Bypass it: write /etc/kcpassword with
-	// the well-known XOR cipher that loginwindow has consumed since 10.4, and set
-	// autoLoginUser via defaults. loginwindow at boot still respects
-	// DisableFDEAutoLogin and processes /etc/kcpassword.
+	// outside: on macOS 26 `sysadminctl -autoLogin set` refuses on a FileVault disk
+	// whatever DisableFDEAutoLogin says, so the login is written as /etc/kcpassword (the
+	// XOR cipher loginwindow has read since 10.4) plus autoLoginUser; loginwindow at boot
+	// still honors DisableFDEAutoLogin.
 	if err := os.WriteFile("/etc/kcpassword", encodeKCPassword(password), 0o600); err != nil {
 		return fmt.Errorf("write /etc/kcpassword: %w", err)
 	}
 	if err := os.Chmod("/etc/kcpassword", 0o600); err != nil {
 		return err
 	}
-	// /etc/kcpassword must be owned by root:wheel; we already are root via sudo.
+	// outside: /etc/kcpassword must be owned by root:wheel.
 	_ = os.Chown("/etc/kcpassword", 0, 0)
 	print.Success("/etc/kcpassword written (root:wheel 0600)")
 
@@ -75,7 +69,6 @@ func installAutologin(values config.InputValues) error {
 	}
 	print.Success("autoLoginUser = " + autologinTargetUser)
 
-	// Cross-check both side effects.
 	if _, err := os.Stat("/etc/kcpassword"); err != nil {
 		return errors.New("/etc/kcpassword missing after write")
 	}
@@ -84,8 +77,8 @@ func installAutologin(values config.InputValues) error {
 		return fmt.Errorf("autoLoginUser cross-check failed (got %q)", strings.TrimSpace(out))
 	}
 
-	// Belt & braces: clear the screen-locked-after-resume flag so the GUI session
-	// stays interactive after auto-login. lock-after-login handles the lock itself.
+	// value: clearing the screen-locked-after-resume flag keeps the auto-login session
+	// interactive; lock-after-login owns the lock itself.
 	_ = exec.Command("/usr/bin/defaults", "delete", "/Library/Preferences/com.apple.loginwindow", "autoLoginUserScreenLocked").Run()
 
 	print.Empty()
@@ -96,7 +89,6 @@ func installAutologin(values config.InputValues) error {
 	return nil
 }
 
-// uninstallAutologin disables auto-login and clears /etc/kcpassword.
 func uninstallAutologin() error {
 	if err := requireDarwin(); err != nil {
 		return err
@@ -117,8 +109,6 @@ func uninstallAutologin() error {
 	return nil
 }
 
-// checkAutologinInstalled reports whether GUI auto-login is currently set up for
-// the agent user. Used as a CheckFn for the j config TUI.
 func checkAutologinInstalled() config.CheckResult {
 	out, err := runQuiet("/usr/bin/defaults", "read", "/Library/Preferences/com.apple.loginwindow", "autoLoginUser")
 	if err != nil || strings.TrimSpace(out) != autologinTargetUser {

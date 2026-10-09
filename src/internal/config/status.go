@@ -9,20 +9,16 @@ type StatusSection struct {
 
 // StatusSections defines all status sections in display order
 var StatusSections = []StatusSection{
-	// System — live performance
 	{Title: "System", SubTitle: "CPU", RenderFn: nil},
 	{Title: "System", SubTitle: "Memory", RenderFn: nil},
 
-	// Environment — network, services, system health
 	{Title: "Environment", SubTitle: "Network", RenderFn: nil},
 	{Title: "Environment", SubTitle: "Services", RenderFn: nil},
 	{Title: "Environment", SubTitle: "Health", RenderFn: nil},
 
-	// Workspace — local project state
 	{Title: "Workspace", SubTitle: "Git", RenderFn: nil},
 	{Title: "Workspace", SubTitle: "Disk", RenderFn: nil},
 
-	// Config — per-Script-Category subsections + Identity + Network (j remote)
 	{Title: "Config", SubTitle: "Terminal", RenderFn: nil},
 	{Title: "Config", SubTitle: "Security", RenderFn: nil},
 	{Title: "Config", SubTitle: "Editor", RenderFn: nil},
@@ -31,7 +27,6 @@ var StatusSections = []StatusSection{
 	{Title: "Config", SubTitle: "Network", RenderFn: nil},
 	{Title: "Config", SubTitle: "Identity", RenderFn: nil},
 
-	// Tools — inventory (cards)
 	{Title: "Tools", SubTitle: "Package Managers", RenderFn: nil},
 	{Title: "Tools", SubTitle: "Runtimes", RenderFn: nil},
 	{Title: "Tools", SubTitle: "Shell & Terminal", RenderFn: nil},

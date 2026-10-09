@@ -8,12 +8,8 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
-// powerHardenSettings is the canonical server power policy: never sleep, restart
-// on power return, display can sleep, wake on network access. Order is fixed so
-// pmset's diagnostics are deterministic.
-//
-// Apple Silicon notes: SleepOnPowerButton and hibernatemode are firmware-controlled
-// and don't appear in `pmset -g custom`, so we don't try to set or check them.
+// outside: on Apple Silicon SleepOnPowerButton and hibernatemode are firmware-controlled
+// and absent from `pmset -g custom`, so they are neither set nor checked.
 var powerHardenSettings = [][2]string{
 	{"autorestart", "1"},
 	{"sleep", "0"},
@@ -79,8 +75,6 @@ func uninstallPower() error {
 	return nil
 }
 
-// checkPowerInstalled reports whether all powerHardenSettings are currently
-// applied. Used as a CheckFn for the j config TUI.
 func checkPowerInstalled() config.CheckResult {
 	out, err := runQuiet("/usr/bin/pmset", "-g", "custom")
 	if err != nil {

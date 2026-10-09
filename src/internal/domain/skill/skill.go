@@ -44,8 +44,6 @@ func RemoveAll() error {
 	return nil
 }
 
-// Update updates a single globally installed skill to its latest upstream
-// version via the `skills` CLI.
 func Update(name string) error {
 	cmd := exec.Command("skills", "update", "-g", "-y", name)
 	if output, err := cmd.CombinedOutput(); err != nil {
@@ -54,8 +52,6 @@ func Update(name string) error {
 	return nil
 }
 
-// skillsDir returns ~/.agents/skills, the directory `skills add -g` installs
-// into. Returns "" if the home directory can't be resolved.
 func skillsDir() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -64,21 +60,14 @@ func skillsDir() string {
 	return filepath.Join(home, ".agents", "skills")
 }
 
-// ListInstalled returns the names of globally installed skills.
-//
-// This reads the filesystem directly — entries of ~/.agents/skills that are
-// directories (or symlinks to directories) containing a SKILL.md — rather
-// than parsing `skills list -g` output. The CLI's list-output format has
-// changed shape across versions (indentation, headers, columns), which made
-// output-parsing fragile; the filesystem is ground truth for what's actually
-// installed. A missing skills directory returns an empty list.
+// ListInstalled lists the skill folders of ~/.agents/skills that hold a SKILL.md.
 func ListInstalled() []string {
 	return listInstalledIn(skillsDir())
 }
 
-// listInstalledIn is the testable variant of ListInstalled — takes the
-// skills directory explicitly instead of resolving $HOME.
 func listInstalledIn(dir string) []string {
+	// outside: `skills list -g` changed its output shape across versions, so the
+	// filesystem is read instead of the CLI's listing.
 	var installed []string
 	if dir == "" {
 		return installed
@@ -95,8 +84,7 @@ func listInstalledIn(dir string) []string {
 			continue
 		}
 
-		// os.Stat (unlike DirEntry.IsDir) follows symlinks, so symlinked
-		// skill folders count too.
+		// outside: os.Stat, unlike DirEntry.IsDir, follows symlinks, so a symlinked skill folder counts.
 		info, err := os.Stat(filepath.Join(dir, name))
 		if err != nil || !info.IsDir() {
 			continue

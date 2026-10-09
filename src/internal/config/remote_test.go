@@ -149,7 +149,7 @@ func TestIsKeepAwakeRunningWithCurrentProcessPID(t *testing.T) {
 		t.Fatalf("WriteFile() error = %v", err)
 	}
 
-	// PID 1 is always running on unix systems in our supported environments.
+	// outside: PID 1 is always running on the unix systems j supports.
 	if !isKeepAwakeRunning() {
 		t.Fatalf("expected keep-awake to be reported as running")
 	}

@@ -6,7 +6,7 @@ func TestToolUninstallCustomFnWins(t *testing.T) {
 	called := false
 	tool := Tool{
 		Name:        "x",
-		Method:      InstallManual, // would otherwise error
+		Method:      InstallManual, // invariant: check-only, so only UninstallFn can succeed
 		UninstallFn: func() error { called = true; return nil },
 	}
 	if err := tool.Uninstall(); err != nil {

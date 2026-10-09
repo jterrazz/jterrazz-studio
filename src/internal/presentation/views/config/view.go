@@ -10,7 +10,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
 )
 
-// State icons for each item row.
 const (
 	iconInstalled       = "✓"
 	iconMissing         = "✗"
@@ -36,7 +35,6 @@ func (m Model) View() string {
 	return b.String()
 }
 
-// renderTabBody dispatches to the active tab's renderer.
 func (m Model) renderTabBody() string {
 	switch m.tabs.Active {
 	case tabConfiguration:
@@ -49,9 +47,6 @@ func (m Model) renderTabBody() string {
 	return ""
 }
 
-// renderModal renders the input-collection form. We frame huh's output with
-// the standard header (re-titled to whatever buildModal/buildFormModal set)
-// so the user keeps context, and add a footer hint.
 func (m Model) renderModal() string {
 	var b strings.Builder
 	b.WriteString(m.renderHeader(m.formTitle))
@@ -68,8 +63,6 @@ func (m Model) renderModal() string {
 	return b.String()
 }
 
-// renderHeader builds the canonical j config header. The right-side context
-// shows which machine the TUI is operating on (alias + color-coded role).
 func (m Model) renderHeader(command string) string {
 	var context string
 	if m.selfRole == "" {
@@ -205,8 +198,6 @@ func (m Model) renderFooter() string {
 	return footer
 }
 
-// renderConfigFooter shows i/u/space hints contextual to the script under
-// the Configuration cursor.
 func (m Model) renderConfigFooter() string {
 	s := m.currentScript()
 	if s == nil {
@@ -230,10 +221,6 @@ func (m Model) renderConfigFooter() string {
 	return prefix + strings.Join(hints, footerSepStyle.Render("   "))
 }
 
-// renderSkillsFooter shows i/u hints contextual to the skill under the
-// Skills cursor and its currency state (install / update / uninstall). No
-// detail panel for Skills (rows are simple name+state). While a currency
-// check is in flight, a muted hint appears on its own line below.
 func (m Model) renderSkillsFooter() string {
 	e, ok := m.currentSkill()
 	if !ok {
@@ -249,7 +236,6 @@ func (m Model) renderSkillsFooter() string {
 	case skillStateOutdated:
 		hints = append(hints, footerKey("i", "update"))
 	case skillStateChecking, skillStateInstalled:
-		// Nothing to install or update — the uninstall hint below is the only one.
 	}
 	if m.skillInstalled(e) {
 		hints = append(hints, footerKey("u", "uninstall"))
@@ -282,8 +268,6 @@ func (m Model) contentWidth() int {
 	return m.width
 }
 
-// padToWidth right-pads text with spaces so the visible width matches `w`.
-// Useful for cursor row highlighting that needs to extend to the edge.
 func padToWidth(text string, w int) string {
 	current := lipgloss.Width(text)
 	if current >= w {
@@ -292,8 +276,6 @@ func padToWidth(text string, w int) string {
 	return text + strings.Repeat(" ", w-current)
 }
 
-// wrapText word-wraps `s` to lines no wider than `width`. Preserves any
-// pre-existing newlines.
 func wrapText(s string, width int) string {
 	if width <= 0 {
 		return s

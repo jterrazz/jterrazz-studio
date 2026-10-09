@@ -73,7 +73,6 @@ func UpgradePackageManager(pm PackageManager) {
 
 // UpgradePackageByName upgrades a specific package by name
 func UpgradePackageByName(name string) error {
-	// Find package in our tools list
 	pkg := GetToolByName(name)
 	if pkg != nil {
 		switch pkg.Method {
@@ -128,13 +127,11 @@ func UpgradePackageByName(name string) error {
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallNvm, InstallXcode, InstallManual, InstallMAS:
-			// No package manager of ours owns these — nvm-managed Node, Xcode, a
-			// manual install and a Mac App Store app each upgrade elsewhere. The
-			// brew fallback below is the only path j can still offer.
+			// invariant: no package manager of j's owns these (nvm Node, Xcode, manual, App Store);
+			// the brew fallback below is the only path j still offers.
 		}
 	}
 
-	// Try as a direct brew package name
 	if CommandExists("brew") {
 		fmt.Printf("  📥 Upgrading %s...\n", name)
 		if err := ExecCommand("brew", "upgrade", name); err != nil {
@@ -147,11 +144,6 @@ func UpgradePackageByName(name string) error {
 	return fmt.Errorf("unknown package: %s", name)
 }
 
-// =============================================================================
-// Upgrade Functions
-// =============================================================================
-
-// makeUpgrader creates a standard upgrade function that prints status and runs commands.
 func makeUpgrader(icon, label string, commands ...[]string) func() {
 	return func() {
 		fmt.Println(output.Cyan(icon + " Upgrading " + label + "..."))

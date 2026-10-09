@@ -2,8 +2,6 @@ package components
 
 import "github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 
-// Badge renders status badges
-
 // BadgeOK renders a success checkmark badge
 func BadgeOK() string {
 	return theme.BadgeOK.Render(theme.IconCheck)

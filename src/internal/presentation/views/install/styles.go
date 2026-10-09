@@ -2,9 +2,6 @@ package installview
 
 import "github.com/charmbracelet/lipgloss"
 
-// Style palette for the j install TUI. Kept in one file so the look can be
-// re-themed by editing constants here without touching layout code. Mirrors
-// configview's palette so the two TUIs feel like the same product.
 var (
 	colorPrimary    = lipgloss.AdaptiveColor{Light: "#005f87", Dark: "#5fafd7"}
 	colorSuccess    = lipgloss.AdaptiveColor{Light: "#2e8540", Dark: "#5fd75f"}

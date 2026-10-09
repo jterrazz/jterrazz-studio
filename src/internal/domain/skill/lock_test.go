@@ -72,11 +72,8 @@ func TestReadLockFromParsesFixture(t *testing.T) {
 	}
 }
 
-// withTestServer points apiBaseURL at a local httptest server for the
-// duration of fn, restoring it afterwards — CheckUpToDate must never hit the
-// real network in tests. Also stubs the token source (no shelling to `gh`)
-// and clears the directory cache on both sides, so tests don't leak listings
-// into one another.
+// invariant: CheckUpToDate never reaches the real network in a test: the token source
+// is stubbed and the directory cache cleared on both sides.
 func withTestServer(t *testing.T, handler http.HandlerFunc, fn func()) {
 	t.Helper()
 	srv := httptest.NewServer(handler)
@@ -94,8 +91,6 @@ func withTestServer(t *testing.T, handler http.HandlerFunc, fn func()) {
 	fn()
 }
 
-// contentsHandler serves a GitHub contents-API listing of `skills` with one
-// child folder `s` at the given tree SHA.
 func contentsHandler(sha string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/repos/owner/repo/contents/skills" {
@@ -107,7 +102,6 @@ func contentsHandler(sha string) http.HandlerFunc {
 	}
 }
 
-// mkSkill creates <dir>/<name>/SKILL.md so the local-presence guard passes.
 func mkSkill(t *testing.T, dir, name string) {
 	t.Helper()
 	if err := os.MkdirAll(filepath.Join(dir, name), 0o750); err != nil {
@@ -127,8 +121,8 @@ func TestCheckUpToDateInSkipsNonGithubSource(t *testing.T) {
 	}
 }
 
-// A lock entry with no skillFolderHash predates the field (or was written by
-// a CLI that doesn't record it). Nothing to compare — never a false badge.
+// outside: a lock entry without skillFolderHash predates the field; nothing to compare,
+// so never a false badge.
 func TestCheckUpToDateInSkipsMissingFolderHash(t *testing.T) {
 	dir := t.TempDir()
 	mkSkill(t, dir, "s")
@@ -168,9 +162,7 @@ func TestCheckUpToDateInDetectsOutdated(t *testing.T) {
 	})
 }
 
-// Local SKILL.md content is irrelevant now — only the recorded folder hash
-// counts. This is the regression that made the Skills tab offer updates
-// `skills update` would then refuse to apply.
+// invariant: local SKILL.md drift is irrelevant; only the recorded folder hash counts.
 func TestCheckUpToDateInIgnoresLocalContentDrift(t *testing.T) {
 	dir := t.TempDir()
 	mkSkill(t, dir, "s")
@@ -198,8 +190,6 @@ func TestCheckUpToDateInUnknownOn404(t *testing.T) {
 	})
 }
 
-// Deleted upstream: the parent listing resolves but the skill's folder isn't
-// in it. Inconclusive, not stale.
 func TestCheckUpToDateInUnknownWhenFolderGoneUpstream(t *testing.T) {
 	dir := t.TempDir()
 	mkSkill(t, dir, "s")
@@ -214,8 +204,6 @@ func TestCheckUpToDateInUnknownWhenFolderGoneUpstream(t *testing.T) {
 	})
 }
 
-// Every skill from one repo shares a single parent-directory fetch, so a
-// twenty-skill machine spends one request per source repo, not per skill.
 func TestUpstreamFolderSHACachesPerParentDirectory(t *testing.T) {
 	dir := t.TempDir()
 	var hits int32
@@ -247,8 +235,7 @@ func TestUpstreamFolderSHACachesPerParentDirectory(t *testing.T) {
 	})
 }
 
-// The TUI fans the check out over goroutines; concurrent callers must share
-// one fetch rather than stampede the API. Run with -race.
+// invariant: concurrent callers share one fetch; run with -race.
 func TestUpstreamFolderSHADedupesConcurrentFetches(t *testing.T) {
 	dir := t.TempDir()
 	var hits int32

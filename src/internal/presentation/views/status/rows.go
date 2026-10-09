@@ -4,7 +4,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
 )
 
-// loadingIndicator returns a spinner while loading, or a static dot after
 func (m Model) loadingIndicator() string {
 	if m.allLoaded {
 		return components.Muted("·")

@@ -4,15 +4,13 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// PageLabels enumerates the j install pages in display order. Index in this
-// slice maps to Model.tabs.Active and to the index into pageFamilies below.
+// PageLabels lists the j install pages in display order; an index here is Model.tabs.Active and pageFamilies'.
 var PageLabels = []string{"Dev", "Infra", "AI", "Apps"}
 
-// pageFamilies groups the 18 ToolCategory families under each page, in the
-// order they render within that page. Every config.ToolCategory must appear
-// in exactly one page's list — see TestBuildSectionsCoversAllFamiliesExactlyOnce.
+// invariant: every config.ToolCategory appears in exactly one page's list
+// (TestPageFamiliesCoverAllCategoriesExactlyOnce).
 var pageFamilies = [][]config.ToolCategory{
-	{ // Dev
+	{
 		config.CategoryPackageManager,
 		config.CategoryRuntimes,
 		config.CategoryShellTerminal,
@@ -20,18 +18,18 @@ var pageFamilies = [][]config.ToolCategory{
 		config.CategoryGit,
 		config.CategoryEditorsIDEs,
 	},
-	{ // Infra
+	{
 		config.CategoryContainersVMs,
 		config.CategoryDeploy,
 		config.CategoryRemoteAccess,
 		config.CategorySecurity,
 	},
-	{ // AI
+	{
 		config.CategoryAIAgents,
 		config.CategoryAITooling,
 		config.CategoryAIApps,
 	},
-	{ // Apps
+	{
 		config.CategoryBrowsers,
 		config.CategoryCommunication,
 		config.CategoryProductivity,
@@ -40,10 +38,7 @@ var pageFamilies = [][]config.ToolCategory{
 	},
 }
 
-// Section is a family of tools grouped under one collapsible header on a
-// page. Order within a page mirrors pageFamilies; order within a section
-// mirrors the registry (config.Tools) — no re-sorting, unlike the config
-// TUI's alphabetical sections.
+// Section is one family of tools under a collapsible header, in registry order, never re-sorted.
 type Section struct {
 	Page      int
 	Category  config.ToolCategory
@@ -51,13 +46,10 @@ type Section struct {
 	Collapsed bool
 }
 
-// buildSections groups config.Tools by family into pages, in canonical order.
 func buildSections() []Section {
 	return buildSectionsFrom(config.Tools)
 }
 
-// buildSectionsFrom is the testable variant: takes the tool list explicitly
-// instead of pulling from the package-level config.Tools.
 func buildSectionsFrom(tools []config.Tool) []Section {
 	groups := map[config.ToolCategory][]*config.Tool{}
 	for i := range tools {
@@ -78,10 +70,7 @@ func buildSectionsFrom(tools []config.Tool) []Section {
 	return sections
 }
 
-// installedCount returns how many of the section's tools are currently
-// installed, running each Tool's live Check(). Used by tests; the running
-// TUI reads from Model's checkCache instead (see Model.sectionInstalledCount)
-// to avoid re-forking a subprocess on every render.
+// value: the running TUI reads Model's checkCache instead; this live count is the tests'.
 func (s Section) installedCount() (installed, total int) {
 	total = len(s.Tools)
 	for _, t := range s.Tools {
@@ -92,8 +81,6 @@ func (s Section) installedCount() (installed, total int) {
 	return
 }
 
-// firstItemCursorForPage returns the position of the first item on the given
-// page, or {-1, -1} if the page has no items.
 func firstItemCursorForPage(sections []Section, page int) cursorPos {
 	for i, sec := range sections {
 		if sec.Page != page {

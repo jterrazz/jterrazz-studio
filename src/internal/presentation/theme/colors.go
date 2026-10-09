@@ -2,13 +2,8 @@ package theme
 
 import "github.com/charmbracelet/lipgloss"
 
-// Color palette
-//
-// ColorClient and ColorServer are the role-pill backgrounds — the visual
-// language for "this is a client (your laptop)" vs "this is a server (your
-// always-on box)". The client blue doubles as the project's primary accent:
-// every header title, active selection, spinner, and progress bar lands on
-// this color so the j CLI feels visually unified.
+// value: the client blue is also the primary accent (titles, selection, spinner,
+// progress), so the CLI reads as one product.
 const (
 	ColorClient = "#5fafd7" // Cyan blue — client role pill, primary accent
 	ColorServer = "#5fd75f" // Green — server role pill

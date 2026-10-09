@@ -9,11 +9,7 @@ import (
 	"strings"
 )
 
-// SSH config blocks managed by `j machine` are wrapped in a per-alias delimiter
-// pair. Multiple aliases produce multiple independent blocks in ~/.ssh/config.
-//
-// The format intentionally embeds the alias in both the begin and end markers
-// so the file is self-describing if a human ever opens it.
+// value: the alias sits in both markers, so each block names itself to a human who opens the file.
 const (
 	sshAliasMarkerPrefix = "# >>> jterrazz machine "
 	sshAliasMarkerSuffix = " >>>"
@@ -24,7 +20,6 @@ const (
 func sshAliasBegin(alias string) string { return sshAliasMarkerPrefix + alias + sshAliasMarkerSuffix }
 func sshAliasEnd(alias string) string   { return sshAliasEndPrefix + alias + sshAliasEndSuffix }
 
-// sshConfigPath returns ~/.ssh/config or empty string if HOME is unset.
 func sshConfigPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil || home == "" {
@@ -33,11 +28,7 @@ func sshConfigPath() string {
 	return filepath.Join(home, ".ssh", "config")
 }
 
-// WriteSSHAlias inserts or refreshes a managed `Host <alias>` block in
-// ~/.ssh/config. Refuses (returns an error) if a conflicting `Host <alias>`
-// line exists outside of any managed block.
-//
-// Requires m.SSH to be non-empty and parseable as user@host.
+// WriteSSHAlias writes or refreshes alias's managed Host block, refusing a foreign Host line.
 func WriteSSHAlias(alias string, m Machine) error {
 	if strings.TrimSpace(alias) == "" {
 		return errors.New("alias is required")
@@ -71,8 +62,7 @@ func WriteSSHAlias(alias string, m Machine) error {
 	return os.WriteFile(path, updated, 0o600)
 }
 
-// RemoveSSHAlias removes the managed `Host <alias>` block from ~/.ssh/config.
-// No-op if the file or the block does not exist.
+// RemoveSSHAlias removes alias's managed block; a missing file or block is a no-op.
 func RemoveSSHAlias(alias string) error {
 	path := sshConfigPath()
 	if path == "" {
@@ -118,9 +108,6 @@ func buildSSHAliasBlock(alias, host, user, identity string) string {
 	}, "\n")
 }
 
-// upsertSSHAliasBlock replaces this alias's managed block if it exists, or
-// appends if not. Returns the new file contents and a non-empty conflict
-// description if a foreign `Host <alias>` line exists outside any managed block.
 func upsertSSHAliasBlock(existing []byte, alias, block string) (updated []byte, conflict string) {
 	text := string(existing)
 	begin := sshAliasBegin(alias)
@@ -176,11 +163,8 @@ func removeSSHAliasBlock(existing []byte, alias string) []byte {
 	return []byte(before + after)
 }
 
-// findForeignHostAlias returns a human-readable description if a `Host <alias>`
-// line exists outside of any managed block. "Managed" means inside any
-// `# >>> jterrazz machine X >>>` ... `# <<< jterrazz machine X <<<` pair, not
-// just this alias's block — neighboring managed blocks belong to other aliases
-// and shouldn't be mistaken for foreign.
+// invariant: any managed block counts, not only this alias's: a neighbour's block is
+// not a foreign Host.
 func findForeignHostAlias(text, alias string) string {
 	inManaged := false
 	for i, line := range strings.Split(text, "\n") {

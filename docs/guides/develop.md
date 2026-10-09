@@ -57,11 +57,12 @@ Most changes are a registry entry, not new code — that is the shape [Architect
 
 ## What a change owes
 
-Four things land in the same commit as the change that makes them true:
+Five things land in the same commit as the change that makes them true:
 
 - **A registry change regenerates the projection.** Run `make skills`; the sync test in `make test` fails otherwise, and the sections between the `GENERATED` markers are never edited by hand ([Tools and skills](../reference/tools-and-skills.md)).
 - **A change to a command's output regenerates the specs.** `TEST_UPDATE=1 npm test` rewrites the `exit:` and the streams of the affected documents, and nothing else ([Test](test.md)).
 - **A change to behaviour updates its page.** The corpus is where this repository's knowledge is authored; a page left saying what is no longer true is a bug that shipped.
+- **A comment states its kind, in both halves.** The default is none; a comment that stays opens with `invariant:`, `hazard:`, `outside:` or `value:` ([A comment states its kind](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/lint-presets.md#a-comment-states-its-kind)). The Go half holds the same law in Go's shapes: a package comment (staticcheck's ST1000 asks for it), and one line of doc above an exported identifier or member, its hover. A kinded comment about an exported function goes inside its body, since ST1020 wants that function's doc to open with its name. `typescript check` reads the configs and scripts, not `.go` files, so on the Go side the review is the gate.
 - **A change to a doctrine page updates its skill.** [The stack](../concepts/stack.md) ships as `jterrazz-stack` and [Repo structure](../concepts/repo-structure.md) as `jterrazz-repo-structure`; skills route, they never author.
 
 ## Related

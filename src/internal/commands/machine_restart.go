@@ -49,7 +49,6 @@ func runMachineRestart(alias string) {
 	cmd.Stdin = nil
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		// Connection drop is expected the moment the Mac begins to restart.
 		print.Dim("ssh exited (expected — the Mac is restarting): " + strings.TrimSpace(string(out)))
 	}
 
@@ -106,7 +105,6 @@ func waitForSSH(target string, attempts int) bool {
 	return false
 }
 
-// dialPort is a small helper used by machine_probe.
 func dialPort(host string, port int, timeout time.Duration) bool {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", host, port), timeout)
 	if err != nil {

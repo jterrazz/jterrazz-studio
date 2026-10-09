@@ -6,8 +6,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// fixture builds a small set of scripts spanning categories and roles.
-// Helpers below create CheckFn closures that report a fixed Installed value.
 func fixture() []config.Script {
 	return []config.Script{
 		{Name: "ssh", Category: config.ScriptCategorySecurity, CheckFn: checkInstalled(true), InstallFn: noop},
@@ -17,7 +15,7 @@ func fixture() []config.Script {
 		{Name: "zed", Category: config.ScriptCategoryEditor, CheckFn: checkInstalled(true), InstallFn: noop},
 		{Name: "autologin", Category: config.ScriptCategoryServer, Role: config.RoleServer, CheckFn: checkInstalled(false), InstallFn: noop, UninstallFn: noopErr},
 		{Name: "power", Category: config.ScriptCategoryServer, Role: config.RoleServer, CheckFn: checkInstalled(true), InstallFn: noop, UninstallFn: noopErr},
-		{Name: "no-category", Category: "", InstallFn: noop}, // dropped by buildSections
+		{Name: "no-category", Category: "", InstallFn: noop},
 	}
 }
 
@@ -109,7 +107,6 @@ func TestSectionInstalledCount(t *testing.T) {
 				t.Errorf("Server: got %d/%d, want 1/2", installed, total)
 			}
 		default:
-			// The fixture declares counts for those two categories only.
 		}
 	}
 }

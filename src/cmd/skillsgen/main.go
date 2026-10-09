@@ -1,8 +1,5 @@
-// Command skillsgen is a deterministic doc projector. It renders the tool
-// registry in src/internal/config into the "Reach for these first" and
-// "Tools roster" sections of skills/jterrazz-toolbelt/SKILL.md, splicing the
-// result between existing HTML-comment markers. Everything outside the
-// markers is left untouched.
+// Command skillsgen projects the tool registry into skills/jterrazz-toolbelt/SKILL.md,
+// between its generated markers.
 package main
 
 import (
@@ -22,7 +19,6 @@ const (
 	preferStartMarker = "<!-- GENERATED:prefer by `make skills` from src/internal/config — DO NOT EDIT between markers -->"
 	preferEndMarker   = "<!-- /GENERATED:prefer -->"
 
-	// defaultRelPath is the projected file's location relative to the repo root.
 	defaultRelPath = "skills/jterrazz-toolbelt/SKILL.md"
 )
 
@@ -46,9 +42,6 @@ func main() {
 	}
 }
 
-// run reads path, re-renders the generated blocks, and either writes the
-// result back (default) or fails when it differs from what's on disk
-// (--check).
 func run(path string, check bool) error {
 	current, err := os.ReadFile(path)
 	if err != nil {
@@ -71,7 +64,6 @@ func run(path string, check bool) error {
 	return os.WriteFile(path, []byte(rendered), 0o644)
 }
 
-// findRepoRoot walks up from the working directory looking for go.mod.
 func findRepoRoot() (string, error) {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -91,8 +83,6 @@ func findRepoRoot() (string, error) {
 	}
 }
 
-// render splices the tools and prefer-table blocks into source between their
-// respective markers, leaving everything else byte-for-byte untouched.
 func render(source string) (string, error) {
 	withTools, err := spliceBlock(source, toolsStartMarker, toolsEndMarker, renderToolsBlock())
 	if err != nil {
@@ -107,9 +97,6 @@ func render(source string) (string, error) {
 	return withPrefer, nil
 }
 
-// spliceBlock replaces the content between startMarker and endMarker with
-// block, keeping the marker lines themselves and a blank line of padding on
-// either side.
 func spliceBlock(source, startMarker, endMarker, block string) (string, error) {
 	startIdx := strings.Index(source, startMarker)
 	if startIdx == -1 {
@@ -132,9 +119,6 @@ func spliceBlock(source, startMarker, endMarker, block string) (string, error) {
 	return b.String(), nil
 }
 
-// renderToolsBlock renders one "### <Category>" section per category in
-// ToolCategories display order, skipping categories with no tools. Tools
-// within a category keep registry order.
 func renderToolsBlock() string {
 	var sections []string
 
@@ -155,8 +139,6 @@ func renderToolsBlock() string {
 	return strings.Join(sections, "\n\n")
 }
 
-// formatToolLine renders a single tool bullet, omitting the description
-// when the registry doesn't have one.
 func formatToolLine(t config.Tool) string {
 	if t.Description == "" {
 		return fmt.Sprintf("- **%s**", t.Name)
@@ -164,9 +146,7 @@ func formatToolLine(t config.Tool) string {
 	return fmt.Sprintf("- **%s** — %s", t.Name, t.Description)
 }
 
-// renderPreferBlock renders the "Reach for these first" markdown table, one
-// row per tool that declares a Replaces value, in registry order. The columns
-// are padded to their widest cell, the shape the repository's formatter writes,
+// invariant: columns are padded to their widest cell, the shape the formatter writes,
 // so the formatter and the sync test agree on every byte.
 func renderPreferBlock() string {
 	rows := [][2]string{{"Instead of…", "Use"}}
@@ -194,7 +174,6 @@ func renderPreferBlock() string {
 	return strings.Join(lines, "\n")
 }
 
-// pad right-pads cell with spaces to width runes.
 func pad(cell string, width int) string {
 	return cell + strings.Repeat(" ", width-utf8.RuneCountInString(cell))
 }

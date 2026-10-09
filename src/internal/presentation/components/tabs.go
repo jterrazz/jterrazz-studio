@@ -6,22 +6,15 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 )
 
-// Tabs is a horizontal tab strip — one line of labels with the active tab
-// highlighted in the primary accent and inactive tabs muted. Shared by every
-// tabbed TUI (j status, j config) so the look stays unified.
-//
-// Tabs is value-type semantically; methods that mutate take a pointer
-// receiver. Render is read-only.
+// Tabs is the one-line tab strip every tabbed TUI shares, the active label in the primary accent.
 type Tabs struct {
 	Labels []string
 	Active int
 }
 
-// Render returns the tab strip as a single line of styled text. Caller
-// supplies the rendering width but the strip itself only spans as far as
-// its labels — extra width is unused.
+// Render returns the strip as one line; it spans only as far as its labels.
 func (t Tabs) Render(width int) string {
-	_ = width // currently informational; reserved for future centring
+	_ = width
 	var b strings.Builder
 	b.WriteString(" ")
 	for i, label := range t.Labels {

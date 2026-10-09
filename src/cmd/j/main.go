@@ -1,5 +1,4 @@
-// Command j is the workstation CLI: it runs the single Cobra root declared in
-// internal/commands and exits non-zero when a verb fails.
+// Command j is the workstation CLI.
 package main
 
 import (

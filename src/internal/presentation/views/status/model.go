@@ -89,9 +89,8 @@ func (m Model) Init() tea.Cmd {
 	)
 }
 
-// selfHeaderContext returns the canonical "<alias> · <role>" context string
-// for the j status header. Mirrors commands.machineContext but lives in the
-// view package to avoid pulling commands into the dependency graph.
+// invariant: mirrors commands.machineContext; importing commands would pull it into
+// the view's dependency graph.
 func selfHeaderContext() string {
 	alias, m, ok := config.SelfMachine()
 	if !ok {
@@ -100,19 +99,16 @@ func selfHeaderContext() string {
 	return alias + " " + print.RenderRole(string(m.Role))
 }
 
-// scheduleProcessRefresh returns a command that triggers a process refresh after 1 second
 func scheduleProcessRefresh() tea.Cmd {
 	return tea.Tick(time.Second, func(_ time.Time) tea.Msg {
 		return ProcessRefreshMsg{}
 	})
 }
 
-// liveRefreshChecks are process checks that refresh every second
 var liveRefreshChecks = map[string]bool{
 	"CPU": true, "Memory": true, "Ports": true,
 }
 
-// refreshProcesses runs live process checks in background and returns the data
 func refreshProcesses() tea.Cmd {
 	return func() tea.Msg {
 		data := make(map[string][]config.ProcessInfo)
@@ -121,7 +117,6 @@ func refreshProcesses() tea.Cmd {
 				data["process-"+check.Name] = check.CheckFn()
 			}
 		}
-		// Compute total CPU from top processes
 		var totalCPU float64
 		if cpuData, ok := data["process-CPU"]; ok {
 			for _, p := range cpuData {
@@ -136,13 +131,12 @@ func refreshProcesses() tea.Cmd {
 	}
 }
 
-// getNetworkBytes reads total rx/tx bytes from en0 via netstat
 func getNetworkBytes() (rxBytes, txBytes int64) {
 	out, err := exec.Command("netstat", "-ib").Output()
 	if err != nil {
 		return 0, 0
 	}
-	// Find first en0 line with <Link#> (the raw interface line)
+	// outside: the first en0 line carrying <Link#> holds the raw interface counters.
 	for _, line := range strings.Split(string(out), "\n") {
 		fields := strings.Fields(line)
 		if len(fields) < 10 || !strings.HasPrefix(fields[0], "en0") {
@@ -159,16 +153,13 @@ func getNetworkBytes() (rxBytes, txBytes int64) {
 	return 0, 0
 }
 
-// getGPUUtilization reads GPU device utilization from ioreg (macOS, no sudo)
 func getGPUUtilization() float64 {
 	out, err := exec.Command("ioreg", "-r", "-d", "1", "-c", "IOAccelerator").Output()
 	if err != nil {
 		return 0
 	}
-	// Look for "Device Utilization %" in the output
 	for _, line := range strings.Split(string(out), "\n") {
 		if strings.Contains(line, `"Device Utilization %"`) {
-			// The number follows the quoted key on the same line.
 			parts := strings.Split(line, "=")
 			if len(parts) == 2 {
 				var v float64
@@ -223,7 +214,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		headerHeight := components.CommandHeaderHeight
-		tabBarHeight := 2 // tab strip + blank line
+		tabBarHeight := 2
 		footerHeight := 1
 
 		if !m.ready {
@@ -263,7 +254,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case status.AllLoadedMsg:
 		m.allLoaded = true
-		// Cache disk sort order so it never shuffles again
+		// invariant: the disk sort order is cached so the rows never shuffle.
 		var diskItems []status.Item
 		for _, base := range m.itemOrder {
 			item := m.items[base.ID]
@@ -290,12 +281,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 	case ProcessRefreshMsg:
-		// Trigger async process data refresh
 		cmds = append(cmds, refreshProcesses(), scheduleProcessRefresh())
-		return m, tea.Batch(cmds...) // Don't re-render yet
+		return m, tea.Batch(cmds...)
 
 	case ProcessDataMsg:
-		// Apply refreshed process data
 		for id, processes := range msg.Data {
 			if existing, ok := m.items[id]; ok {
 				existing.Processes = processes
@@ -303,7 +292,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.items[id] = existing
 			}
 		}
-		// Push to history
 		m.cpuHistory = append(m.cpuHistory, msg.TotalCPU)
 		if len(m.cpuHistory) > sparkHistorySize {
 			m.cpuHistory = m.cpuHistory[len(m.cpuHistory)-sparkHistorySize:]
@@ -312,7 +300,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if len(m.gpuHistory) > sparkHistorySize {
 			m.gpuHistory = m.gpuHistory[len(m.gpuHistory)-sparkHistorySize:]
 		}
-		// Network: diff with previous sample to get bytes/sec
 		if m.lastNetRx > 0 && msg.NetRx >= m.lastNetRx {
 			rxPerSec := float64(msg.NetRx - m.lastNetRx)
 			txPerSec := float64(msg.NetTx - m.lastNetTx)
@@ -334,14 +321,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.spinner, cmd = m.spinner.Update(msg)
 			cmds = append(cmds, cmd)
 		}
-		// Only re-render content on spinner tick if still loading
 		if m.ready && !m.allLoaded {
 			m.viewport.SetContent(m.renderContent())
 		}
 		return m, tea.Batch(cmds...)
 	}
 
-	// Re-render content for data updates (UpdateMsg, ProcessDataMsg, etc.)
 	if m.ready {
 		m.viewport.SetContent(m.renderContent())
 		var cmd tea.Cmd
@@ -364,19 +349,14 @@ func (m Model) View() string {
 
 	var b strings.Builder
 
-	// Header context: machine identity (alias + role pill) only — OS, hostname,
-	// shell etc. are visible inside the System tab when needed.
 	b.WriteString(print.RenderHeader("j status", selfHeaderContext(), m.width))
 
-	// Tab bar
 	b.WriteString(m.renderTabBar(m.width))
 	b.WriteString("\n\n")
 
-	// Content
 	b.WriteString(m.viewport.View())
 	b.WriteString("\n")
 
-	// Footer
 	scrollPercent := int(m.viewport.ScrollPercent() * 100)
 	help := fmt.Sprintf("←/→ tab • ↑/↓ scroll • g/G top/bottom • %d%% • q quit", scrollPercent)
 

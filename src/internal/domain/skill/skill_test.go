@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-// mkSkillDir creates dir/name (optionally as a symlink to a real directory
-// elsewhere) with a SKILL.md unless withSkillMd is false.
 func mkSkillDir(t *testing.T, base, name string, withSkillMd bool) {
 	t.Helper()
 	path := filepath.Join(base, name)

@@ -9,12 +9,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/config"
 )
 
-// renderRemoteBody renders the Remote tab — a read-only summary of the
-// current Tailscale settings, plus a hint to press 'i' to reconfigure.
-//
-// The reconfigure flow opens a generic huh form modal (buildFormModal)
-// that collects mode / auth / hostname / secret and persists via
-// config.SaveRemoteSettings.
 func (m Model) renderRemoteBody() string {
 	settings, err := config.LoadRemoteSettings()
 	if err != nil {
@@ -52,8 +46,6 @@ func remoteRow(label, value string) string {
 		itemNameStyle.Render(value))
 }
 
-// remoteStartConfigure opens the reconfigure modal — a 4-field huh form
-// that mutates a working copy of RemoteSettings, then saves on submit.
 func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 	current, err := config.LoadRemoteSettings()
 	if err != nil {
@@ -105,7 +97,7 @@ func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 				Secret:     secret,
 			}
 			if next.AuthMethod != config.RemoteAuthAuthKey {
-				// Don't persist a stale secret when the auth method doesn't use it.
+				// invariant: a secret the auth method does not use is never persisted.
 				next.Secret = ""
 			}
 			return runAction("remote", "save", func() error {
@@ -116,7 +108,6 @@ func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 	return m, m.form.Init()
 }
 
-// renderRemoteFooter shows the contextual key hint for the Remote tab.
 func (m Model) renderRemoteFooter() string {
 	prefix := footerLabelStyle.Render(" ▶ remote  ")
 	hint := footerKey("i", "reconfigure")

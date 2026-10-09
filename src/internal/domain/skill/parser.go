@@ -7,7 +7,6 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
 )
 
-// boxCharsRegex matches box-drawing characters used in skills CLI output
 var boxCharsRegex = regexp.MustCompile(`[│├└┌◇]`)
 
 // ParseSkillsListOutput parses the output of `skills add <repo> --list`

@@ -121,9 +121,8 @@ var NetworkChecks = []ResourceCheck{
 		CheckFn: func() ResourceResult {
 			var vpnNames []string
 
-			// Check system VPN connections (Passepartout, IKEv2, IPSec, etc.)
 			out, err := exec.Command("scutil", "--nc", "list").Output()
-			_ = err // scutil may fail if no network configs exist
+			_ = err // outside: scutil fails when no network config exists
 			for _, line := range strings.Split(string(out), "\n") {
 				if strings.Contains(line, "(Connected)") {
 					if idx := strings.LastIndex(line, `"`); idx > 0 {
@@ -137,7 +136,6 @@ var NetworkChecks = []ResourceCheck{
 				}
 			}
 
-			// Check if Tailscale has an active exit node
 			if st, err := GetTailscaleFullStatus(); err == nil && st.ExitNode != "" {
 				vpnNames = append(vpnNames, "Tailscale ("+st.ExitNode+")")
 			}
@@ -155,7 +153,7 @@ var NetworkChecks = []ResourceCheck{
 				return ResourceResult{Value: "Quad9 (encrypted)", Style: "success", Available: true}
 			}
 			out, err := exec.Command("scutil", "--dns").Output()
-			_ = err // dns resolver may not be available
+			_ = err // outside: the resolver may be unavailable
 			var servers []string
 			for _, line := range strings.Split(string(out), "\n") {
 				if strings.Contains(line, "nameserver[") {
@@ -167,7 +165,6 @@ var NetworkChecks = []ResourceCheck{
 					if server == "" || server == "127.0.0.1" || server == "::1" {
 						continue
 					}
-					// Skip IPv6
 					if strings.Contains(server, ":") {
 						continue
 					}
@@ -289,7 +286,6 @@ var CacheChecks = []DiskCheck{
 	{Name: "trash", Path: "~/.Trash", Style: "muted"},
 }
 
-// parseDockerSize parses Docker size strings like "1.973GB", "469.4kB" into bytes
 func parseDockerSize(s string) int64 {
 	s = strings.TrimSpace(s)
 	if s == "" || s == "0B" {
@@ -322,7 +318,6 @@ func (d DiskCheck) Check() ResourceResult {
 	return ResourceResult{Available: false}
 }
 
-// expandHome expands ~ to the user's home directory
 func expandHome(path string) string {
 	if strings.HasPrefix(path, "~/") {
 		return filepath.Join(os.Getenv("HOME"), path[2:])
@@ -374,17 +369,15 @@ var ProcessChecks = []ProcessCheck{
 	},
 }
 
-// System processes to hide from port listing
 var systemPortProcesses = map[string]bool{
-	"rapportd":      true, // macOS Rapport daemon
-	"ControlCenter": true, // macOS Control Center (AirPlay)
-	"IPNExtension":  true, // Tailscale (already shown in Network)
-	"mDNSResponder": true, // macOS DNS
-	"launchd":       true, // macOS init
-	"systemd":       true, // Linux init
+	"rapportd":      true,
+	"ControlCenter": true,
+	"IPNExtension":  true, // value: Tailscale, already shown under Network
+	"mDNSResponder": true,
+	"launchd":       true,
+	"systemd":       true,
 }
 
-// parseListeningPortsFcn parses lsof -Fcn output into port → process entries
 func parseListeningPortsFcn(out []byte) []ProcessInfo {
 	lines := strings.Split(string(out), "\n")
 
@@ -403,18 +396,16 @@ func parseListeningPortsFcn(out []byte) []ProcessInfo {
 			continue
 		}
 		switch line[0] {
-		case 'c': // command name
+		case 'c': // outside: lsof's command-name field
 			currentCmd = line[1:]
-		case 'n': // network address (e.g. "*:8080" or "127.0.0.1:3000")
+		case 'n': // outside: lsof's network-address field, e.g. "*:8080"
 			addr := line[1:]
 			if currentCmd == "" {
 				continue
 			}
-			// Skip system processes
 			if systemPortProcesses[currentCmd] {
 				continue
 			}
-			// Extract port
 			idx := strings.LastIndex(addr, ":")
 			if idx < 0 {
 				continue
@@ -431,7 +422,6 @@ func parseListeningPortsFcn(out []byte) []ProcessInfo {
 		}
 	}
 
-	// Sort by port number
 	sort.Slice(entries, func(i, j int) bool {
 		return entries[i].portNum < entries[j].portNum
 	})
@@ -446,12 +436,10 @@ func parseListeningPortsFcn(out []byte) []ProcessInfo {
 	return result
 }
 
-// parseCPUOutput parses ps CPU output into ProcessInfo slice
 func parseCPUOutput(out []byte) []ProcessInfo {
 	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
 	var processes []ProcessInfo
 
-	// Skip header, take top 5
 	for i := 1; i < len(lines) && len(processes) < 5; i++ {
 		fields := strings.Fields(lines[i])
 		if len(fields) < 3 {
@@ -471,12 +459,10 @@ func parseCPUOutput(out []byte) []ProcessInfo {
 	return processes
 }
 
-// parseMemoryOutput parses ps memory output (RSS in KB) into ProcessInfo slice
 func parseMemoryOutput(out []byte) []ProcessInfo {
 	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
 	var processes []ProcessInfo
 
-	// Skip header, take top 5
 	for i := 1; i < len(lines) && len(processes) < 5; i++ {
 		fields := strings.Fields(lines[i])
 		if len(fields) < 3 {
@@ -486,7 +472,6 @@ func parseMemoryOutput(out []byte) []ProcessInfo {
 		rssKB := fields[1]
 		name := strings.Join(fields[2:], " ")
 
-		// Convert RSS from KB to human readable format
 		var formatted string
 		if kb, err := strconv.ParseInt(rssKB, 10, 64); err == nil {
 			mb := kb / 1024
@@ -509,7 +494,6 @@ func parseMemoryOutput(out []byte) []ProcessInfo {
 	return processes
 }
 
-// parseDockerContainers parses docker ps output into ProcessInfo entries
 func parseDockerContainers(out []byte) []ProcessInfo {
 	lines := strings.Split(strings.TrimSpace(string(out)), "\n")
 	var result []ProcessInfo
@@ -544,7 +528,6 @@ func parseDockerContainers(out []byte) []ProcessInfo {
 	return result
 }
 
-// extractHostPorts extracts unique host ports from docker port mappings
 func extractHostPorts(ports string) string {
 	var hostPorts []string
 	seen := make(map[string]bool)
@@ -566,7 +549,6 @@ func extractHostPorts(ports string) string {
 	return strings.Join(hostPorts, ",")
 }
 
-// shortenUptime shortens "3 hours" → "3h", "2 days" → "2d", etc.
 func shortenUptime(s string) string {
 	s = strings.TrimSpace(s)
 	if idx := strings.Index(s, " ("); idx > 0 {
@@ -584,13 +566,10 @@ func shortenUptime(s string) string {
 	return replacer.Replace(s)
 }
 
-// scanRepoMaxDepth caps how deep we walk into ~/Developer looking for git repos.
-// 2 is enough for the common ~/Developer/<org>/<repo> layout while keeping the
-// scan fast on machines with deep node_modules / vendor trees.
+// value: depth 2 covers ~/Developer/<org>/<repo> and keeps the scan fast on
+// machines with deep node_modules or vendor trees.
 const scanRepoMaxDepth = 2
 
-// findRepoPaths walks `root` and returns paths of git working trees, pruning
-// once a .git directory is found so we never descend into a repo's children.
 func findRepoPaths(root string, maxDepth int) []string {
 	var paths []string
 	var walk func(dir string, depth int)
@@ -600,7 +579,7 @@ func findRepoPaths(root string, maxDepth int) []string {
 		}
 		if _, err := os.Stat(dir + "/.git"); err == nil {
 			paths = append(paths, dir)
-			return // prune: don't descend into a repo
+			return
 		}
 		entries, err := os.ReadDir(dir)
 		if err != nil {
@@ -617,8 +596,6 @@ func findRepoPaths(root string, maxDepth int) []string {
 	return paths
 }
 
-// scanRepo runs the git invocations for a single repo path. Safe to call
-// concurrently — pure read-only commands.
 func scanRepo(repoPath, relPath string) RepoInfo {
 	branchCmd := exec.Command("git", "-C", repoPath, "rev-parse", "--abbrev-ref", "HEAD")
 	branchOut, _ := branchCmd.Output()
@@ -643,17 +620,7 @@ func scanRepo(repoPath, relPath string) RepoInfo {
 	}
 }
 
-// ScanAllRepos scans all git repos under ~/Developer (up to scanRepoMaxDepth
-// levels deep) and groups them by project. Grouping rules:
-//   - depth-1 repo (e.g. ~/Developer/x): prefix = portion before the first
-//     dash in the name (existing convention, keeps "jterrazz-studio" grouped
-//     under "jterrazz" if you have flat repos).
-//   - deeper repo (e.g. ~/Developer/jterrazz/jterrazz-studio): prefix = the
-//     containing directory name. Natural since organizations cluster repos
-//     under one folder.
-//
-// Git invocations run in parallel — without it, a server with 30+ repos
-// blocks the j status load for ~2 seconds.
+// ScanAllRepos scans the git repos under ~/Developer, in parallel, grouped by project.
 func ScanAllRepos() []ProjectGroup {
 	devDir := os.Getenv("HOME") + "/Developer"
 	paths := findRepoPaths(devDir, scanRepoMaxDepth)
@@ -673,21 +640,17 @@ func ScanAllRepos() []ProjectGroup {
 	}
 	wg.Wait()
 
-	// Group by prefix
 	groupMap := make(map[string][]RepoInfo)
 	var groupOrder []string
 	for _, repo := range repos {
 		var prefix, name string
 		if idx := strings.LastIndex(repo.FullName, "/"); idx > 0 {
-			// nested: prefix = parent folder, name = leaf
 			prefix = repo.FullName[:idx]
 			name = repo.FullName[idx+1:]
 		} else if idx := strings.Index(repo.FullName, "-"); idx > 0 {
-			// flat with dash: prefix = before-dash, name = after-dash
 			prefix = repo.FullName[:idx]
 			name = repo.FullName[idx+1:]
 		} else {
-			// flat single-word: standalone group
 			prefix = repo.FullName
 			name = repo.FullName
 		}
@@ -711,8 +674,7 @@ func ScanAllRepos() []ProjectGroup {
 	return result
 }
 
-// ScanDependencies checks outdated deps for all repos under ~/Developer
-// (same depth and grouping rules as ScanAllRepos).
+// ScanDependencies counts the outdated dependencies of every repo ScanAllRepos finds.
 func ScanDependencies() []DepProjectGroup {
 	devDir := os.Getenv("HOME") + "/Developer"
 	paths := findRepoPaths(devDir, scanRepoMaxDepth)
@@ -726,7 +688,6 @@ func ScanDependencies() []DepProjectGroup {
 		outdated int
 	}
 
-	// Collect repos with lockfiles
 	var jobs []depResult
 	for _, repoPath := range paths {
 		var manager string
@@ -746,7 +707,6 @@ func ScanDependencies() []DepProjectGroup {
 		jobs = append(jobs, depResult{fullName: rel, manager: manager, outdated: -1})
 	}
 
-	// Run outdated checks in parallel
 	type indexedResult struct {
 		idx      int
 		outdated int
@@ -764,7 +724,6 @@ func ScanDependencies() []DepProjectGroup {
 		jobs[r.idx].outdated = r.outdated
 	}
 
-	// Group by prefix — same rules as ScanAllRepos.
 	groupMap := make(map[string][]DepRepoInfo)
 	var groupOrder []string
 	for _, job := range jobs {
@@ -799,13 +758,12 @@ func ScanDependencies() []DepProjectGroup {
 	return result
 }
 
-// countOutdated returns number of outdated dependencies for a repo.
 func countOutdated(repoPath, manager string) int {
 	switch manager {
 	case "pnpm":
 		out, err := exec.Command("pnpm", "outdated", "--dir", repoPath, "--format", "json").Output()
 		if err != nil {
-			// pnpm outdated exits 1 when there are outdated deps
+			// outside: pnpm outdated exits 1 when there are outdated deps.
 			if len(out) == 0 {
 				return 0
 			}
@@ -814,7 +772,7 @@ func countOutdated(repoPath, manager string) int {
 		if outStr == "" || outStr == "{}" || outStr == "[]" {
 			return 0
 		}
-		// Count entries — each key in the JSON object is an outdated package
+		// outside: each key of pnpm's JSON object is an outdated package.
 		count := 0
 		for _, line := range strings.Split(outStr, "\n") {
 			if strings.Contains(line, `"current"`) {
@@ -825,7 +783,6 @@ func countOutdated(repoPath, manager string) int {
 	case "go":
 		out, _ := exec.Command("go", "list", "-m", "-u", "-json", "all").
 			Output()
-		// Count modules that have an Update field
 		count := 0
 		for _, line := range strings.Split(string(out), "\n") {
 			if strings.Contains(line, `"Update"`) {
@@ -834,7 +791,7 @@ func countOutdated(repoPath, manager string) int {
 		}
 		return count
 	case "bun":
-		// bun doesn't have a good outdated command yet
+		// outside: bun has no usable outdated command yet.
 		return 0
 	case "npm":
 		out, _ := exec.Command("npm", "outdated", "--json", "--prefix", repoPath).Output()
@@ -861,13 +818,11 @@ func GetDockerStatus() (DockerStatus, error) {
 
 	var ds DockerStatus
 
-	// Running containers
 	out, err := exec.Command("docker", "ps", "--format", "{{.Names}}\t{{.Status}}\t{{.Ports}}").Output()
 	if err == nil {
 		ds.Containers = parseDockerContainers(out)
 	}
 
-	// All images (non-dangling)
 	imgOut, err := exec.Command("docker", "images", "--format", "{{.Repository}}\t{{.Tag}}\t{{.Size}}").Output()
 	if err == nil {
 		for _, line := range strings.Split(strings.TrimSpace(string(imgOut)), "\n") {
@@ -879,7 +834,7 @@ func GetDockerStatus() (DockerStatus, error) {
 				continue
 			}
 			if parts[0] == "<none>" {
-				continue // skip dangling in main list
+				continue
 			}
 			ds.Images = append(ds.Images, DockerImageInfo{
 				Repository: parts[0],
@@ -889,7 +844,6 @@ func GetDockerStatus() (DockerStatus, error) {
 		}
 	}
 
-	// Dangling images
 	dangOut, err := exec.Command("docker", "images", "-f", "dangling=true", "--format", "{{.Size}}").Output()
 	if err == nil {
 		lines := strings.Split(strings.TrimSpace(string(dangOut)), "\n")
@@ -899,7 +853,6 @@ func GetDockerStatus() (DockerStatus, error) {
 			}
 		}
 		if ds.DanglingCount > 0 {
-			// Get total dangling size
 			sizeOut, _ := exec.Command("docker", "images", "-f", "dangling=true", "--format", "{{.Size}}").Output()
 			var total int64
 			for _, line := range strings.Split(strings.TrimSpace(string(sizeOut)), "\n") {
@@ -911,7 +864,6 @@ func GetDockerStatus() (DockerStatus, error) {
 		}
 	}
 
-	// Volumes
 	volOut, err := exec.Command("docker", "volume", "ls", "-q").Output()
 	if err == nil {
 		for _, line := range strings.Split(strings.TrimSpace(string(volOut)), "\n") {
@@ -921,7 +873,6 @@ func GetDockerStatus() (DockerStatus, error) {
 		}
 	}
 
-	// Build cache from docker system df
 	dfOut, err := exec.Command("docker", "system", "df", "--format", "{{.Type}}\t{{.Size}}").Output()
 	if err == nil {
 		for _, line := range strings.Split(strings.TrimSpace(string(dfOut)), "\n") {
@@ -935,12 +886,11 @@ func GetDockerStatus() (DockerStatus, error) {
 	return ds, nil
 }
 
-// getUptimeInfo returns system uptime, load average, and battery info
 func getUptimeInfo() []ProcessInfo {
 	var result []ProcessInfo
 
 	uptimeOut, err := exec.Command("uptime").Output()
-	_ = err // uptime may not be available on all platforms
+	_ = err // outside: uptime is not on every platform
 	uptimeStr := strings.TrimSpace(string(uptimeOut))
 	if uptimeStr != "" {
 		if idx := strings.Index(uptimeStr, "up "); idx >= 0 {

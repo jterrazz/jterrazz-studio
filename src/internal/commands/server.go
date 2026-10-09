@@ -2,9 +2,6 @@ package commands
 
 import "github.com/jterrazz/jterrazz-studio/src/internal/config"
 
-// init registers the four server Scripts with the config package so the
-// j config TUI can list and toggle them. The CheckFn / InstallFn / UninstallFn
-// implementations live in server_*.go.
 func init() {
 	config.RegisterServerActions(config.ServerActions{
 		AutologinInstall:        installAutologin,

@@ -37,7 +37,7 @@ func installLockAfterLogin() error {
 	dumpLockAfterLoginState()
 	print.Empty()
 
-	// launchd executes this script: the x bit is the point.
+	// invariant: launchd executes this script: the x bit is the point.
 	if err := os.Chmod(lockAfterLoginScript, 0o755); err != nil { //nolint:gosec // see above
 		return err
 	}
@@ -61,11 +61,10 @@ func installLockAfterLogin() error {
 
 	print.Success("Wrote " + lockAfterLoginPlist)
 
-	// Try to bootstrap the agent in the live GUI session if one exists.
 	consoleOwner, _ := runQuiet("/usr/bin/stat", "-f", "%Su", "/dev/console")
 	if strings.TrimSpace(consoleOwner) == lockAfterLoginUser && uid >= 0 {
 		domain := fmt.Sprintf("gui/%d", uid)
-		// Bootout first to make this idempotent if already loaded.
+		// invariant: bootout first, so installing over a loaded agent succeeds.
 		_ = exec.Command("/bin/launchctl", "bootout", domain+"/"+lockAfterLoginLabel).Run()
 		if out, err := runQuiet("/bin/launchctl", "bootstrap", domain, lockAfterLoginPlist); err != nil {
 			print.Warning("launchctl bootstrap failed (will run on next auto-login regardless): " + oneLineOrDash(out))
@@ -104,8 +103,6 @@ func uninstallLockAfterLogin() error {
 	return nil
 }
 
-// checkLockAfterLoginInstalled reports whether the LaunchAgent plist exists.
-// Used as a CheckFn for the j config TUI.
 func checkLockAfterLoginInstalled() config.CheckResult {
 	if _, err := os.Stat(lockAfterLoginPlist); err != nil {
 		return config.CheckResult{}

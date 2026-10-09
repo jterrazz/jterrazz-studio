@@ -11,8 +11,7 @@ import (
 // SpinnerFPS is the animation speed for all spinners.
 const SpinnerFPS = 80 * time.Millisecond
 
-// NewSpinnerModel creates a styled bubbles spinner.Model. Used by every TUI
-// that needs a loader — j status' load progress, j config's busy state.
+// NewSpinnerModel returns the styled spinner every TUI loads with.
 func NewSpinnerModel() spinner.Model {
 	s := spinner.New()
 	s.Spinner = spinner.Spinner{

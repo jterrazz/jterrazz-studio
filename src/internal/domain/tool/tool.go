@@ -11,10 +11,6 @@ import (
 	"time"
 )
 
-// =============================================================================
-// Version Helpers - Build version detection functions from common patterns
-// =============================================================================
-
 // VersionFromCmd creates a version func that runs a command and parses output
 func VersionFromCmd(cmd string, args []string, parser func(string) string) func() string {
 	return func() string {
@@ -33,7 +29,7 @@ func VersionFromBrewFormula(formula string) func() string {
 		if err != nil {
 			return ""
 		}
-		// Output: "formula 1.2.3" or "formula 1.2.3 1.2.2"
+		// outside: brew prints "formula 1.2.3" or "formula 1.2.3 1.2.2".
 		parts := strings.Fields(string(out))
 		if len(parts) >= 2 {
 			return parts[1]
@@ -49,11 +45,10 @@ func VersionFromBrewCask(cask string) func() string {
 		if err != nil {
 			return ""
 		}
-		// Output: "cask 1.2.3" or "cask 0.34.1,HASH"
+		// outside: brew prints "cask 1.2.3" or "cask 0.34.1,HASH".
 		parts := strings.Fields(string(out))
 		if len(parts) >= 2 {
 			version := parts[1]
-			// Strip build hash after comma (e.g. "0.34.1,01KGT7..." → "0.34.1")
 			if idx := strings.Index(version, ","); idx > 0 {
 				version = version[:idx]
 			}
@@ -82,15 +77,14 @@ func VersionFromBunGlobal(pkg string) func() string {
 		if err != nil {
 			return ""
 		}
-		// Output lines: "├── package@version" or "└── package@version"
+		// outside: the global list prints "├── package@version" or "└── package@version".
 		for _, line := range strings.Split(string(out), "\n") {
-			// Find the package name after tree chars (├── or └──)
 			idx := strings.Index(line, "── ")
 			if idx < 0 {
 				continue
 			}
 			entry := strings.TrimSpace(line[idx+len("── "):])
-			// entry is like "qmd@1.2.3" or "qmd@github:tobi/qmd#hash"
+			// outside: an entry reads "qmd@1.2.3" or "qmd@github:tobi/qmd#hash".
 			atIdx := strings.LastIndex(entry, "@")
 			if atIdx <= 0 {
 				continue
@@ -98,7 +92,6 @@ func VersionFromBunGlobal(pkg string) func() string {
 			name := entry[:atIdx]
 			version := entry[atIdx+1:]
 			if name == pkg {
-				// Strip "github:" prefix for git refs, show as short hash
 				version = strings.TrimPrefix(version, "github:")
 				return version
 			}

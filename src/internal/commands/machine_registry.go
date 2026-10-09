@@ -135,7 +135,7 @@ func runMachineAdd(alias string) {
 
 	if m.SSH != "" {
 		if err := config.WriteSSHAlias(alias, m); err != nil {
-			// Rollback so the registry and ~/.ssh/config never disagree.
+			// invariant: the rollback keeps the registry and ~/.ssh/config from disagreeing.
 			_ = config.RemoveMachine(alias)
 			failOn(fmt.Errorf("ssh config update failed (registry rolled back): %w", err))
 		}

@@ -14,27 +14,15 @@ import (
 	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
 )
 
-// =============================================================================
-// Basic Print Functions
-// =============================================================================
-
 func Line(s string)                    { fmt.Println(s) }
 func Linef(format string, args ...any) { fmt.Printf(format+"\n", args...) }
 func Empty()                           { fmt.Println() }
-
-// =============================================================================
-// Message Print Functions
-// =============================================================================
 
 func Error(msg string)   { fmt.Printf("%s %s\n", theme.Danger.Render("Error:"), msg) }
 func Warning(msg string) { fmt.Printf("%s %s\n", theme.Warning.Render("Warning:"), msg) }
 func Success(msg string) { fmt.Printf("%s %s\n", theme.Success.Render(theme.IconCheck), msg) }
 func Info(msg string)    { fmt.Println(theme.Special.Render(msg)) }
 func Dim(msg string)     { fmt.Println(theme.Muted.Render(msg)) }
-
-// =============================================================================
-// Action Print Functions
-// =============================================================================
 
 func Action(emoji, msg string) { fmt.Println(theme.Special.Render(emoji + " " + msg)) }
 func Done(msg string)          { fmt.Println(theme.Success.Render("✅ " + msg)) }
@@ -43,15 +31,6 @@ func Installing(name string) {
 	fmt.Printf(components.PageIndent+"📥 Installing %s...\n", name)
 }
 
-// =============================================================================
-// Role chip (used in header contexts)
-// =============================================================================
-
-// roleClientStyle / roleServerStyle render the role as an inverse-video pill
-// (background color + dark bold text + 1-char horizontal padding) so it
-// reads as a badge — the GitHub/Linear/Vercel pattern. Background colors
-// come from the theme palette so they stay in sync with the primary accent
-// (client blue is also the project's primary color).
 var (
 	roleClientStyle = lipgloss.NewStyle().
 			Background(lipgloss.Color(theme.ColorClient)).
@@ -65,10 +44,7 @@ var (
 			Padding(0, 1)
 )
 
-// RenderRole returns the role rendered as a colored pill ready to drop into
-// a header context. Falls back to plain text for unknown roles. Lives here
-// (rather than in commands or config) so TUIs and CLI commands share the
-// same rendering without pulling in a config dependency on the print package.
+// RenderRole renders a role as a colored pill, plain text for an unknown role.
 func RenderRole(role string) string {
 	switch role {
 	case "client":
@@ -79,40 +55,15 @@ func RenderRole(role string) string {
 	return role
 }
 
-// MutedText returns text in the muted style — handy for "(unregistered)" or
-// other small bits of context that should fade into the background.
+// MutedText renders s in the muted style.
 func MutedText(s string) string { return theme.Muted.Render(s) }
 
-// =============================================================================
-// Header — canonical command header used by every j subcommand and TUI
-// =============================================================================
-
-// Header prints the canonical command header to stdout. Use for CLI commands
-// (non-TUI). For TUIs that need to embed the header in their View string,
-// use RenderHeader.
-//
-// command:  command path or action label, e.g. "j install", "install autologin".
-//
-//	Always lowercase, never decorated.
-//
-// context:  optional right-aligned info, e.g. "self: mac-mini · server".
-//
-//	Pass "" to omit (no placeholder rendered).
-//
-// Output:
-//
-//	(blank line)
-//	 j install                                       darwin · arm64
-//	 ──────────────────────────────────────────────────────────────────
-//	(blank line)
+// Header prints the canonical command header to stdout; a TUI embeds RenderHeader instead.
 func Header(command, context string) {
 	fmt.Print(RenderHeader(command, context, termWidth()))
 }
 
-// RenderHeader returns the canonical header as a string, sized to the given
-// width. Use from inside bubbletea View() functions or anywhere you need the
-// rendered string instead of stdout output. Thin wrapper over
-// components.CommandHeader.
+// RenderHeader returns the canonical header as a string sized to width.
 func RenderHeader(command, context string, width int) string {
 	return components.CommandHeader(command, context, width)
 }
@@ -135,10 +86,6 @@ func termWidth() int {
 	return 80
 }
 
-// =============================================================================
-// Status Row
-// =============================================================================
-
 func Row(ok bool, label, detail string) {
 	icon := components.Badge(ok)
 	if detail != "" {
@@ -148,19 +95,11 @@ func Row(ok bool, label, detail string) {
 	}
 }
 
-// =============================================================================
-// Usage
-// =============================================================================
-
 func Usage(lines ...string) {
 	for _, line := range lines {
 		fmt.Println(theme.Muted.Render(line))
 	}
 }
-
-// =============================================================================
-// Color Helpers (return styled string for use with fmt)
-// =============================================================================
 
 var (
 	cyan  = lipgloss.NewStyle().Foreground(lipgloss.Color(theme.ColorSpecial))

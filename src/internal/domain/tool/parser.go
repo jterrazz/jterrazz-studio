@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-// =============================================================================
-// Output Parsers - Extract version strings from command output
-// =============================================================================
-
-// stripAnsi removes ANSI escape codes (colors, formatting) from a string
 var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 
 func StripAnsi(s string) string {
@@ -22,8 +17,6 @@ func TrimVersion(s string) string {
 	return strings.TrimSpace(strings.TrimPrefix(StripAnsi(s), "v"))
 }
 
-// parseFirstLineField extracts a field from the first line of output
-// fieldIndex is 0-based, stripV optionally removes "v" prefix
 func parseFirstLineField(s string, fieldIndex int, stripV bool) string {
 	s = StripAnsi(s)
 	lines := strings.Split(s, "\n")
@@ -141,7 +134,6 @@ func ParseMultipassVersion(s string) string {
 func ParseCodexVersion(s string) string {
 	v := parseFirstLineField(s, 1, false)
 	if v == "" {
-		// Fallback: return first field if only one field present
 		return parseFirstLineField(s, 0, false)
 	}
 	return v
@@ -182,8 +174,7 @@ func ParsePulumiVersion(s string) string {
 	return strings.TrimPrefix(strings.TrimSpace(s), "v")
 }
 
-// ParseEasVersion parses "eas-cli/16.32.0 darwin-arm64 node-v24.11.1" -> "16.32.0"
-// Handles multi-line output with upgrade notices
+// ParseEasVersion reads the version out of eas-cli's output, upgrade notices included.
 func ParseEasVersion(s string) string {
 	s = StripAnsi(s)
 	for _, line := range strings.Split(s, "\n") {
@@ -196,10 +187,6 @@ func ParseEasVersion(s string) string {
 	}
 	return ""
 }
-
-// =============================================================================
-// Formatters
-// =============================================================================
 
 // FormatBytes formats bytes into human-readable format (KB, MB, GB, etc.)
 func FormatBytes(bytes int64) string {
@@ -214,10 +201,6 @@ func FormatBytes(bytes int64) string {
 	}
 	return fmt.Sprintf("%.1f %cB", float64(bytes)/float64(div), "KMGTPE"[exp])
 }
-
-// =============================================================================
-// Slice Helpers
-// =============================================================================
 
 // FilterStrings returns elements from slice that are not in exclude
 func FilterStrings(slice, exclude []string) []string {

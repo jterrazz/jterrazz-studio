@@ -26,57 +26,40 @@ const (
 	ScriptCategoryServer   ScriptCategory = "Server"
 )
 
-// Script represents a setup/configuration task
-// Scripts can be standalone or attached to a Tool via Tool.Scripts
+// Script is a setup or configuration task, standalone or attached to a Tool via Tool.Scripts.
 type Script struct {
 	Name        string
 	Description string
 	Category    ScriptCategory
 
 	// Help is the long-form description shown in the j config detail panel.
-	// Wraps freely; aim for a short paragraph describing what the install does
-	// and why someone would want it.
 	Help string
 
-	// Role - if set, the script only applies to machines registered with that
-	// role. Items with no Role apply to every machine. Used to gate server-only
-	// configuration from the TUI on a client box.
+	// Role, when set, limits the script to machines registered with that role.
 	Role Role
 
-	// Check - verify if already configured (optional)
-	// If nil, script is "run-once" with no checkable state
+	// CheckFn verifies the configured state; nil makes the script run-once.
 	CheckFn func() CheckResult
 
-	// InstallFn - perform the installation/configuration action. Receives the
-	// values collected via the Inputs modal (empty map if Inputs is nil).
-	// For scripts that don't need inputs, wrap a plain func() error with
-	// config.NoInputs(...) at assignment time.
+	// InstallFn applies the configuration with the values the Inputs modal collected.
 	InstallFn func(InputValues) error
 
-	// UninstallFn - inverse of InstallFn. When set, the item is toggleable in
-	// the TUI: pressing 'u' on an installed item runs this instead of InstallFn.
+	// UninstallFn, when set, makes the item toggleable: 'u' on an installed item runs it.
 	UninstallFn func() error
 
-	// Inputs - if non-empty, the TUI collects these values via a modal form
-	// before calling InstallFn. The script reads them via a side channel
-	// (typically env vars or a closure-captured map).
+	// Inputs, when non-empty, are collected by a modal form before InstallFn runs.
 	Inputs []ScriptInput
 
-	// ExecArgs - when set, the script runs via tea.ExecProcess (suspends TUI)
-	// Use for interactive commands that need full terminal control
+	// ExecArgs, when set, runs the script through tea.ExecProcess with the TUI suspended.
 	ExecArgs []string
 
-	// Interactive - when true, InstallFn is wrapped in tea.Exec so the TUI is
-	// released while it runs. Required for any InstallFn that prompts the user
-	// (passphrase entry, GPG key generation, etc.).
+	// Interactive wraps InstallFn in tea.Exec, so a prompt (passphrase, GPG key) gets the terminal.
 	Interactive bool
 
-	// Dependencies
 	RequiresTool string // Tool that must be installed first (e.g., "openjdk")
 }
 
-// InputValues maps Input.Name to the user-provided value for that input.
-// Always non-nil when passed to InstallFn (use Get to read safely).
+// InputValues maps an input's Name to the value the user gave; never nil in InstallFn.
 type InputValues map[string]string
 
 // Get returns the value for `name` or "" if missing.
@@ -87,8 +70,7 @@ func (v InputValues) Get(name string) string {
 	return v[name]
 }
 
-// NoInputs wraps a plain `func() error` so it satisfies the Script.InstallFn
-// signature. Convenience for the common case where a script needs no inputs.
+// NoInputs adapts a plain func() error to Script.InstallFn.
 func NoInputs(fn func() error) func(InputValues) error {
 	return func(_ InputValues) error { return fn() }
 }
@@ -103,8 +85,7 @@ const (
 	InputConfirm                   // yes/no
 )
 
-// ScriptInput describes a single value collected from the user before an
-// InstallFn runs. Rendered in a modal form by the j config TUI.
+// ScriptInput is one value the j config modal collects before an InstallFn runs.
 type ScriptInput struct {
 	Name     string // key the InstallFn uses to look up the value
 	Label    string // primary prompt
@@ -115,13 +96,11 @@ type ScriptInput struct {
 	Validate func(string) error
 }
 
-// MatchesRole reports whether the script applies to the given machine role.
-// Scripts with no Role match every role.
+// MatchesRole reports whether the script applies to role; a script with no Role matches every role.
 func (s Script) MatchesRole(role Role) bool {
 	return s.Role == "" || s.Role == role
 }
 
-// checkFileExists returns a CheckFn that reports installed if path exists.
 func checkFileExists(path, displayPath string) func() CheckResult {
 	return func() CheckResult {
 		if _, err := os.Stat(path); err == nil {
@@ -133,9 +112,6 @@ func checkFileExists(path, displayPath string) func() CheckResult {
 
 // Scripts is the single source of truth for all setup/configuration scripts.
 var Scripts = []Script{
-	// ==========================================================================
-	// Terminal
-	// ==========================================================================
 	{
 		Name:        "hushlogin",
 		Description: "Silence terminal login message",
@@ -176,9 +152,6 @@ var Scripts = []Script{
 		InstallFn: NoInputs(runStarshipConfig),
 	},
 
-	// ==========================================================================
-	// Security
-	// ==========================================================================
 	{
 		Name:         "gpg",
 		Description:  "Configure GPG for commit signing",
@@ -247,9 +220,6 @@ var Scripts = []Script{
 		},
 		InstallFn: NoInputs(runDNSEncrypt),
 	},
-	// ==========================================================================
-	// Editor
-	// ==========================================================================
 	{
 		Name:         "zed",
 		Description:  "Install Zed editor config",
@@ -260,9 +230,6 @@ var Scripts = []Script{
 		InstallFn:    NoInputs(runZedConfig),
 	},
 
-	// ==========================================================================
-	// System
-	// ==========================================================================
 	{
 		Name:         "java",
 		Description:  "Configure JAVA_HOME in shell profile",
@@ -307,18 +274,11 @@ var Scripts = []Script{
 		InstallFn:   NoInputs(runDockSpacer),
 	},
 
-	// ==========================================================================
-	// Server — only visible on machines registered with role=server
-	// ==========================================================================
-	// CheckFn / InstallFn / UninstallFn live in src/internal/commands/machine_config_*.go
-	// and are wired up via config.RegisterServerActions at init time so this file
-	// stays free of macOS-specific logic.
+	// invariant: the server scripts' functions live in commands/machine_config_*.go and
+	// arrive through RegisterServerActions, so this package imports nothing macOS-specific.
 }
 
-// ServerActions is the set of install/uninstall/check functions provided by the
-// commands package for the four server-only scripts. The commands package wires
-// these in via RegisterServerActions so this file (and the config package as a
-// whole) stays free of macOS-specific imports.
+// ServerActions is the check, install and uninstall set the commands package gives the server scripts.
 type ServerActions struct {
 	AutologinInstall        func(InputValues) error
 	AutologinUninstall      func() error
@@ -334,8 +294,7 @@ type ServerActions struct {
 	SshdCheck               func() CheckResult
 }
 
-// RegisterServerActions appends the four server Scripts using the provided
-// action set. Called from the commands package init().
+// RegisterServerActions appends the four server scripts; the commands package calls it from init().
 func RegisterServerActions(a ServerActions) {
 	Scripts = append(Scripts,
 		Script{
@@ -394,10 +353,6 @@ func RegisterServerActions(a ServerActions) {
 	)
 }
 
-// =============================================================================
-// Script Runners
-// =============================================================================
-
 func runHushlogin() error {
 	fmt.Println(out.Cyan("Setting up hushlogin..."))
 
@@ -419,7 +374,6 @@ func runHushlogin() error {
 	return nil
 }
 
-// copyRepoConfig copies a config file from the repo to a destination path.
 func copyRepoConfig(repoRelPath, destPath string) error {
 	if err := os.MkdirAll(filepath.Dir(destPath), 0o750); err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)
@@ -442,7 +396,6 @@ func copyRepoConfig(repoRelPath, destPath string) error {
 	return nil
 }
 
-// makeConfigInstaller creates a InstallFn that copies a repo config file to a destination.
 func makeConfigInstaller(label, repoRelPath, destPath string) func() error {
 	return func() error {
 		fmt.Println(out.Cyan("Setting up " + label + " config..."))
@@ -479,7 +432,6 @@ func runTmuxConfig() error {
 	if err := install(); err != nil {
 		return err
 	}
-	// Try to reload tmux if running
 	if err := exec.Command("tmux", "source-file", configPath).Run(); err == nil {
 		fmt.Println(out.Green("  tmux config reloaded"))
 	}
@@ -617,7 +569,7 @@ func runSSHSetup() error {
 	fmt.Println("Configuring SSH...")
 	sshConfig := sshDir + "/config"
 
-	existingConfig, _ := os.ReadFile(sshConfig) // ok if file doesn't exist yet
+	existingConfig, _ := os.ReadFile(sshConfig) // invariant: a missing file reads as empty
 	if !strings.Contains(string(existingConfig), "AddKeysToAgent yes") {
 		configContent := `
 Host *
@@ -668,17 +620,9 @@ Host *
 	return nil
 }
 
-// isSpotlightExcluded reports whether `dir` is in the Spotlight Privacy list.
-//
-// On Tahoe (26+) the Privacy list lives in a root-only plist
-// (/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist) and the
-// legacy `defaults read com.apple.Spotlight Exclusions` returns
-// "does not exist", so we can't read the list directly without sudo.
-//
-// Instead we probe Spotlight: pick a file we know exists inside `dir` and ask
-// `mdfind` for it. When `dir` is in the Privacy list, Spotlight refuses to
-// index its contents and the query returns no hits. When it's not, mdfind
-// finds the file. Returns false if the directory has nothing to probe with.
+// outside: on Tahoe (26+) the Privacy list lives in a root-only plist and
+// `defaults read com.apple.Spotlight Exclusions` says "does not exist", so the check
+// probes instead: mdfind finds a known file inside dir unless dir is excluded.
 func isSpotlightExcluded(dir string) bool {
 	probe := pickSpotlightProbe(dir)
 	if probe == "" {
@@ -693,9 +637,7 @@ func isSpotlightExcluded(dir string) bool {
 	return strings.TrimSpace(string(mdfindOut)) == ""
 }
 
-// pickSpotlightProbe walks `dir` and returns the path of the first regular,
-// non-hidden file it finds. Hidden files are skipped because Spotlight ignores
-// them by default, so they'd produce a false "excluded" reading.
+// hazard: hidden files are skipped: Spotlight ignores them by default, so they would read as excluded.
 func pickSpotlightProbe(dir string) string {
 	var probe string
 	_ = filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
@@ -730,8 +672,8 @@ func runSpotlightExclude() error {
 		return nil
 	}
 
-	// Clean up the stale .metadata_never_index marker — it never worked
-	// inside a sub-folder, only at volume root.
+	// outside: a .metadata_never_index marker never worked inside a sub-folder, only at
+	// volume root, so a stale one is removed.
 	staleMarker := devDir + "/.metadata_never_index"
 	if _, err := os.Stat(staleMarker); err == nil {
 		_ = os.Remove(staleMarker)
@@ -750,8 +692,8 @@ func runSpotlightExclude() error {
 		fmt.Println(out.Dimmed("Could not open Settings automatically — open System Settings → Spotlight → Search Privacy manually."))
 	}
 
-	// Brief pause so System Settings is on screen before the TUI redraws.
-	// The CheckFn auto-detects exclusion via mdfind, so no marker is needed.
+	// value: System Settings is on screen before the TUI redraws; the CheckFn detects the
+	// exclusion through mdfind, so no marker is written.
 	time.Sleep(1 * time.Second)
 	return nil
 }
@@ -760,9 +702,9 @@ var runStarshipConfig = makeConfigInstaller("Starship",
 	"dotfiles/applications/starship/starship.toml",
 	os.Getenv("HOME")+"/.config/starship.toml")
 
-// Zed formats its own settings.json with oxfmt on save; the .oxfmtrc.json
-// beside it holds the estate's values, or oxfmt falls back to its defaults
-// and rewrites the installed file on first open.
+// outside: Zed formats its settings.json with oxfmt on save; the .oxfmtrc.json beside
+// it holds the estate's values, or oxfmt falls back to its defaults and rewrites the
+// installed file on first open.
 func runZedConfig() error {
 	zedDir := os.Getenv("HOME") + "/.config/zed"
 	install := makeConfigInstaller("Zed",
@@ -830,8 +772,8 @@ func runNvmSetup() error {
 
 func runDockReset() error {
 	fmt.Println(out.Cyan("Resetting macOS Dock..."))
-	// `defaults delete` fails when the domain is already absent, which is the
-	// state the reset is asking for.
+	// outside: `defaults delete` fails when the domain is already absent, which is the
+	// state the reset asks for.
 	_ = ExecCommand("defaults", "delete", "com.apple.dock")
 	if err := ExecCommand("killall", "Dock"); err != nil {
 		return fmt.Errorf("restarting the Dock: %w", err)
@@ -885,7 +827,7 @@ func runDNSEncrypt() error {
 		return fmt.Errorf("opening the DNS profile: %w", err)
 	}
 
-	// Give macOS time to read the file before the TUI resumes
+	// outside: macOS needs time to read the file before the TUI resumes.
 	time.Sleep(2 * time.Second)
 	return nil
 }
@@ -948,10 +890,6 @@ func generateDNSProfile() string {
 </plist>`
 }
 
-// =============================================================================
-// Helper Functions
-// =============================================================================
-
 // GetRepoConfigPath returns the full path for a file in the repo
 func GetRepoConfigPath(relativePath string) (string, error) {
 	for _, root := range repoRootCandidates() {
@@ -964,8 +902,6 @@ func GetRepoConfigPath(relativePath string) (string, error) {
 	return "", fmt.Errorf("config file not found: %s (searched: %s)", relativePath, strings.Join(candidates, ", "))
 }
 
-// repoRootCandidates returns candidate filesystem locations of the source repo,
-// in priority order. Set J_REPO_PATH to override.
 func repoRootCandidates() []string {
 	home := os.Getenv("HOME")
 	var roots []string
@@ -993,10 +929,6 @@ func ExecCommand(name string, args ...string) error {
 // CommandExists checks if a command is available in PATH
 var CommandExists = tool.CommandExists
 
-// =============================================================================
-// Script Functions
-// =============================================================================
-
 // GetAllScripts returns all scripts
 func GetAllScripts() []Script {
 	return Scripts
@@ -1012,15 +944,7 @@ func GetScriptByName(name string) *Script {
 	return nil
 }
 
-// RunScript executes a single script by name using the same toggle
-// convention as the j config TUI and `j install`'s post-install-scripts
-// loop: uninstall when the script is already installed and declares an
-// UninstallFn, install otherwise. Any Inputs the script declares are ignored
-// (this is the headless / no-modal path). Returns the verb actually
-// attempted ("install" or "uninstall", empty if none could be run) alongside
-// any error, so callers can report contextually — see runScript in
-// commands/script_runner.go (CLI wrapper) and the install TUI's post-install
-// wiring for the two current callers.
+// RunScript toggles one script the way j config does, Inputs ignored, and returns the verb it attempted.
 func RunScript(name string) (verb string, err error) {
 	script := GetScriptByName(name)
 	if script == nil {
@@ -1035,8 +959,7 @@ func RunScript(name string) (verb string, err error) {
 	return "install", script.InstallFn(InputValues{})
 }
 
-// RunScripts runs each named script in order via RunScript, stopping at (and
-// returning) the first error. Used for a Tool's post-install Scripts list.
+// RunScripts runs each named script in order, stopping at the first error.
 func RunScripts(names []string) error {
 	for _, name := range names {
 		if _, err := RunScript(name); err != nil {
@@ -1075,7 +998,6 @@ func GetScriptsForTool(toolName string) []Script {
 
 // GetStandaloneScripts returns scripts not attached to any tool
 func GetStandaloneScripts() []Script {
-	// Build set of tool-attached scripts
 	attached := make(map[string]bool)
 	for _, catalogEntry := range Tools {
 		for _, scriptName := range catalogEntry.Scripts {
@@ -1122,5 +1044,5 @@ func CheckScript(script Script) CheckResult {
 	if script.CheckFn != nil {
 		return script.CheckFn()
 	}
-	return CheckResult{} // No check = unknown state
+	return CheckResult{}
 }

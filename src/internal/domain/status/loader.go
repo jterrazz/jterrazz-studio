@@ -43,7 +43,6 @@ type Item struct {
 	Description string
 	Loaded      bool
 
-	// Result data (populated after loading)
 	Installed bool
 	Version   string
 	Status    string
@@ -54,19 +53,14 @@ type Item struct {
 	Method    string // Install method for tools
 	Available bool   // For resources: whether the resource exists
 
-	// Process data (for KindProcess items)
 	Processes []config.ProcessInfo
 
-	// Tailscale data (for KindTailscale items)
 	TailscaleStatus *config.TailscaleFullStatus
 
-	// Repository data (for KindRepository items)
 	ProjectGroups []config.ProjectGroup
 
-	// Docker data (for KindDocker items)
 	DockerStatus *config.DockerStatus
 
-	// Dependency data (for KindDependency items)
 	DepGroups []config.DepProjectGroup
 }
 
@@ -116,9 +110,7 @@ func (l *Loader) GetPendingCount() int {
 	return count
 }
 
-// buildItems creates all status items in display order
 func (l *Loader) buildItems() {
-	// System info (used in header subtitle)
 	l.addItem(Item{
 		ID:      "sysinfo",
 		Kind:    KindSystemInfo,
@@ -126,17 +118,13 @@ func (l *Loader) buildItems() {
 		Name:    "System Info",
 	})
 
-	// ── Activity ──────────────────────────────────────────────────────
-	// CPU and Memory process checks
 	for _, check := range config.ProcessChecks {
 		section := "System"
 		subsection := check.Name
-		// The Ports check renders under Environment, as Services.
 		if check.Name == "Ports" {
 			section = "Environment"
 			subsection = "Services"
 		}
-		// Uptime goes to Environment/System
 		if check.Name == "Uptime" {
 			section = "Environment"
 			subsection = "Health"
@@ -150,7 +138,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// Repository scan (replaces old Git process check)
 	l.addItem(Item{
 		ID:         "repositories",
 		Kind:       KindRepository,
@@ -159,7 +146,6 @@ func (l *Loader) buildItems() {
 		Name:       "repositories",
 	})
 
-	// Docker dashboard
 	l.addItem(Item{
 		ID:         "docker",
 		Kind:       KindDocker,
@@ -168,7 +154,6 @@ func (l *Loader) buildItems() {
 		Name:       "docker",
 	})
 
-	// Dependencies
 	l.addItem(Item{
 		ID:         "dependencies",
 		Kind:       KindDependency,
@@ -177,8 +162,6 @@ func (l *Loader) buildItems() {
 		Name:       "dependencies",
 	})
 
-	// ── Environment ───────────────────────────────────────────────────
-	// Network checks
 	for _, check := range config.NetworkChecks {
 		l.addItem(Item{
 			ID:         "network-" + check.Name,
@@ -189,7 +172,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// Tailscale check
 	l.addItem(Item{
 		ID:         "tailscale",
 		Kind:       KindTailscale,
@@ -198,7 +180,6 @@ func (l *Loader) buildItems() {
 		Name:       "tailscale",
 	})
 
-	// Security checks → Environment/System
 	for _, check := range config.SecurityChecks {
 		l.addItem(Item{
 			ID:          "security-" + check.Name,
@@ -211,8 +192,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// ── Workspace ─────────────────────────────────────────────────────
-	// Disk/cache checks
 	for _, check := range config.CacheChecks {
 		l.addItem(Item{
 			ID:         "cache-" + check.Name,
@@ -223,10 +202,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// ── Config ────────────────────────────────────────────────────────
-	// Config scripts (mirror j config items). Filter by self.role and
-	// group by ScriptCategory so the section reads as "Terminal", "Security",
-	// "Editor", "System", "Server" sub-blocks.
 	role := selfMachineRole()
 	for _, script := range config.Scripts {
 		if script.CheckFn == nil {
@@ -257,7 +232,6 @@ func (l *Loader) buildItems() {
 		Description: "Configure remote SSH access",
 	})
 
-	// Identity checks
 	for _, check := range config.IdentityChecks {
 		l.addItem(Item{
 			ID:          "identity-" + check.Name,
@@ -270,11 +244,8 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// Maintenance checks (pending macOS / brew updates) live in the System
-	// tab next to Network/Tailscale/Disk — they're "what's the state of
-	// this machine" signals, not configuration. Kind=KindSecurity so the
-	// renderer's GoodWhen-aware badge logic kicks in (GoodWhen=false means
-	// "healthy when nothing pending").
+	// value: maintenance checks are KindSecurity so the GoodWhen-aware badge reads
+	// them (GoodWhen=false: healthy when nothing is pending).
 	for _, check := range config.MaintenanceChecks {
 		l.addItem(Item{
 			ID:          "maintenance-" + check.Name,
@@ -287,9 +258,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// Daemons — user LaunchAgents matching the jterrazz prefix list.
-	// Discovered at startup so a freshly-installed agent shows up on next
-	// `j status` run without code changes here.
 	for _, d := range config.DiscoverDaemons() {
 		l.addItem(Item{
 			ID:          "daemon-" + d.Label,
@@ -301,7 +269,6 @@ func (l *Loader) buildItems() {
 		})
 	}
 
-	// ── Tools ─────────────────────────────────────────────────────────
 	for _, category := range config.ToolCategories {
 		tools := config.GetToolsByCategory(category)
 		if len(tools) == 0 {
@@ -324,9 +291,6 @@ func (l *Loader) addItem(item Item) {
 	l.items = append(l.items, item)
 }
 
-// selfMachineRole returns the role of the current machine according to the
-// registry, or empty string if no self alias is set. Used to filter Config
-// items so server-only entries don't appear on a client box.
 func selfMachineRole() config.Role {
 	if _, m, ok := config.SelfMachine(); ok {
 		return m.Role
@@ -346,7 +310,6 @@ func (l *Loader) Start() {
 
 	var wg sync.WaitGroup
 
-	// System info
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -354,8 +317,8 @@ func (l *Loader) Start() {
 		l.updates <- UpdateMsg{ID: item.ID, Item: item}
 	}()
 
-	// Config checks — same role filter as the registration loop above so
-	// the placeholders and the actual results stay in sync.
+	// invariant: the same role filter as the registration loop, so the placeholders
+	// and the results stay in step.
 	role := selfMachineRole()
 	for _, script := range config.Scripts {
 		if script.CheckFn == nil {
@@ -414,7 +377,6 @@ func (l *Loader) Start() {
 		l.updates <- UpdateMsg{ID: item.ID, Item: item}
 	}()
 
-	// Security checks
 	for _, check := range config.SecurityChecks {
 		wg.Add(1)
 		go func(c config.SecurityCheck) {
@@ -428,7 +390,6 @@ func (l *Loader) Start() {
 		}(check)
 	}
 
-	// Identity checks
 	for _, check := range config.IdentityChecks {
 		wg.Add(1)
 		go func(c config.IdentityCheck) {
@@ -442,7 +403,6 @@ func (l *Loader) Start() {
 		}(check)
 	}
 
-	// Maintenance checks (pending updates, uptime, etc.)
 	for _, check := range config.MaintenanceChecks {
 		wg.Add(1)
 		go func(c config.MaintenanceCheck) {
@@ -456,9 +416,7 @@ func (l *Loader) Start() {
 		}(check)
 	}
 
-	// Daemon state — one launchctl call per agent. Could batch but the
-	// list is small (< 10 typically) and probing in parallel keeps
-	// startup snappy if launchctl ever stalls on one entry.
+	// value: one launchctl call per agent, in parallel, so one stalled entry does not stall startup.
 	for _, d := range config.DiscoverDaemons() {
 		wg.Add(1)
 		go func(d config.DaemonCheck) {
@@ -471,7 +429,6 @@ func (l *Loader) Start() {
 		}(d)
 	}
 
-	// Tool checks
 	for _, t := range config.Tools {
 		wg.Add(1)
 		go func(t config.Tool) {
@@ -485,7 +442,6 @@ func (l *Loader) Start() {
 		}(t)
 	}
 
-	// Process checks
 	for _, check := range config.ProcessChecks {
 		wg.Add(1)
 		go func(c config.ProcessCheck) {
@@ -498,7 +454,6 @@ func (l *Loader) Start() {
 		}(check)
 	}
 
-	// Network checks
 	for _, check := range config.NetworkChecks {
 		wg.Add(1)
 		go func(c config.ResourceCheck) {
@@ -511,7 +466,6 @@ func (l *Loader) Start() {
 		}(check)
 	}
 
-	// Tailscale check
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -528,7 +482,6 @@ func (l *Loader) Start() {
 		l.updates <- UpdateMsg{ID: item.ID, Item: item}
 	}()
 
-	// Repository scan
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -539,7 +492,6 @@ func (l *Loader) Start() {
 		}}
 	}()
 
-	// Docker check
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -553,7 +505,6 @@ func (l *Loader) Start() {
 		l.updates <- UpdateMsg{ID: item.ID, Item: item}
 	}()
 
-	// Dependencies check
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -564,7 +515,6 @@ func (l *Loader) Start() {
 		}}
 	}()
 
-	// Cache checks
 	for _, check := range config.CacheChecks {
 		wg.Add(1)
 		go func(c config.DiskCheck) {
@@ -594,7 +544,6 @@ func (l *Loader) WaitForUpdate() tea.Cmd {
 	}
 }
 
-// loadSystemInfo loads system information
 func (l *Loader) loadSystemInfo() Item {
 	hostname, _ := os.Hostname()
 	if idx := strings.Index(hostname, "."); idx > 0 {

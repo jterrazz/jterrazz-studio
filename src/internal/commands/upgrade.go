@@ -32,7 +32,6 @@ Examples:
 		return tool.FilterStrings(all, args), cobra.ShellCompDirectiveNoFileComp
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// Check for --all flag
 		allFlag, _ := cmd.Flags().GetBool("all")
 		if allFlag {
 			print.Action("🔄", "Upgrading all packages...")
@@ -41,7 +40,6 @@ Examples:
 			return
 		}
 
-		// Check for specific manager flags
 		anyFlagSet := false
 		for _, pm := range config.PackageManagers {
 			if flagVal, ok := upgradeFlags[pm.Flag]; ok && *flagVal {
@@ -54,7 +52,6 @@ Examples:
 			return
 		}
 
-		// If specific package names provided
 		if len(args) > 0 {
 			print.Action("🔄", "Upgrading selected packages...")
 			for _, name := range args {
@@ -66,7 +63,6 @@ Examples:
 			return
 		}
 
-		// No args, list options
 		listUpgradeOptions()
 	},
 }
@@ -74,7 +70,6 @@ Examples:
 func init() {
 	upgradeCmd.Flags().BoolP("all", "a", false, "Upgrade all package managers")
 
-	// Dynamically add flags for each package manager
 	for _, pm := range config.PackageManagers {
 		flagPtr := new(bool)
 		upgradeFlags[pm.Flag] = flagPtr

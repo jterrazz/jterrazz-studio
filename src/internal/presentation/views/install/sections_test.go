@@ -10,9 +10,6 @@ func checkInstalled(b bool) func() config.CheckResult {
 	return func() config.CheckResult { return config.CheckResult{Installed: b} }
 }
 
-// TestPageFamiliesCoverAllCategoriesExactlyOnce guards the routing table
-// itself: every config.ToolCategory must appear in exactly one page's family
-// list, with no duplicates and no gaps.
 func TestPageFamiliesCoverAllCategoriesExactlyOnce(t *testing.T) {
 	want := map[config.ToolCategory]bool{}
 	for _, cat := range config.ToolCategories {
@@ -41,10 +38,6 @@ func TestPageFamiliesCoverAllCategoriesExactlyOnce(t *testing.T) {
 	}
 }
 
-// TestBuildSectionsCoversAllFamiliesExactlyOnce runs the grouping against the
-// real registry (config.Tools) and checks every one of the 18 families
-// produces exactly one section — i.e. the catalog has at least one tool per
-// family and buildSectionsFrom doesn't duplicate or drop any.
 func TestBuildSectionsCoversAllFamiliesExactlyOnce(t *testing.T) {
 	sections := buildSections()
 	seen := map[config.ToolCategory]int{}
@@ -60,10 +53,10 @@ func TestBuildSectionsCoversAllFamiliesExactlyOnce(t *testing.T) {
 
 func TestBuildSectionsFromAssignsPage(t *testing.T) {
 	tools := []config.Tool{
-		{Name: "a", Category: config.CategoryGit},           // Dev
-		{Name: "b", Category: config.CategoryDeploy},        // Infra
-		{Name: "c", Category: config.CategoryAIAgents},      // AI
-		{Name: "d", Category: config.CategoryCommunication}, // Apps
+		{Name: "a", Category: config.CategoryGit},
+		{Name: "b", Category: config.CategoryDeploy},
+		{Name: "c", Category: config.CategoryAIAgents},
+		{Name: "d", Category: config.CategoryCommunication},
 	}
 	sections := buildSectionsFrom(tools)
 	wantPage := map[config.ToolCategory]int{

@@ -13,9 +13,7 @@ type SecurityCheck struct {
 	GoodWhen    bool // true = check passes when Installed=true, false = check passes when Installed=false
 }
 
-// SecurityChecks is the list of macOS security checks. Each CheckFn populates
-// Detail with a short state word ("on", "off", "unknown") so the j status
-// Configuration tab can render it as a right-aligned second column.
+// SecurityChecks are the macOS security checks; each Detail is one state word (on, off, unknown).
 var SecurityChecks = []SecurityCheck{
 	{
 		Name:        "filevault",
@@ -78,8 +76,7 @@ var SecurityChecks = []SecurityCheck{
 				return CheckResult{Detail: "unknown"}
 			}
 			sshRunning := strings.Contains(string(out), "com.openssh.sshd")
-			// GoodWhen=true means we want SSH off, so Installed=!sshRunning.
-			// Detail reports the actual sshd state for clarity.
+			// invariant: GoodWhen=true wants SSH off, so Installed is !sshRunning; Detail reports sshd as it is.
 			return CheckResult{Installed: !sshRunning, Detail: onOff(sshRunning)}
 		},
 		GoodWhen: true,

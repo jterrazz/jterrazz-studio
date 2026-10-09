@@ -14,23 +14,17 @@ import (
 	"time"
 )
 
-// LockEntry is one skill's record in ~/.agents/.skill-lock.json — enough to
-// know where it came from and to compare it against its upstream folder for a
-// currency check.
+// LockEntry is one skill's record in ~/.agents/.skill-lock.json.
 type LockEntry struct {
 	Source     string // "<owner>/<repo>", e.g. "jterrazz/jterrazz-studio"
 	SourceType string // "github" is the only type CheckUpToDate understands
 	SkillPath  string // path within the source repo, e.g. "skills/<name>/SKILL.md"
-	// FolderHash is the git tree SHA of the skill's folder in the source repo
-	// as of the last install/update. This is the `skills` CLI's own record of
-	// what it installed, and comparing it to the upstream tree SHA is exactly
-	// how the CLI decides whether an update exists — see CheckUpToDate.
+	// FolderHash is the git tree SHA of the skill's folder at its last install or update.
 	FolderHash string
 }
 
-// lockFileSchema mirrors the on-disk shape of ~/.agents/.skill-lock.json
-// (schema version 3). Only the fields ReadLock needs are declared; unknown
-// fields (e.g. "dismissed", per-skill timestamps) are ignored.
+// outside: mirrors ~/.agents/.skill-lock.json (schema version 3); only the fields
+// ReadLock needs are declared.
 type lockFileSchema struct {
 	Version int                     `json:"version"`
 	Skills  map[string]lockRawEntry `json:"skills"`
@@ -43,7 +37,6 @@ type lockRawEntry struct {
 	FolderHash string `json:"skillFolderHash"`
 }
 
-// lockPath returns ~/.agents/.skill-lock.json.
 func lockPath() string {
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -52,16 +45,11 @@ func lockPath() string {
 	return filepath.Join(home, ".agents", ".skill-lock.json")
 }
 
-// ReadLock parses ~/.agents/.skill-lock.json. A missing or corrupt file
-// returns an empty map rather than an error — the lock file is best-effort
-// metadata for the update-currency check, never load-bearing for whether a
-// skill counts as installed (that's ListInstalled's job).
+// ReadLock parses ~/.agents/.skill-lock.json; a missing or corrupt file gives an empty map.
 func ReadLock() map[string]LockEntry {
 	return readLockFrom(lockPath())
 }
 
-// readLockFrom is the testable variant of ReadLock — takes the lock file
-// path explicitly.
 func readLockFrom(lockPath string) map[string]LockEntry {
 	out := map[string]LockEntry{}
 	if lockPath == "" {
@@ -84,8 +72,7 @@ func readLockFrom(lockPath string) map[string]LockEntry {
 	return out
 }
 
-// UpdateStatus is the currency state of an installed skill relative to its
-// upstream source.
+// UpdateStatus is an installed skill's currency against its upstream source.
 type UpdateStatus int
 
 const (
@@ -94,53 +81,31 @@ const (
 	StatusOutdated
 )
 
-// httpClient is shared across currency checks; a short timeout keeps a slow
-// or unreachable network from blocking the fan-out longer than necessary.
+// value: a 5s timeout keeps an unreachable network from holding the currency fan-out.
 var httpClient = &http.Client{Timeout: 5 * time.Second}
 
-// apiBaseURL is the api.github.com origin, overridable in tests to point at a
-// local httptest server.
+// value: a var so the tests point it at an httptest server.
 var apiBaseURL = "https://api.github.com"
 
-// CheckUpToDate reports whether an installed skill's folder still matches the
-// upstream folder it was installed from.
-//
-// The comparison is on git tree SHAs, not file contents: the lock file's
-// skillFolderHash is the tree SHA of the skill's folder at install/update
-// time, and the GitHub contents API reports the current tree SHA of that same
-// folder. This is deliberately the *same* oracle the `skills` CLI uses to
-// decide what to update.
-//
-// That equivalence is the whole point. An independent heuristic here (an
-// earlier version diffed the local SKILL.md against raw.githubusercontent.com)
-// can disagree with the CLI, and when it says "outdated" for a skill the CLI
-// considers current, `skills update` does nothing, the row never clears, and
-// the Skills tab offers an update that can never be applied. Comparing what
-// the CLI compares keeps the badge and the action in agreement — and catches
-// changes to supporting files (scripts, references), which a SKILL.md-only
-// diff missed.
-//
-// Only sourceType "github" is supported. Any network error, non-200 response,
-// missing upstream folder, or missing hash on either side reports
-// StatusUnknown — staleness is never invented from an inconclusive check.
+// CheckUpToDate compares an installed skill's folder tree SHA with its upstream folder's.
 func CheckUpToDate(name string, entry LockEntry) UpdateStatus {
 	return checkUpToDateIn(skillsDir(), name, entry)
 }
 
-// checkUpToDateIn is the testable variant of CheckUpToDate — takes the
-// skills directory explicitly.
 func checkUpToDateIn(dir, name string, entry LockEntry) UpdateStatus {
+	// invariant: the verdict compares git tree SHAs, the oracle the skills CLI updates by,
+	// so the badge never offers an update `skills update` would not apply; an inconclusive
+	// check (network, non-200, missing folder or hash) is StatusUnknown, never stale.
 	if entry.SourceType != "github" || entry.Source == "" || entry.SkillPath == "" || entry.FolderHash == "" {
 		return StatusUnknown
 	}
 
-	// The skill must actually be on disk. ListInstalled already guarantees
-	// this for the TUI's callers, but a lock entry can outlive its folder.
+	// hazard: a lock entry can outlive its folder.
 	if _, err := os.Stat(filepath.Join(dir, name, "SKILL.md")); err != nil {
 		return StatusUnknown
 	}
 
-	// skillPath points at the SKILL.md; the hash is over its containing folder.
+	// outside: skillPath names the SKILL.md; the hash is over its containing folder.
 	folder := path.Dir(entry.SkillPath)
 	if folder == "." || folder == "/" {
 		return StatusUnknown
@@ -157,19 +122,15 @@ func checkUpToDateIn(dir, name string, entry LockEntry) UpdateStatus {
 	return StatusOutdated
 }
 
-// contentsEntry is one element of the GitHub contents API's directory
-// listing. Only the fields needed to find a subfolder's tree SHA are declared.
 type contentsEntry struct {
 	Name string `json:"name"`
 	SHA  string `json:"sha"`
 	Type string `json:"type"`
 }
 
-// dirListing is one cached directory fetch — resolved at most once per
-// (repo, parent directory) per process, however many goroutines race for it.
 type dirListing struct {
 	once sync.Once
-	shas map[string]string // child name -> tree/blob SHA
+	shas map[string]string
 	err  error
 }
 
@@ -178,14 +139,8 @@ var (
 	dirCache   = map[string]*dirListing{}
 )
 
-// upstreamFolderSHA returns the current git tree SHA of <source>/<folder>.
-//
-// It lists the folder's *parent* rather than the folder itself, so all skills
-// from one repo collapse into a single API call — a `j config` launch with
-// twenty installed skills spends one request per distinct source repo, not
-// per skill. Results are cached for the process lifetime: upstream can't
-// change mid-session, and the local side of the comparison (the lock file) is
-// re-read on every check, so post-update rechecks still resolve correctly.
+// value: the parent folder is listed, so every skill of one repo costs one request; the
+// cache lasts the process, since the lock side is re-read on every check.
 func upstreamFolderSHA(source, folder string) (string, error) {
 	parent := path.Dir(folder)
 	if parent == "." {
@@ -210,22 +165,18 @@ func upstreamFolderSHA(source, folder string) (string, error) {
 
 	sha, ok := listing.shas[path.Base(folder)]
 	if !ok {
-		// Deleted upstream, or moved. Inconclusive, not stale.
+		// invariant: deleted or moved upstream is inconclusive, not stale.
 		return "", fmt.Errorf("%s not found in %s/%s", path.Base(folder), source, parent)
 	}
 	return sha, nil
 }
 
-// resetDirCache drops the cached directory listings. Tests call it so one
-// test's httptest server can't serve another's lookups.
 func resetDirCache() {
 	dirCacheMu.Lock()
 	defer dirCacheMu.Unlock()
 	dirCache = map[string]*dirListing{}
 }
 
-// fetchDirSHAs lists <source>/<dir> on the default branch and maps each child
-// name to its SHA.
 func fetchDirSHAs(source, dir string) (map[string]string, error) {
 	url := fmt.Sprintf("%s/repos/%s/contents/%s", apiBaseURL, source, dir)
 
@@ -234,11 +185,8 @@ func fetchDirSHAs(source, dir string) (map[string]string, error) {
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/vnd.github+json")
-	// Unauthenticated api.github.com allows 60 requests/hour, which a few
-	// `j config` launches can exhaust. A token (env, else the `gh` CLI's)
-	// raises that to 5000; without one a rate-limited response is a non-200
-	// and every affected skill settles to StatusUnknown rather than a wrong
-	// verdict.
+	// outside: unauthenticated api.github.com allows 60 requests an hour, a token 5000;
+	// a rate-limited response is a non-200, so the skill settles to StatusUnknown.
 	if tok := githubToken(); tok != "" {
 		req.Header.Set("Authorization", "Bearer "+tok)
 	}
@@ -270,13 +218,9 @@ func fetchDirSHAs(source, dir string) (map[string]string, error) {
 	return shas, nil
 }
 
-// githubToken is the token source, resolved once per process. A package var
-// so tests can stub it out instead of shelling to `gh`.
+// value: a package var so the tests stub it instead of shelling out to gh.
 var githubToken = sync.OnceValue(resolveGitHubToken)
 
-// resolveGitHubToken reads a GitHub token from the environment, falling back
-// to the `gh` CLI's stored credential. Returns "" when neither is available —
-// the check degrades to unauthenticated rather than failing.
 func resolveGitHubToken() string {
 	for _, key := range []string{"GITHUB_TOKEN", "GH_TOKEN"} {
 		if v := strings.TrimSpace(os.Getenv(key)); v != "" {
