@@ -28,8 +28,8 @@ A machine takes the release through the one-line install of [Getting started](..
 ## From a checkout
 
 ```sh
-git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz/jterrazz-studio
-cd ~/Developer/jterrazz/jterrazz-studio
+git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz-studio
+cd ~/Developer/jterrazz-studio
 make provision
 source ~/.zshrc
 ```

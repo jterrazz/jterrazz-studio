@@ -12,11 +12,13 @@ How to work on `j` itself: build it, run it from the checkout, and know which fi
 ## Working from source
 
 ```sh
-git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz/jterrazz-studio
-cd ~/Developer/jterrazz/jterrazz-studio
+git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz-studio
+cd ~/Developer/jterrazz-studio
 make build                # .artifacts/go/j
 ./.artifacts/go/j status  # run the build without installing it
 ```
+
+The path is the one the install script clones to, because the machine serves one clone: the `~/.zshrc` line sources its `zshrc.sh`, and `j` reads its dotfiles and scripts from it unless `J_REPO_PATH` names another ([Footprint](../reference/footprint.md)). A second clone elsewhere is a checkout to build, not the one the shell runs.
 
 Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j` — that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
 
