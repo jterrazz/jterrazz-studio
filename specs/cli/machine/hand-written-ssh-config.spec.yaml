@@ -1,3 +1,6 @@
+# hazard: the first run pins known-wrong output, an open owner question: the
+# success line prints before the refusal and its rollback, and the Error line
+# goes to stdout, not stderr. Fixing the product changes this golden on purpose.
 description: refuses to shadow a Host it does not manage, and refreshes the block it does
 fixture: ./__fixtures__/hand-written-ssh-config/
 runs:
@@ -49,3 +52,18 @@ runs:
                     ServerAliveInterval 30
                     ServerAliveCountMax 3
                   # <<< jterrazz machine worker <<<
+          .jterrazz/config.json:
+              equals: |
+                  {
+                    "remote": {
+                      "mode": "userspace",
+                      "auth_method": "oauth"
+                    },
+                    "machines": {
+                      "worker": {
+                        "role": "server",
+                        "ssh": "deploy@10.0.0.2",
+                        "identity": "~/.ssh/deploy_key"
+                      }
+                    }
+                  }
