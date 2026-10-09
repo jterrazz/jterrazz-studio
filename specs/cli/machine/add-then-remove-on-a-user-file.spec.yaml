@@ -1,0 +1,33 @@
+description: adding then removing a machine gives a user's ssh config back byte for byte
+fixture: ./__fixtures__/user-ssh-config/
+runs:
+    - command: machine add box --role server --ssh agent@10.0.0.9
+      exit: 0
+      stdout: |
+          ✓ Added machine "box" (role=server)
+          ✓ Wrote ~/.ssh/config block for box
+      files:
+          .ssh/config:
+              equals: |
+                  Host x
+                    User y
+
+
+                  # >>> jterrazz machine box >>>
+                  Host box
+                    HostName 10.0.0.9
+                    User agent
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine box <<<
+    - command: machine remove box
+      exit: 0
+      stdout: |
+          ✓ Removed machine "box"
+      files:
+          .ssh/config:
+              equals: |+
+                  Host x
+                    User y
+

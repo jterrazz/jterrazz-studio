@@ -143,7 +143,7 @@ func upsertSSHAliasBlock(existing []byte, alias, block string) (updated []byte, 
 	if text != "" && !strings.HasSuffix(text, "\n") {
 		text += "\n"
 	}
-	if text != "" && !strings.HasSuffix(text, "\n\n") {
+	if text != "" {
 		text += "\n"
 	}
 	return []byte(text + block), ""
@@ -163,8 +163,9 @@ func removeSSHAliasBlock(existing []byte, alias string) []byte {
 	if endLine < len(text) && text[endLine] == '\n' {
 		endLine++
 	}
-	// The blank line upsertSSHAliasBlock wrote before an appended block goes
-	// with it, so adding and removing a machine leaves the file as it was.
+	// invariant: an append always writes exactly one blank line before its block
+	// (upsertSSHAliasBlock), even after a blank line the user wrote, so removal
+	// takes exactly one and an add then remove gives the file back byte for byte.
 	before, after := text[:beginIdx], text[endLine:]
 	switch {
 	case strings.HasSuffix(before, "\n\n"):

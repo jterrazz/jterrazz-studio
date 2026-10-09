@@ -25,6 +25,26 @@ runs:
       stdout: |
           ✓ Added machine "worker" (role=server)
           ✓ Wrote ~/.ssh/config block for worker
+      files:
+          .ssh/config:
+              equals: |
+                  # >>> jterrazz machine mac-mini >>>
+                  Host mac-mini
+                    HostName 192.168.1.106
+                    User agent
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine mac-mini <<<
+
+                  # >>> jterrazz machine worker >>>
+                  Host worker
+                    HostName 10.0.0.2
+                    User deploy
+                    IdentityFile ~/.ssh/id_ed25519
+                    ServerAliveInterval 30
+                    ServerAliveCountMax 3
+                  # <<< jterrazz machine worker <<<
     - command: machine add mac-mini --role server
       exit: 1
       stdout: |
