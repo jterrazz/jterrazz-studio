@@ -48,10 +48,10 @@ type Item struct {
 	Status    string
 	Detail    string
 	Value     string
-	Style     string // Semantic style: "success", "warning", "muted", etc.
-	GoodWhen  bool   // For checks: true means Installed=true is good
-	Method    string // Install method for tools
-	Available bool   // For resources: whether the resource exists
+	Style     string
+	GoodWhen  bool
+	Method    string
+	Available bool
 
 	Processes []config.ProcessInfo
 

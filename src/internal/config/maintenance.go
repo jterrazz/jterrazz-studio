@@ -74,8 +74,8 @@ func humanizeAge(d time.Duration) string {
 
 // DaemonCheck is one LaunchAgent of ~/Library/LaunchAgents whose name matches daemonNamePrefixes.
 type DaemonCheck struct {
-	Label string // e.g. "ai.jterrazz.lock-after-login"
-	Path  string // full plist path
+	Label string
+	Path  string
 }
 
 // value: only the estate's own agents: macOS and third-party apps ship dozens more.

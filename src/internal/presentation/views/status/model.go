@@ -25,8 +25,8 @@ type ProcessDataMsg struct {
 	Data     map[string][]config.ProcessInfo
 	TotalCPU float64
 	GPUPct   float64
-	NetRx    int64 // total rx bytes (for diffing)
-	NetTx    int64 // total tx bytes (for diffing)
+	NetRx    int64
+	NetTx    int64
 }
 
 const sparkHistorySize = 60
@@ -45,15 +45,15 @@ type Model struct {
 	total         int
 	quitting      bool
 	allLoaded     bool
-	activeTab     int       // index into TabLabels
-	diskSortOrder []string  // cached disk item IDs once sorted
-	diskMaxSize   float64   // cached max disk size for stable bar ratios
-	cpuHistory    []float64 // last N seconds of total CPU usage
-	gpuHistory    []float64 // last N seconds of GPU utilization
-	netRxHistory  []float64 // last N seconds of network bytes received/sec
-	netTxHistory  []float64 // last N seconds of network bytes sent/sec
-	lastNetRx     int64     // previous sample total rx bytes
-	lastNetTx     int64     // previous sample total tx bytes
+	activeTab     int
+	diskSortOrder []string
+	diskMaxSize   float64
+	cpuHistory    []float64
+	gpuHistory    []float64
+	netRxHistory  []float64
+	netTxHistory  []float64
+	lastNetRx     int64
+	lastNetTx     int64
 }
 
 // New creates a new status view model

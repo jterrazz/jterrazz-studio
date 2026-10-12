@@ -10,9 +10,9 @@ import (
 // PackageManager represents an upgradable package manager
 type PackageManager struct {
 	Name        string
-	Flag        string // CLI flag name (e.g., "brew" for --brew)
-	RequiresCmd string // Command that must exist
-	UpgradeFn   func() // Function to run upgrades
+	Flag        string
+	RequiresCmd string
+	UpgradeFn   func()
 }
 
 // PackageManagers is the list of all package managers that can be upgraded

@@ -54,9 +54,9 @@ type Model struct {
 	form           *huh.Form
 	formScript     *config.Script
 	formBindings   []*string
-	formTitle      string         // header label, e.g. "install autologin"
-	formHelp       string         // optional sub-text shown above the form
-	formOnComplete func() tea.Cmd // fires when the user submits
+	formTitle      string
+	formHelp       string
+	formOnComplete func() tea.Cmd
 }
 
 type cursorPos struct {

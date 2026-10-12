@@ -21,8 +21,8 @@ import (
 type RemoteDaemon string
 
 const (
-	RemoteDaemonUserspace RemoteDaemon = "userspace" // started and owned by j
-	RemoteDaemonSystem    RemoteDaemon = "system"    // Tailscale.app / OS service
+	RemoteDaemonUserspace RemoteDaemon = "userspace"
+	RemoteDaemonSystem    RemoteDaemon = "system"
 )
 
 // Describe returns a human-readable label for status output.
@@ -78,12 +78,12 @@ type JRCConfig struct {
 
 // RemoteStatus summarizes current remote connectivity.
 type RemoteStatus struct {
-	Daemon       RemoteDaemon // which daemon answered
-	BackendState string       // tailscale's own state: Running, Stopped, NeedsLogin…
+	Daemon       RemoteDaemon
+	BackendState string // outside: tailscale's own state - Running, Stopped, NeedsLogin
 	Hostname     string
 	IP           string
 	Connected    bool
-	KeepAwake    bool // userspace only: caffeinate guard against sleep
+	KeepAwake    bool // invariant: userspace daemon only
 }
 
 type tailscalePeer struct {
@@ -114,7 +114,7 @@ type TailscaleFullStatus struct {
 	BackendState string
 	Daemon       RemoteDaemon
 	IP           string
-	ExitNode     string // hostname of active exit node, or ""
+	ExitNode     string
 	Peers        []TailscalePeerInfo
 }
 

@@ -11,7 +11,7 @@ type IdentityCheck struct {
 	Name        string
 	Description string
 	CheckFn     func() CheckResult
-	GoodWhen    bool // true = check passes when Installed=true
+	GoodWhen    bool
 }
 
 // IdentityChecks is the list of developer identity checks

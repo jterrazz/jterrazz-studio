@@ -10,8 +10,8 @@ import (
 type BoxStyle int
 
 const (
-	BoxRounded BoxStyle = iota // ╭─╮ │ │ ╰─╯
-	BoxThick                   // ┏━┓ ┃ ┃ ┗━┛
+	BoxRounded BoxStyle = iota
+	BoxThick
 )
 
 // SectionHeader renders a section divider with horizontal lines

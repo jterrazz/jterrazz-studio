@@ -56,7 +56,7 @@ type Script struct {
 	// Interactive wraps InstallFn in tea.Exec, so a prompt (passphrase, GPG key) gets the terminal.
 	Interactive bool
 
-	RequiresTool string // Tool that must be installed first (e.g., "openjdk")
+	RequiresTool string
 }
 
 // InputValues maps an input's Name to the value the user gave; never nil in InstallFn.
@@ -79,20 +79,20 @@ func NoInputs(fn func() error) func(InputValues) error {
 type InputKind int
 
 const (
-	InputText     InputKind = iota // single-line text input
-	InputPassword                  // masked single-line input
-	InputSelect                    // pick one from Options
-	InputConfirm                   // yes/no
+	InputText InputKind = iota
+	InputPassword
+	InputSelect
+	InputConfirm
 )
 
 // ScriptInput is one value the j config modal collects before an InstallFn runs.
 type ScriptInput struct {
-	Name     string // key the InstallFn uses to look up the value
-	Label    string // primary prompt
-	Help     string // sub-text explaining the field
+	Name     string
+	Label    string
+	Help     string
 	Kind     InputKind
-	Options  []string // values for InputSelect
-	Default  string   // pre-filled value (e.g. from an env var)
+	Options  []string
+	Default  string
 	Validate func(string) error
 }
 

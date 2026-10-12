@@ -3,8 +3,8 @@ package config
 // StatusSection represents a section in the status display
 type StatusSection struct {
 	Title    string
-	SubTitle string // Optional subsection title
-	RenderFn func() // Function to render this section
+	SubTitle string
+	RenderFn func()
 }
 
 // StatusSections defines all status sections in display order

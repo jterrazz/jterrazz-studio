@@ -12,14 +12,14 @@ type Cleanable struct {
 	Name        string
 	Description string
 
-	Path   string        // Static path
-	PathFn func() string // Dynamic path (overrides Path)
+	Path   string
+	PathFn func() string
 
-	SizeFn func() int64 // Get current size in bytes
+	SizeFn func() int64
 
-	CleanFn func() error // How to clean it
+	CleanFn func() error
 
-	RequiresCmd string // Only show if this command exists (e.g., "docker")
+	RequiresCmd string
 }
 
 // Cleanables is the list of reclaimable storage (caches, VMs, trash, etc.)

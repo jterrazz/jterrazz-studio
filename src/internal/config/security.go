@@ -10,7 +10,7 @@ type SecurityCheck struct {
 	Name        string
 	Description string
 	CheckFn     func() CheckResult
-	GoodWhen    bool // true = check passes when Installed=true, false = check passes when Installed=false
+	GoodWhen    bool
 }
 
 // SecurityChecks are the macOS security checks; each Detail is one state word (on, off, unknown).

@@ -2,14 +2,14 @@ package config
 
 // SkillRepo represents a repository containing AI agent skills
 type SkillRepo struct {
-	Name        string // Repository name (owner/repo format)
+	Name        string
 	Description string
 }
 
 // Skill represents a favorite/installed skill
 type Skill struct {
-	Repo  string // Repository (owner/repo format)
-	Skill string // Skill name within the repo
+	Repo  string
+	Skill string
 }
 
 // StudioSkills are @jterrazz skills — the foundation of every project

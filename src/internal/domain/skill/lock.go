@@ -16,9 +16,9 @@ import (
 
 // LockEntry is one skill's record in ~/.agents/.skill-lock.json.
 type LockEntry struct {
-	Source     string // "<owner>/<repo>", e.g. "jterrazz/jterrazz-studio"
-	SourceType string // "github" is the only type CheckUpToDate understands
-	SkillPath  string // path within the source repo, e.g. "skills/<name>/SKILL.md"
+	Source     string
+	SourceType string // invariant: github is the only type CheckUpToDate understands
+	SkillPath  string
 	// FolderHash is the git tree SHA of the skill's folder at its last install or update.
 	FolderHash string
 }

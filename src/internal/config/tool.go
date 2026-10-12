@@ -10,10 +10,10 @@ import (
 
 // CheckResult is the unified result type for all check operations
 type CheckResult struct {
-	Installed bool   // Whether the item is installed/configured
-	Version   string // Version string (if applicable)
-	Status    string // Additional status: "running", "stopped", "3 versions", etc.
-	Detail    string // Extra detail: path, config location, etc.
+	Installed bool
+	Version   string
+	Status    string
+	Detail    string
 }
 
 // Installed creates a CheckResult for an installed item
@@ -109,21 +109,21 @@ type Tool struct {
 	Name        string
 	Description string
 	Category    ToolCategory
-	Replaces    string // The default command or workflow this tool supersedes; drives the toolbelt skill's generated prefer-table.
+	Replaces    string // invariant: drives the toolbelt skill's generated prefer-table
 
-	Command string             // CLI command to check existence
-	CheckFn func() CheckResult // Custom check (overrides Command)
+	Command string
+	CheckFn func() CheckResult
 
-	Method        InstallMethod // brew, npm, manual, etc.
-	Formula       string        // Brew formula or npm package name
-	PythonVersion string        // Python version constraint for uv tools (e.g. "3.13")
-	InstallFn     func() error  // Custom install (overrides Method)
-	UninstallFn   func() error  // Custom uninstall (overrides Method); optional
-	Dependencies  []string      // Tool names this depends on
+	Method        InstallMethod
+	Formula       string
+	PythonVersion string
+	InstallFn     func() error
+	UninstallFn   func() error
+	Dependencies  []string
 
-	VersionFn func() string // Returns version string
+	VersionFn func() string
 
-	Scripts []string // Script names to run after install
+	Scripts []string
 }
 
 // GetAllTools returns all tools

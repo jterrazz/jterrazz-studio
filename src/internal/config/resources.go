@@ -23,7 +23,7 @@ type ResourceCheck struct {
 // ProcessInfo represents a single process entry
 type ProcessInfo struct {
 	Name  string
-	Value string // CPU % or Memory
+	Value string
 	PID   string
 }
 
@@ -35,8 +35,8 @@ type ProcessResult struct {
 
 // RepoInfo describes a single git repository.
 type RepoInfo struct {
-	Name        string // short name (prefix stripped)
-	FullName    string // full directory name
+	Name        string
+	FullName    string
 	Branch      string
 	ChangeCount int
 	Clean       bool
@@ -68,9 +68,9 @@ type DockerStatus struct {
 
 // DepRepoInfo describes dependency status for a single repo.
 type DepRepoInfo struct {
-	Name     string // short name (prefix stripped)
-	Manager  string // "pnpm", "go", etc.
-	Outdated int    // number of outdated deps (-1 = error/unknown)
+	Name     string
+	Manager  string
+	Outdated int
 }
 
 // DepProjectGroup groups dependency info by project prefix.
@@ -81,9 +81,9 @@ type DepProjectGroup struct {
 
 // ResourceResult holds the result of a resource check
 type ResourceResult struct {
-	Value     string // The value to display (e.g., IP address, size)
-	Style     string // "success", "warning", "muted", "special"
-	Available bool   // Whether this resource is available/relevant
+	Value     string
+	Style     string
+	Available bool
 }
 
 // NetworkChecks is the list of network resource checks
@@ -191,9 +191,9 @@ var NetworkChecks = []ResourceCheck{
 // DiskCheck represents a disk usage check
 type DiskCheck struct {
 	Name    string
-	Path    string                // Path to check (supports ~ expansion)
-	Style   string                // Default style for this check
-	CheckFn func() ResourceResult // Custom check (overrides Path)
+	Path    string
+	Style   string
+	CheckFn func() ResourceResult
 }
 
 // CacheChecks shows disk usage grouped by domain
