@@ -18,7 +18,7 @@ func Line(s string)                    { fmt.Println(s) }
 func Linef(format string, args ...any) { fmt.Printf(format+"\n", args...) }
 func Empty()                           { fmt.Println() }
 
-func Error(msg string)   { fmt.Printf("%s %s\n", theme.Danger.Render("Error:"), msg) }
+func Error(msg string)   { fmt.Fprintf(os.Stderr, "%s %s\n", theme.Danger.Render("Error:"), msg) }
 func Warning(msg string) { fmt.Printf("%s %s\n", theme.Warning.Render("Warning:"), msg) }
 func Success(msg string) { fmt.Printf("%s %s\n", theme.Success.Render(theme.IconCheck), msg) }
 func Info(msg string)    { fmt.Println(theme.Special.Render(msg)) }

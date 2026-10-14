@@ -1,13 +1,9 @@
-# hazard: the first run pins known-wrong output, an open owner question: the
-# success line prints before the refusal and its rollback, and the Error line
-# goes to stdout, not stderr. Fixing the product changes this golden on purpose.
 description: refuses to shadow a Host it does not manage, and refreshes the block it does
 fixture: ./__fixtures__/hand-written-ssh-config/
 runs:
     - command: machine add mac-mini --role server --ssh agent@1.2.3.4
       exit: 1
-      stdout: |
-          ✓ Added machine "mac-mini" (role=server)
+      stderr: |
           Error: ssh config update failed (registry rolled back): refusing to modify {{workdir}}/.ssh/config: Host mac-mini already defined at line 1 (outside any managed block)
       files:
           .ssh/config:

@@ -47,19 +47,19 @@ runs:
                   # <<< jterrazz machine worker <<<
     - command: machine add mac-mini --role server
       exit: 1
-      stdout: |
+      stderr: |
           Error: machine "mac-mini" already exists (remove it first to change it)
     - command: machine add bad
       exit: 1
-      stdout: |
+      stderr: |
           Error: --role is required (client or server)
     - command: machine add bad --role nope
       exit: 1
-      stdout: |
+      stderr: |
           Error: invalid role "nope" (expected client or server)
     - command: machine add bad --role server --ssh no-at-sign
       exit: 1
-      stdout: |
+      stderr: |
           Error: ssh endpoint "no-at-sign" must be user@host
     - command: machine list
       exit: 0
@@ -106,5 +106,5 @@ runs:
                   # <<< jterrazz machine worker <<<
     - command: machine remove ghost
       exit: 1
-      stdout: |
+      stderr: |
           Error: machine "ghost" not found

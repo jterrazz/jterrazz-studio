@@ -131,7 +131,6 @@ func runMachineAdd(alias string) {
 	if err := config.AddMachine(alias, m); err != nil {
 		failOn(err)
 	}
-	print.Success(fmt.Sprintf("Added machine %q (role=%s)", alias, m.Role))
 
 	if m.SSH != "" {
 		if err := config.WriteSSHAlias(alias, m); err != nil {
@@ -139,6 +138,10 @@ func runMachineAdd(alias string) {
 			_ = config.RemoveMachine(alias)
 			failOn(fmt.Errorf("ssh config update failed (registry rolled back): %w", err))
 		}
+	}
+
+	print.Success(fmt.Sprintf("Added machine %q (role=%s)", alias, m.Role))
+	if m.SSH != "" {
 		print.Success("Wrote ~/.ssh/config block for " + alias)
 	}
 }

@@ -2,6 +2,7 @@ package status
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"sort"
 	"strings"
@@ -404,6 +405,6 @@ func Run() error {
 // RunOrExit runs the status TUI and exits on error
 func RunOrExit() {
 	if err := Run(); err != nil {
-		fmt.Printf("Error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 	}
 }
