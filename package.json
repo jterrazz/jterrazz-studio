@@ -8,8 +8,8 @@
         "test": "vitest --run"
     },
     "devDependencies": {
-        "@jterrazz/test": "file:../package-test",
-        "@jterrazz/typescript": "file:../package-typescript",
+        "@jterrazz/test": "file:.artifacts/packages/jterrazz-test-17.0.0.tgz",
+        "@jterrazz/typescript": "file:.artifacts/packages/jterrazz-typescript-11.0.0.tgz",
         "@types/node": "^25.5.0",
         "vitest": "^5.0.1"
     }
