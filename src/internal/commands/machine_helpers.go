@@ -22,7 +22,7 @@ func requireRoot() error {
 	if os.Geteuid() == 0 {
 		return nil
 	}
-	return errors.New("requires root — re-run with: sudo " + strings.Join(os.Args, " "))
+	return errors.New("requires root; re-run with: sudo " + strings.Join(os.Args, " "))
 }
 
 func run(name string, args ...string) error {

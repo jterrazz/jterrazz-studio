@@ -80,7 +80,7 @@ func UpgradePackageByName(name string) error {
 			if !CommandExists("brew") {
 				return errors.New("brew not found")
 			}
-			fmt.Printf("  📥 Upgrading %s...\n", name)
+			fmt.Printf("  Upgrading %s...\n", name)
 			if err := ExecCommand("brew", "upgrade", pkg.Formula); err != nil {
 				return fmt.Errorf("upgrading %s: %w", name, err)
 			}
@@ -90,7 +90,7 @@ func UpgradePackageByName(name string) error {
 			if !CommandExists("brew") {
 				return errors.New("brew not found")
 			}
-			fmt.Printf("  📥 Upgrading %s...\n", name)
+			fmt.Printf("  Upgrading %s...\n", name)
 			if err := ExecCommand("brew", "upgrade", "--cask", pkg.Formula); err != nil {
 				return fmt.Errorf("upgrading %s: %w", name, err)
 			}
@@ -100,7 +100,7 @@ func UpgradePackageByName(name string) error {
 			if !CommandExists("npm") {
 				return errors.New("npm not found")
 			}
-			fmt.Printf("  📥 Upgrading %s...\n", name)
+			fmt.Printf("  Upgrading %s...\n", name)
 			if err := ExecCommand("npm", "update", "-g", pkg.Formula); err != nil {
 				return fmt.Errorf("upgrading %s: %w", name, err)
 			}
@@ -110,7 +110,7 @@ func UpgradePackageByName(name string) error {
 			if !CommandExists("bun") {
 				return errors.New("bun not found")
 			}
-			fmt.Printf("  📥 Upgrading %s...\n", name)
+			fmt.Printf("  Upgrading %s...\n", name)
 			if err := ExecCommand("bun", "update", "-g", pkg.Formula); err != nil {
 				return fmt.Errorf("upgrading %s: %w", name, err)
 			}
@@ -120,7 +120,7 @@ func UpgradePackageByName(name string) error {
 			if !CommandExists("uv") {
 				return errors.New("uv not found")
 			}
-			fmt.Printf("  📥 Upgrading %s...\n", name)
+			fmt.Printf("  Upgrading %s...\n", name)
 			if err := ExecCommand("uv", "tool", "upgrade", pkg.Formula); err != nil {
 				return fmt.Errorf("upgrading %s: %w", name, err)
 			}
@@ -133,7 +133,7 @@ func UpgradePackageByName(name string) error {
 	}
 
 	if CommandExists("brew") {
-		fmt.Printf("  📥 Upgrading %s...\n", name)
+		fmt.Printf("  Upgrading %s...\n", name)
 		if err := ExecCommand("brew", "upgrade", name); err != nil {
 			return fmt.Errorf("upgrading %s: %w", name, err)
 		}
@@ -144,21 +144,21 @@ func UpgradePackageByName(name string) error {
 	return fmt.Errorf("unknown package: %s", name)
 }
 
-func makeUpgrader(icon, label string, commands ...[]string) func() {
+func makeUpgrader(label string, commands ...[]string) func() {
 	return func() {
-		fmt.Println(output.Cyan(icon + " Upgrading " + label + "..."))
+		fmt.Println(output.Cyan("Upgrading " + label + "..."))
 		for _, cmd := range commands {
 			if err := ExecCommand(cmd[0], cmd[1:]...); err != nil {
 				fmt.Println(output.Cyan("  ⚠ " + cmd[0] + " failed: " + err.Error()))
 			}
 		}
-		fmt.Println(output.Green("  ✅ " + label + " upgrade completed"))
+		fmt.Println(output.Green("  ✓ " + label + " upgrade completed"))
 	}
 }
 
 var (
-	upgradeBrew = makeUpgrader("🍺", "Homebrew packages", []string{"brew", "update"}, []string{"brew", "upgrade"})
-	upgradeNpm  = makeUpgrader("📦", "npm global packages", []string{"npm", "update", "-g"})
-	upgradeBun  = makeUpgrader("📦", "bun global packages", []string{"bun", "update", "-g"})
-	upgradeUV   = makeUpgrader("📦", "uv tools", []string{"uv", "tool", "upgrade", "--all"})
+	upgradeBrew = makeUpgrader("Homebrew packages", []string{"brew", "update"}, []string{"brew", "upgrade"})
+	upgradeNpm  = makeUpgrader("npm global packages", []string{"npm", "update", "-g"})
+	upgradeBun  = makeUpgrader("bun global packages", []string{"bun", "update", "-g"})
+	upgradeUV   = makeUpgrader("uv tools", []string{"uv", "tool", "upgrade", "--all"})
 )

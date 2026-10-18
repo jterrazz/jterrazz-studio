@@ -57,13 +57,13 @@ var FavoriteSkills = append(StudioSkills, CommunitySkills...)
 
 // StudioRepos are @jterrazz skill repositories
 var StudioRepos = []SkillRepo{
-	{"jterrazz/jterrazz-studio", "The studio — machine CLI, stack conventions, repo doctrine"},
+	{"jterrazz/jterrazz-studio", "The studio: machine CLI, stack conventions, repo doctrine"},
 	{"jterrazz/jterrazz-infrastructure", "Infrastructure and deployment (K3s, Helm, Traefik)"},
 	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
-	{"jterrazz/package-typescript", "TypeScript toolchain — build, lint, format, docs"},
-	{"jterrazz/package-attestation", "Article attestation — EIP-712 + OpenTimestamps"},
+	{"jterrazz/package-typescript", "TypeScript toolchain: build, lint, format, docs"},
+	{"jterrazz/package-attestation", "Article attestation with EIP-712 and OpenTimestamps"},
 	{"jterrazz/package-broadcast", "Multi-channel announcements (App Store, push)"},
-	{"jterrazz/package-reach", "Site reach — SEO/GEO surfaces, projections, conformance"},
+	{"jterrazz/package-reach", "Site reach: SEO/GEO surfaces, projections, conformance"},
 	{"jterrazz/package-test", "Testing utilities (vitest mocks)"},
 }
 
@@ -76,7 +76,7 @@ var CommunityRepos = []SkillRepo{
 	{"expo/skills", "Expo and React Native mobile development"},
 	{"firecrawl/cli", "Web content extraction for AI agents"},
 	{"GoogleChrome/modern-web-guidance", "Chrome's current web platform guidance, and extension authoring"},
-	{"jakubkrehel/skills", "Interface craft — UI polish, typography, color, a11y, layout, copy"},
+	{"jakubkrehel/skills", "Interface craft: UI polish, typography, color, a11y, layout, copy"},
 	{"shadcn-ui/ui", "Official shadcn/ui components and patterns"},
 	{"obra/superpowers", "Development workflow and productivity skills"},
 	{"remotion-dev/skills", "Remotion video creation skills"},

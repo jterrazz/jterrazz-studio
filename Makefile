@@ -62,7 +62,7 @@ provision: build ## Put this build on the machine: ~/.jterrazz/bin, and the zshr
 	@chmod +x $(INSTALL_PATH)
 	@printf "$(GREEN)✓$(RESET) Installed $(INSTALL_PATH)\n"
 	@if [ -f "$(OLD_INSTALL)" ]; then \
-		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL) — run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
+		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL); run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
 	fi
 	@if [ -f "$(OLD_CONFIG_DIR)/jrc.json" ] && [ ! -f "$(JTERRAZZ_DIR)/config.json" ]; then \
 		cp "$(OLD_CONFIG_DIR)/jrc.json" "$(JTERRAZZ_DIR)/config.json"; \
@@ -78,9 +78,9 @@ provision: build ## Put this build on the machine: ~/.jterrazz/bin, and the zshr
 			printf "$(GREEN)✓$(RESET) Added source to ~/.zshrc\n"; \
 		fi \
 	else \
-		printf "$(DIM)~/.zshrc not found — add manually: source $(CURDIR)/$(ZSHRC_SOURCE)$(RESET)\n"; \
+		printf "$(DIM)~/.zshrc not found; add it by hand: source $(CURDIR)/$(ZSHRC_SOURCE)$(RESET)\n"; \
 	fi
-	@printf "$(GREEN)✓$(RESET) Done — run $(DIM)source ~/.zshrc$(RESET) then $(DIM)j help$(RESET)\n"
+	@printf "$(GREEN)✓$(RESET) Done. Run $(DIM)source ~/.zshrc$(RESET) then $(DIM)j help$(RESET)\n"
 
 deprovision: ## Remove the binary from ~/.jterrazz/bin; the user data stays
 	@if [ -f "$(INSTALL_PATH)" ]; then \
@@ -90,7 +90,7 @@ deprovision: ## Remove the binary from ~/.jterrazz/bin; the user data stays
 		printf "$(DIM)$(BINARY) not found at $(INSTALL_PATH)$(RESET)\n"; \
 	fi
 	@if [ -f "$(OLD_INSTALL)" ]; then \
-		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL) — run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
+		rm "$(OLD_INSTALL)" 2>/dev/null || printf "$(DIM)Cannot remove $(OLD_INSTALL); run: sudo rm $(OLD_INSTALL)$(RESET)\n"; \
 	fi
 
 skills: ## Regenerate the toolbelt skill rosters

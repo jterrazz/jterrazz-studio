@@ -67,7 +67,7 @@ func runMachineProbe(alias string) {
 	if sshErr == nil {
 		print.Row(true, "ssh", "BatchMode auth ok")
 	} else {
-		print.Row(false, "ssh", "auth failed (or pre-boot — try `j machine unlock "+alias+"`)")
+		print.Row(false, "ssh", "auth failed (or pre-boot: try `j machine unlock "+alias+"`)")
 	}
 
 	if dialPort(ip, machineProbeGatewayPort, 2*time.Second) {

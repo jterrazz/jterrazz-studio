@@ -34,7 +34,7 @@ Examples:
 	Run: func(cmd *cobra.Command, args []string) {
 		allFlag, _ := cmd.Flags().GetBool("all")
 		if allFlag {
-			print.Action("🔄", "Upgrading all packages...")
+			print.Action("Upgrading all packages...")
 			config.UpgradeAll()
 			print.Done("All upgrades completed")
 			return
@@ -53,7 +53,7 @@ Examples:
 		}
 
 		if len(args) > 0 {
-			print.Action("🔄", "Upgrading selected packages...")
+			print.Action("Upgrading selected packages...")
 			for _, name := range args {
 				if err := config.UpgradePackageByName(name); err != nil {
 					print.Error(err.Error())

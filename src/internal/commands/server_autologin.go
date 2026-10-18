@@ -36,7 +36,7 @@ func installAutologin(values config.InputValues) error {
 		password = os.Getenv(autologinPasswordEnv)
 	}
 	if password == "" {
-		return errors.New("empty password — refusing to set /etc/kcpassword with an empty value")
+		return errors.New("empty password: refusing to set /etc/kcpassword with an empty value")
 	}
 
 	print.Header("install autologin", machineContext())

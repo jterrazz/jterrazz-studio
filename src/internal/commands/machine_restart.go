@@ -22,7 +22,7 @@ The remote runs ` + "`sudo fdesetup authrestart -delayminutes 0`" + ` which capt
 FileVault unlock token in memory; the next boot skips FV and auto-login lands the
 agent session ~60s later.
 
-Requires --yes — this is a destructive remote action.`),
+Requires --yes, since this is a destructive remote action.`),
 	Args: cobra.ExactArgs(1),
 	Run:  func(_ *cobra.Command, args []string) { runMachineRestart(args[0]) },
 }
@@ -49,11 +49,11 @@ func runMachineRestart(alias string) {
 	cmd.Stdin = nil
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		print.Dim("ssh exited (expected — the Mac is restarting): " + strings.TrimSpace(string(out)))
+		print.Dim("ssh exited (expected, the Mac is restarting): " + strings.TrimSpace(string(out)))
 	}
 
 	ip := resolveSSHHostname(target)
-	print.Linef("Waiting for %s to come back…", alias)
+	print.Linef("Waiting for %s to come back...", alias)
 	if ip != "" {
 		waitForPing(ip, 60)
 	}
@@ -61,7 +61,7 @@ func runMachineRestart(alias string) {
 		print.Success("SSH ready after restart")
 		return
 	}
-	failOn(fmt.Errorf("SSH did not come back within budget — check `j machine probe %s`", alias))
+	failOn(fmt.Errorf("SSH did not come back within budget; check `j machine probe %s`", alias))
 }
 
 func resolveSSHHostname(target string) string {

@@ -8,7 +8,7 @@ import (
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure this machine (interactive TUI)",
-	Long: "Open the configuration TUI. Lists every configurable item — " +
+	Long: "Open the configuration TUI. Lists every configurable item: " +
 		"terminal, security, editor, system tweaks, and (on a server-registered " +
 		"machine) server services. Items show their current install state; " +
 		"toggleable items run uninstall when already installed.",

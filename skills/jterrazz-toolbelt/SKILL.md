@@ -11,175 +11,175 @@ Every jterrazz machine is provisioned by `j` (jterrazz-studio). The rosters belo
 
 Modern replacements are on every machine — prefer them over the defaults:
 
-<!-- GENERATED:prefer by `make skills` from src/internal/config — DO NOT EDIT between markers -->
+<!-- GENERATED:prefer by `make skills` from src/internal/config: DO NOT EDIT between markers -->
 
-| Instead of…                             | Use                                                           |
-| --------------------------------------- | ------------------------------------------------------------- |
-| cd (jumping around)                     | `zoxide` — Smarter cd command                                 |
-| Finder in the terminal                  | `yazi` — Terminal file manager                                |
-| cat (for humans)                        | `bat` — Cat clone with syntax highlighting                    |
-| du -sh                                  | `dust` — Intuitive disk usage tool                            |
-| ls                                      | `eza` — Modern ls replacement                                 |
-| find                                    | `fd` — Fast find alternative                                  |
-| grep (what agent and editor tools call) | `ripgrep` — Fast grep, the rg agents and editors shell out to |
-| grep -r                                 | `tgrep` — Trigram-indexed grep for large codebases            |
-| sed (simple replaces)                   | `sd` — Intuitive sed alternative                              |
-| diff                                    | `difftastic` — Structural diff tool                           |
-| raw git porcelain (interactive)         | `lazygit` — Terminal UI for git                               |
-| raw GitHub API / web UI                 | `gh` — GitHub CLI for repository management                   |
-| grep over markdown notes                | `qmd` — Local semantic search over markdown                   |
-| raw dev commands (token-heavy output)   | `rtk` — Token-optimized CLI proxy for agents                  |
+| Instead of                              | Use                                                          |
+| --------------------------------------- | ------------------------------------------------------------ |
+| cd (jumping around)                     | `zoxide`: Smarter cd command                                 |
+| Finder in the terminal                  | `yazi`: Terminal file manager                                |
+| cat (for humans)                        | `bat`: Cat clone with syntax highlighting                    |
+| du -sh                                  | `dust`: Intuitive disk usage tool                            |
+| ls                                      | `eza`: Modern ls replacement                                 |
+| find                                    | `fd`: Fast find alternative                                  |
+| grep (what agent and editor tools call) | `ripgrep`: Fast grep, the rg agents and editors shell out to |
+| grep -r                                 | `tgrep`: Trigram-indexed grep for large codebases            |
+| sed (simple replaces)                   | `sd`: Intuitive sed alternative                              |
+| diff                                    | `difftastic`: Structural diff tool                           |
+| raw git porcelain (interactive)         | `lazygit`: Terminal UI for git                               |
+| raw GitHub API / web UI                 | `gh`: GitHub CLI for repository management                   |
+| grep over markdown notes                | `qmd`: Local semantic search over markdown                   |
+| raw dev commands (token-heavy output)   | `rtk`: Token-optimized CLI proxy for agents                  |
 
 <!-- /GENERATED:prefer -->
 
 ## Tools roster
 
-<!-- GENERATED:tools by `make skills` from src/internal/config — DO NOT EDIT between markers -->
+<!-- GENERATED:tools by `make skills` from src/internal/config: DO NOT EDIT between markers -->
 
 ### Package Managers
 
-- **uv** — Fast Python package and project manager
-- **cocoapods** — Dependency manager for iOS and macOS projects
-- **homebrew** — macOS package manager
-- **npm** — Node.js package manager
-- **nvm** — Manage multiple installed Node.js versions
-- **pnpm** — Fast, disk space efficient Node package manager
+- **uv**: Fast Python package and project manager
+- **cocoapods**: Dependency manager for iOS and macOS projects
+- **homebrew**: macOS package manager
+- **npm**: Node.js package manager
+- **nvm**: Manage multiple installed Node.js versions
+- **pnpm**: Fast, disk space efficient Node package manager
 
 ### Runtimes
 
-- **bun** — Fast JavaScript runtime and package manager
-- **go** — Compiled systems programming language by Google
-- **node** — JavaScript runtime built on Chrome's V8 engine
-- **openjdk** — Open-source Java Development Kit
-- **python** — Python programming language runtime
-- **rust** — Systems programming language for safety and speed
+- **bun**: Fast JavaScript runtime and package manager
+- **go**: Compiled systems programming language by Google
+- **node**: JavaScript runtime built on Chrome's V8 engine
+- **openjdk**: Open-source Java Development Kit
+- **python**: Python programming language runtime
+- **rust**: Systems programming language for safety and speed
 
 ### Shell & Terminal
 
-- **ghostty** — GPU-accelerated terminal emulator
-- **ohmyzsh** — Oh My Zsh shell framework
-- **tmux** — Terminal multiplexer for persistent sessions
-- **starship** — Cross-shell prompt (path, git branch/status, versions)
-- **zoxide** — Smarter cd command
+- **ghostty**: GPU-accelerated terminal emulator
+- **ohmyzsh**: Oh My Zsh shell framework
+- **tmux**: Terminal multiplexer for persistent sessions
+- **starship**: Cross-shell prompt (path, git branch/status, versions)
+- **zoxide**: Smarter cd command
 
 ### CLI Tools
 
-- **yazi** — Terminal file manager
-- **bat** — Cat clone with syntax highlighting
-- **dust** — Intuitive disk usage tool
-- **eza** — Modern ls replacement
-- **fd** — Fast find alternative
-- **ripgrep** — Fast grep, the rg agents and editors shell out to
-- **tgrep** — Trigram-indexed grep for large codebases
-- **sd** — Intuitive sed alternative
-- **difftastic** — Structural diff tool
+- **yazi**: Terminal file manager
+- **bat**: Cat clone with syntax highlighting
+- **dust**: Intuitive disk usage tool
+- **eza**: Modern ls replacement
+- **fd**: Fast find alternative
+- **ripgrep**: Fast grep, the rg agents and editors shell out to
+- **tgrep**: Trigram-indexed grep for large codebases
+- **sd**: Intuitive sed alternative
+- **difftastic**: Structural diff tool
 
 ### Git
 
-- **gpg** — GNU Privacy Guard for encryption and signing
-- **lazygit** — Terminal UI for git
-- **git** — Distributed version control system
-- **gh** — GitHub CLI for repository management
+- **gpg**: GNU Privacy Guard for encryption and signing
+- **lazygit**: Terminal UI for git
+- **git**: Distributed version control system
+- **gh**: GitHub CLI for repository management
 
 ### Editors & IDEs
 
-- **zed** — Zed code editor
-- **android-studio** — Android development IDE
-- **cursor** — AI-powered code editor
-- **xcode** — Apple development IDE
+- **zed**: Zed code editor
+- **android-studio**: Android development IDE
+- **cursor**: AI-powered code editor
+- **xcode**: Apple development IDE
 
 ### Containers & VMs
 
-- **multipass** — Lightweight Ubuntu VMs on demand
-- **orbstack** — OrbStack container runtime (provides docker CLI)
-- **lens** — Kubernetes IDE for managing clusters
-- **utm** — Virtual machines for macOS (QEMU + Apple Virtualization)
+- **multipass**: Lightweight Ubuntu VMs on demand
+- **orbstack**: OrbStack container runtime (provides docker CLI)
+- **lens**: Kubernetes IDE for managing clusters
+- **utm**: Virtual machines for macOS (QEMU + Apple Virtualization)
 
 ### Deploy
 
-- **ansible** — Agentless IT automation and configuration management
-- **eas** — Expo Application Services CLI for app builds
-- **pulumi** — Infrastructure as code using real programming languages
-- **terraform** — Infrastructure as code provisioning tool
+- **ansible**: Agentless IT automation and configuration management
+- **eas**: Expo Application Services CLI for app builds
+- **pulumi**: Infrastructure as code using real programming languages
+- **terraform**: Infrastructure as code provisioning tool
 
 ### AI Agents
 
-- **claude** — Claude Code CLI for agentic coding
-- **codex** — OpenAI's CLI coding agent
-- **gemini** — Google's CLI coding agent
-- **opencode** — Open-source AI coding agent CLI
-- **hermes** — Self-improving AI agent with persistent memory
-- **conductor** — Runs parallel AI coding agents in git worktrees
+- **claude**: Claude Code CLI for agentic coding
+- **codex**: OpenAI's CLI coding agent
+- **gemini**: Google's CLI coding agent
+- **opencode**: Open-source AI coding agent CLI
+- **hermes**: Self-improving AI agent with persistent memory
+- **conductor**: Runs parallel AI coding agents in git worktrees
 
 ### AI Tooling
 
-- **ollama** — Run large language models locally
-- **qmd** — Local semantic search over markdown
-- **rtk** — Token-optimized CLI proxy for agents
-- **skills** — Agent skills package manager
-- **browser-use** — AI agent library for browser automation
-- **markitdown** — Convert files to Markdown for LLMs
-- **playwright-mcp** — Browser automation for AI agents via MCP
-- **playwright-browsers** — Chromium runtime for website specs (@jterrazz/test)
-- **inferrs** — TurboQuant LLM inference server
-- **agent-browser** — Browser automation CLI for AI agents
-- **plannotator** — Review AI agent plans and code before committing
+- **ollama**: Run large language models locally
+- **qmd**: Local semantic search over markdown
+- **rtk**: Token-optimized CLI proxy for agents
+- **skills**: Agent skills package manager
+- **browser-use**: AI agent library for browser automation
+- **markitdown**: Convert files to Markdown for LLMs
+- **playwright-mcp**: Browser automation for AI agents via MCP
+- **playwright-browsers**: Chromium runtime for website specs (@jterrazz/test)
+- **inferrs**: TurboQuant LLM inference server
+- **agent-browser**: Browser automation CLI for AI agents
+- **plannotator**: Review AI agent plans and code before committing
 
 ### AI Apps
 
-- **chatgpt** — OpenAI ChatGPT desktop app
-- **claude-desktop** — Anthropic Claude desktop app
-- **typewhisper** — Whisper-based dictation app
+- **chatgpt**: OpenAI ChatGPT desktop app
+- **claude-desktop**: Anthropic Claude desktop app
+- **typewhisper**: Whisper-based dictation app
 
 ### Browsers
 
-- **brave** — Privacy-focused web browser
-- **dia** — The Browser Company's AI-first browser
+- **brave**: Privacy-focused web browser
+- **dia**: The Browser Company's AI-first browser
 
 ### Communication
 
-- **discord** — Voice and text chat
-- **slack** — Team communication
-- **whatsapp** — Messaging app
-- **messenger** — Facebook Messenger
+- **discord**: Voice and text chat
+- **slack**: Team communication
+- **whatsapp**: Messaging app
+- **messenger**: Facebook Messenger
 
 ### Productivity
 
-- **linear** — Project management tool
-- **notion** — Workspace for notes and docs
-- **obsidian** — Knowledge base and note-taking
-- **keynote** — Apple presentations
-- **numbers** — Apple spreadsheets
-- **pages** — Apple word processor
-- **raindrop** — Bookmark manager
+- **linear**: Project management tool
+- **notion**: Workspace for notes and docs
+- **obsidian**: Knowledge base and note-taking
+- **keynote**: Apple presentations
+- **numbers**: Apple spreadsheets
+- **pages**: Apple word processor
+- **raindrop**: Bookmark manager
 
 ### Media
 
-- **broadcasts** — Internet radio and stream player
-- **compressor** — Apple video compression tool
-- **final-cut-pro** — Professional video editor
-- **lightroom** — Adobe photo editor
-- **logic-pro** — Professional music production
+- **broadcasts**: Internet radio and stream player
+- **compressor**: Apple video compression tool
+- **final-cut-pro**: Professional video editor
+- **lightroom**: Adobe photo editor
+- **logic-pro**: Professional music production
 
 ### Remote Access
 
-- **jump-desktop-connect** — Remote GUI recovery host service for headless Macs
-- **jump-desktop** — Jump Desktop viewer/client app
-- **tailscale** — Mesh VPN built on WireGuard
+- **jump-desktop-connect**: Remote GUI recovery host service for headless Macs
+- **jump-desktop**: Jump Desktop viewer/client app
+- **tailscale**: Mesh VPN built on WireGuard
 
 ### Security
 
-- **bitwarden** — Password manager
-- **adguard** — Ad blocker for Safari
-- **passepartout** — VPN client
+- **bitwarden**: Password manager
+- **adguard**: Ad blocker for Safari
+- **passepartout**: VPN client
 
 ### System Utilities
 
-- **mole** — Clean, uninstall, analyze, and optimize macOS from the terminal
-- **betterdisplay** — Flexible HiDPI scaling and display management
-- **pipifier** — Picture-in-Picture for Safari
-- **snippety** — Code snippet manager
-- **speedtest** — Internet speed test
+- **mole**: Clean, uninstall, analyze, and optimize macOS from the terminal
+- **betterdisplay**: Flexible HiDPI scaling and display management
+- **pipifier**: Picture-in-Picture for Safari
+- **snippety**: Code snippet manager
+- **speedtest**: Internet speed test
 
 <!-- /GENERATED:tools -->
 

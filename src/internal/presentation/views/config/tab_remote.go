@@ -87,7 +87,7 @@ func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 
 	m.buildFormModal(
 		"reconfigure remote",
-		"Tailscale endpoint config — written to ~/.jterrazz/config.json on submit.",
+		"Tailscale endpoint config, written to ~/.jterrazz/config.json on submit.",
 		fields,
 		func() tea.Cmd {
 			next := config.RemoteSettings{

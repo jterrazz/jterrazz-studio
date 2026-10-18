@@ -143,7 +143,7 @@ func (m Model) renderItem(t *config.Tool, sectionIdx, itemIdx int) string {
 	desc := ""
 	descBudget := width - prefixW - rightW - 2
 	if t.Description != "" && descBudget > 4 {
-		text := " — " + t.Description
+		text := "  " + t.Description
 		if len([]rune(text)) > descBudget {
 			text = string([]rune(text)[:descBudget-1]) + "…"
 		}
@@ -221,7 +221,7 @@ func (m Model) renderDetail(t *config.Tool) string {
 
 func (m Model) renderFooter() string {
 	if m.busy {
-		return contextStyle.Render(" " + iconBusy + " " + m.busyAction + "…")
+		return contextStyle.Render(" " + iconBusy + " " + m.busyAction + "...")
 	}
 
 	t := m.currentTool()

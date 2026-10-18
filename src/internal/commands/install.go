@@ -21,7 +21,7 @@ var installCmd = &cobra.Command{
 	Long: `Install development tools.
 
 With no arguments and an interactive terminal, opens the install TUI: tools
-are grouped into four pages — Dev, Infra, AI, Apps — each split into family
+are grouped into four pages (Dev, Infra, AI, Apps), each split into family
 sections in registry order. Use arrows/jk to move, tab to fold a section,
 space for details, i to install, u to uninstall (with a confirm prompt),
 1-4 to jump pages, q/esc to quit.
@@ -52,7 +52,7 @@ Examples:
 			return
 		}
 
-		print.Action("📦", "Installing selected tools...")
+		print.Action("Installing selected tools...")
 		for _, name := range args {
 			installToolByName(name)
 		}

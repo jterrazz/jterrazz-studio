@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	toolsStartMarker  = "<!-- GENERATED:tools by `make skills` from src/internal/config — DO NOT EDIT between markers -->"
+	toolsStartMarker  = "<!-- GENERATED:tools by `make skills` from src/internal/config: DO NOT EDIT between markers -->"
 	toolsEndMarker    = "<!-- /GENERATED:tools -->"
-	preferStartMarker = "<!-- GENERATED:prefer by `make skills` from src/internal/config — DO NOT EDIT between markers -->"
+	preferStartMarker = "<!-- GENERATED:prefer by `make skills` from src/internal/config: DO NOT EDIT between markers -->"
 	preferEndMarker   = "<!-- /GENERATED:prefer -->"
 
 	defaultRelPath = "skills/jterrazz-toolbelt/SKILL.md"
@@ -55,7 +55,7 @@ func run(path string, check bool) error {
 
 	if check {
 		if rendered != string(current) {
-			return fmt.Errorf("%s is out of sync with src/internal/config — run `make skills`", path)
+			return fmt.Errorf("%s is out of sync with src/internal/config: run `make skills`", path)
 		}
 		return nil
 	}
@@ -143,18 +143,18 @@ func formatToolLine(t config.Tool) string {
 	if t.Description == "" {
 		return fmt.Sprintf("- **%s**", t.Name)
 	}
-	return fmt.Sprintf("- **%s** — %s", t.Name, t.Description)
+	return fmt.Sprintf("- **%s**: %s", t.Name, t.Description)
 }
 
 // invariant: columns are padded to their widest cell, the shape the formatter writes,
 // so the formatter and the sync test agree on every byte.
 func renderPreferBlock() string {
-	rows := [][2]string{{"Instead of…", "Use"}}
+	rows := [][2]string{{"Instead of", "Use"}}
 	for _, t := range config.GetAllTools() {
 		if t.Replaces == "" {
 			continue
 		}
-		rows = append(rows, [2]string{t.Replaces, fmt.Sprintf("`%s` — %s", t.Name, t.Description)})
+		rows = append(rows, [2]string{t.Replaces, fmt.Sprintf("`%s`: %s", t.Name, t.Description)})
 	}
 
 	widths := [2]int{}

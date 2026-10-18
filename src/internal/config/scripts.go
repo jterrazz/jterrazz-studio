@@ -145,7 +145,7 @@ var Scripts = []Script{
 		Description:  "Install Starship prompt config",
 		Category:     ScriptCategoryTerminal,
 		RequiresTool: "starship",
-		Help:         "Drops the repo's Catppuccin Macchiato Starship config into ~/.config/starship.toml. The zsh loader (dotfiles/applications/zsh/zshrc.sh) runs `starship init` automatically when the binary is present, so a new shell picks it up — path, git branch/status and language versions, no Nerd Font required.",
+		Help:         "Drops the repo's Catppuccin Macchiato Starship config into ~/.config/starship.toml. The zsh loader (dotfiles/applications/zsh/zshrc.sh) runs `starship init` automatically when the binary is present, so a new shell picks it up: path, git branch/status and language versions, no Nerd Font required.",
 		CheckFn: checkFileExists(
 			os.Getenv("HOME")+"/.config/starship.toml",
 			"~/.config/starship.toml"),
@@ -196,9 +196,9 @@ var Scripts = []Script{
 	},
 	{
 		Name:        "spotlight-exclude",
-		Description: "Exclude ~/Developer from Spotlight (guided — opens Settings)",
+		Description: "Exclude ~/Developer from Spotlight (guided, opens Settings)",
 		Category:    ScriptCategorySecurity,
-		Help:        "macOS Tahoe stores the Spotlight Privacy list in a root-only plist (/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist), so we can't read it directly. Instead we probe ~/Developer with `mdfind` — when the folder is in Privacy, Spotlight returns no hits for files we know exist. Install opens System Settings → Spotlight → Search Privacy so you can drop ~/Developer onto the list.",
+		Help:        "macOS Tahoe stores the Spotlight Privacy list in a root-only plist (/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist), so we can't read it directly. Instead we probe ~/Developer with `mdfind`: when the folder is in Privacy, Spotlight returns no hits for files we know exist. Install opens System Settings > Spotlight > Search Privacy so you can drop ~/Developer onto the list.",
 		CheckFn: func() CheckResult {
 			if isSpotlightExcluded(os.Getenv("HOME") + "/Developer") {
 				return InstalledWithDetail("~/Developer in Spotlight Privacy list")
@@ -263,7 +263,7 @@ var Scripts = []Script{
 		Name:        "dock-reset",
 		Description: "Reset dock to system defaults",
 		Category:    ScriptCategorySystem,
-		Help:        "`defaults delete com.apple.dock` + killall Dock — restores the macOS default dock layout.",
+		Help:        "`defaults delete com.apple.dock` then killall Dock, which restores the macOS default dock layout.",
 		InstallFn:   NoInputs(runDockReset),
 	},
 	{
@@ -345,7 +345,7 @@ func RegisterServerActions(a ServerActions) {
 			Category:    ScriptCategoryServer,
 			Role:        RoleServer,
 			Interactive: true,
-			Help:        "Toggles the System Settings → General → Sharing → Remote Login switch via `systemsetup -setremotelogin`.",
+			Help:        "Toggles the System Settings > General > Sharing > Remote Login switch via `systemsetup -setremotelogin`.",
 			CheckFn:     a.SshdCheck,
 			InstallFn:   NoInputs(a.SshdInstall),
 			UninstallFn: a.SshdUninstall,
@@ -680,16 +680,16 @@ func runSpotlightExclude() error {
 	}
 
 	fmt.Println(out.Cyan("Add ~/Developer to Spotlight Privacy"))
-	fmt.Println(out.Dimmed("macOS has no public API for this — it must be done in System Settings."))
+	fmt.Println(out.Dimmed("macOS has no public API for this; it must be done in System Settings."))
 	fmt.Println()
 	fmt.Println("Steps:")
-	fmt.Println("  1. System Settings opens at Spotlight → Search Privacy")
+	fmt.Println("  1. System Settings opens at Spotlight > Search Privacy")
 	fmt.Println("  2. Click + and pick ~/Developer (or drag the folder onto the list)")
 	fmt.Println("  3. Re-run `j status` to confirm")
 	fmt.Println()
 
 	if err := exec.Command("open", "x-apple.systempreferences:com.apple.Spotlight-Settings.extension").Run(); err != nil {
-		fmt.Println(out.Dimmed("Could not open Settings automatically — open System Settings → Spotlight → Search Privacy manually."))
+		fmt.Println(out.Dimmed("Could not open Settings automatically. Open System Settings > Spotlight > Search Privacy by hand."))
 	}
 
 	// value: System Settings is on screen before the TUI redraws; the CheckFn detects the
@@ -765,8 +765,8 @@ func runNvmSetup() error {
 		return fmt.Errorf("failed to create %s: %w", nvmDir, err)
 	}
 
-	fmt.Println(out.Green("Done - " + nvmDir + " ready"))
-	fmt.Println(out.Dimmed("Shell loader is in dotfiles/applications/zsh/zshrc.sh — open a new shell or `source ~/.zshrc`"))
+	fmt.Println(out.Green("Done: " + nvmDir + " ready"))
+	fmt.Println(out.Dimmed("Shell loader is in dotfiles/applications/zsh/zshrc.sh; open a new shell or run `source ~/.zshrc`"))
 	return nil
 }
 

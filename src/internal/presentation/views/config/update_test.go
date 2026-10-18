@@ -60,7 +60,7 @@ func TestCursorMoveDownSkipsCollapsedSection(t *testing.T) {
 	m.sections[1].Collapsed = true
 	m.moveCursorDown()
 	if m.cursor.section != 2 || m.cursor.item != 0 {
-		t.Errorf("cursor = (%d, %d), want (2, 0) — should skip collapsed section",
+		t.Errorf("cursor = (%d, %d), want (2, 0): should skip collapsed section",
 			m.cursor.section, m.cursor.item)
 	}
 }
@@ -87,7 +87,7 @@ func TestCursorMoveUpSkipsCollapsedSection(t *testing.T) {
 	m.cursor = cursorPos{section: 2, item: 0}
 	m.moveCursorUp()
 	if m.cursor.section != 0 || m.cursor.item != 0 {
-		t.Errorf("cursor = (%d, %d), want (0, 0) — should skip collapsed section",
+		t.Errorf("cursor = (%d, %d), want (0, 0): should skip collapsed section",
 			m.cursor.section, m.cursor.item)
 	}
 }

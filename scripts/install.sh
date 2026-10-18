@@ -42,4 +42,4 @@ if [ -f "$HOME/.zshrc" ]; then
   fi
 fi
 
-echo "✓ Done — run 'source ~/.zshrc' then 'j help'"
+echo "✓ Done. Run 'source ~/.zshrc', then 'j help'"

@@ -26,6 +26,6 @@ func TestSkillMDIsInSyncWithConfig(t *testing.T) {
 	}
 
 	if rendered != string(current) {
-		t.Fatalf("%s is out of sync with src/internal/config — run `make skills` and commit the result", defaultRelPath)
+		t.Fatalf("%s is out of sync with src/internal/config: run `make skills` and commit the result", defaultRelPath)
 	}
 }

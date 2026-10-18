@@ -24,11 +24,11 @@ func Success(msg string) { fmt.Printf("%s %s\n", theme.Success.Render(theme.Icon
 func Info(msg string)    { fmt.Println(theme.Special.Render(msg)) }
 func Dim(msg string)     { fmt.Println(theme.Muted.Render(msg)) }
 
-func Action(emoji, msg string) { fmt.Println(theme.Special.Render(emoji + " " + msg)) }
-func Done(msg string)          { fmt.Println(theme.Success.Render("✅ " + msg)) }
+func Action(msg string) { fmt.Println(theme.Special.Render(msg)) }
+func Done(msg string)   { fmt.Println(theme.Success.Render(theme.IconCheck + " " + msg)) }
 
 func Installing(name string) {
-	fmt.Printf(components.PageIndent+"📥 Installing %s...\n", name)
+	fmt.Printf(components.PageIndent+"Installing %s...\n", name)
 }
 
 var (

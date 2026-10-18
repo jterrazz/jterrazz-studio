@@ -31,7 +31,7 @@ Examples:
 	},
 	Run: func(_ *cobra.Command, args []string) {
 		if cleanAll {
-			print.Action("🧹", "Cleaning everything...")
+			print.Action("Cleaning everything...")
 			for _, c := range config.Cleanables {
 				runCleanable(c)
 			}
@@ -44,7 +44,7 @@ Examples:
 			return
 		}
 
-		print.Action("🧹", "Cleaning selected items...")
+		print.Action("Cleaning selected items...")
 		for _, name := range args {
 			c := config.GetCleanableByName(name)
 			if c == nil {
@@ -83,7 +83,7 @@ func runCleanable(c config.Cleanable) {
 		return
 	}
 
-	print.Action("🧹", c.Description+"...")
+	print.Action(c.Description + "...")
 	if c.CleanFn != nil {
 		if err := c.CleanFn(); err != nil {
 			print.Error("Failed to clean " + c.Name + ": " + err.Error())

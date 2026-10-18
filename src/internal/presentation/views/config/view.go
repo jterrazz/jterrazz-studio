@@ -177,7 +177,7 @@ func (m Model) renderDetail(s *config.Script) string {
 
 func (m Model) renderFooter() string {
 	if m.busy {
-		return contextStyle.Render(" " + iconBusy + " " + m.busyAction + "…")
+		return contextStyle.Render(" " + iconBusy + " " + m.busyAction + "...")
 	}
 
 	var footer string
@@ -245,7 +245,7 @@ func (m Model) renderSkillsFooter() string {
 	footer := prefix + strings.Join(hints, footerSepStyle.Render("   "))
 
 	if m.skillsCheckingUpdates() {
-		footer += "\n" + contextStyle.Render(" checking for updates…")
+		footer += "\n" + contextStyle.Render(" checking for updates...")
 	}
 	return footer
 }

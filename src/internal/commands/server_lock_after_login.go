@@ -29,7 +29,7 @@ func installLockAfterLogin() error {
 	}
 
 	if _, err := os.Stat(lockAfterLoginScript); err != nil {
-		return fmt.Errorf("missing %s — expected the openclaw lock-after-login script", lockAfterLoginScript)
+		return fmt.Errorf("missing %s, expected the openclaw lock-after-login script", lockAfterLoginScript)
 	}
 
 	print.Header("install lock-after-login", machineContext())
@@ -72,7 +72,7 @@ func installLockAfterLogin() error {
 			print.Success("launchctl bootstrap " + domain)
 		}
 	} else {
-		print.Dim("No active GUI session for " + lockAfterLoginUser + " — agent will load at next auto-login.")
+		print.Dim("No active GUI session for " + lockAfterLoginUser + "; the agent will load at the next auto-login.")
 	}
 
 	print.Empty()

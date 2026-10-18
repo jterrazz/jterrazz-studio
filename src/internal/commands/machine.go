@@ -53,7 +53,7 @@ var machineUnlockCmd = &cobra.Command{
 unlock password. The endpoint comes from the registry (see j machine list).
 
 Pre-boot SSH advertises a different host key than the running OS and only
-accepts password auth — no authorized_keys exist before FileVault unlock.`,
+accepts password auth: no authorized_keys exist before FileVault unlock.`,
 	Args: cobra.ExactArgs(1),
 	Run:  func(_ *cobra.Command, args []string) { runMachineUnlock(args[0]) },
 }
@@ -82,11 +82,11 @@ func runMachineUnlock(alias string) {
 func resolveRemoteSSH(alias string) string {
 	selfAlias, _, _ := config.SelfMachine()
 	if alias == selfAlias {
-		failOn(fmt.Errorf("%q is this machine — refusing to act on self", alias))
+		failOn(fmt.Errorf("%q is this machine; refusing to act on self", alias))
 	}
 	m, ok := config.GetMachine(alias)
 	if !ok {
-		failOn(fmt.Errorf("machine %q not found in registry — see `j machine list`", alias))
+		failOn(fmt.Errorf("machine %q not found in registry (see `j machine list`)", alias))
 	}
 	if m.SSH == "" {
 		failOn(fmt.Errorf("machine %q has no ssh endpoint configured", alias))
