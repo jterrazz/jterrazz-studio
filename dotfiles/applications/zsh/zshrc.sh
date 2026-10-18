@@ -1,5 +1,5 @@
 # value: the colours below are the Catppuccin Macchiato palette the Zed and Ghostty
-# themes use — ANSI 1=red(#ed8796) 2=green(#a6da95) 3=yellow(#eed49f)
+# themes use: ANSI 1=red(#ed8796) 2=green(#a6da95) 3=yellow(#eed49f)
 # 4=blue(#8aadf4) 5=magenta(#f5bde6) 6=cyan(#8bd5ca) 7=white(#a5adcb).
 
 # invariant: a fresh machine without starship still gets a usable, path-only prompt.
@@ -10,17 +10,17 @@ else
     PROMPT="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ ) %{$fg[blue]%}%c%{$reset_color%} "
 fi
 
-# value: BSD ls colours — dirs=blue, links=cyan, sockets=red, pipes=yellow, exec=green.
+# value: BSD ls colours, with dirs=blue, links=cyan, sockets=red, pipes=yellow, exec=green.
 export CLICOLOR=1
 export LSCOLORS="ExGxBxDxCxegedabagacad"
 
 # value: the completion menu re-uses the ls colours.
 zstyle ':completion:*' list-colors 'di=34:ln=36:so=31:pi=33:ex=32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
 
-# value: grep --color — match=red bold, filename=magenta, line number=green.
+# value: grep --color, with match=red bold, filename=magenta, line number=green.
 export GREP_COLORS='ms=01;31:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
 
-# value: man pages through less — headings=blue bold, search=yellow bg, emphasis=green.
+# value: man pages through less, with headings=blue bold, search=yellow bg, emphasis=green.
 export LESS_TERMCAP_mb=$'\e[1;31m'
 export LESS_TERMCAP_md=$'\e[1;34m'
 export LESS_TERMCAP_me=$'\e[0m'

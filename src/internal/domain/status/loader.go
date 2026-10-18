@@ -1,5 +1,5 @@
-// Package status loads what `j status` reports — the machine's own facts and
-// every registry probe — concurrently, and hands the rows to the view.
+// Package status loads what `j status` reports (the machine's own facts and
+// every registry probe) concurrently, and hands the rows to the view.
 package status
 
 import (

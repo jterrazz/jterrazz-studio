@@ -1,4 +1,4 @@
-// Package print renders the plain-text lines the commands emit outside a TUI —
+// Package print renders the plain-text lines the commands emit outside a TUI:
 // headers, role pills and the verdicts an install action reports.
 package print
 

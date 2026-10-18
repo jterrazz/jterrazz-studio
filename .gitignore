@@ -1,4 +1,4 @@
-# Build, test and lint artefacts — one root, one `rm -rf`.
+# Build, test and lint artefacts: one root, one `rm -rf`.
 .artifacts/
 
 # Dependencies

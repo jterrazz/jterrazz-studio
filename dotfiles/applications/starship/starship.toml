@@ -1,7 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 # =============================================================================
-# Starship prompt — ANSI named colors only, so the terminal theme drives the
+# Starship prompt: ANSI named colors only, so the terminal theme drives the
 # palette and the prompt stays readable in both light and dark modes.
 # Managed by `j`. No Nerd Font required: only widely-supported Unicode glyphs.
 # Two lines: context on top (path + git left, language versions right via the

@@ -12,7 +12,7 @@ type Skill struct {
 	Skill string
 }
 
-// StudioSkills are @jterrazz skills — the foundation of every project
+// StudioSkills are @jterrazz skills, the foundation of every project
 var StudioSkills = []Skill{
 	{"jterrazz/jterrazz-studio", "jterrazz-toolbelt"},
 	{"jterrazz/jterrazz-studio", "jterrazz-stack"},

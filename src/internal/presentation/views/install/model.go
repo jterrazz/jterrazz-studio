@@ -1,7 +1,7 @@
 // Package installview implements the `j install` full-screen TUI. It mirrors
 // the architecture of the j config TUI (src/internal/presentation/views/config)
-// closely — same checkCache + parallel refresh, same tea.Exec-wrapped action
-// pattern, same huh modal machinery — adapted to browse config.Tools instead
+// closely (same checkCache + parallel refresh, same tea.Exec-wrapped action
+// pattern, same huh modal machinery), adapted to browse config.Tools instead
 // of config.Scripts, and grouped into four pages (Dev/Infra/AI/Apps) instead
 // of a single flat list of sections.
 package installview

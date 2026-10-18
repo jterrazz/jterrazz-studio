@@ -1,4 +1,4 @@
-// Zed settings — https://zed.dev/docs/reference/all-settings
+// Zed settings: https://zed.dev/docs/reference/all-settings
 //
 // Formatting follows @jterrazz/typescript: 100 columns, 4 spaces, LF,
 // oxlint (type-aware, safe fixes only) THEN oxfmt on save; `.astro` is the one
@@ -238,7 +238,7 @@
     // `prettier.allowed: false` stops Zed's bundled prettier (on by default for
     // these languages) from competing with oxfmt.
     "languages": {
-        // Lint fixes first, then format — the order `typescript fix` runs them.
+        // Lint fixes first, then format: the order `typescript fix` runs them.
         "JavaScript": {
             // tsgo is the TypeScript 7 checker `typescript check` runs; deno would
             // otherwise attach to every TypeScript file.

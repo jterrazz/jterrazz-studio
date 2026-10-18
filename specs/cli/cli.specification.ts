@@ -8,7 +8,7 @@ const REPO_ROOT = resolve(import.meta.dirname, '../..');
 const J_BIN = resolve(REPO_ROOT, '.artifacts/go/j-test');
 const GO_SRC = resolve(REPO_ROOT, 'src');
 
-// hazard: a stale binary silently tests old behaviour — the suite rebuilds when
+// hazard: a stale binary silently tests old behaviour, so the suite rebuilds when
 // any `src/**/*.go` is newer than the binary, so an edit to the CLI is what a rerun exercises.
 function binaryIsStale(): boolean {
     if (!existsSync(J_BIN)) {
