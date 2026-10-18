@@ -1,11 +1,11 @@
 ---
 name: jterrazz-new-project
-description: Scaffolds a new @jterrazz project with all conventions — jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch.
+description: Scaffolds a new @jterrazz project with all conventions: jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch.
 ---
 
 # Create a new @jterrazz project
 
-A project is born declared: one `jterrazz.config.ts`, the derived editor files, a Makefile answering the six gestures. How each is written — the steps, the files whole, the first `make check` — is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md), and where a test lives is `@jterrazz/test`'s [Set up a project](https://github.com/jterrazz/package-test/blob/main/docs/start/set-up-a-project.md). Follow them; this skill holds only what the estate adds.
+A project is born declared: one `jterrazz.config.ts`, the derived editor files, a Makefile answering the six gestures. How each is written (the steps, the files whole, the first `make check`) is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md), and where a test lives is `@jterrazz/test`'s [Set up a project](https://github.com/jterrazz/package-test/blob/main/docs/start/set-up-a-project.md). Follow them; this skill holds only what the estate adds.
 
 ## For a new library (package-{name})
 
@@ -33,9 +33,9 @@ The identity `package.json` carries beside what Getting started writes:
 
 ## For a new application ({product}-{role})
 
-`"private": true`, no `exports` or `publishConfig`; `jterrazz.config.ts` declares the application's kind — `api`, `cli`, `website` or `mobile` — and its platform.
+`"private": true`, no `exports` or `publishConfig`; `jterrazz.config.ts` declares the application's kind (`api`, `cli`, `website` or `mobile`) and its platform.
 
-**The composition root.** An application is hexagonal — `typescript: { architecture: { hexagonal: true } }` in `jterrazz.config.ts` — and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
+**The composition root.** An application is hexagonal (`typescript: { architecture: { hexagonal: true } }` in `jterrazz.config.ts`) and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
 
 ```ts
 // src/index.ts
@@ -83,17 +83,17 @@ jobs:
         secrets: inherit
 ```
 
-## Repo structure — born structured
+## Repo structure, born structured
 
-A new project starts with the corpus + injection layout, not just code. Do not author layout advice here — follow the **`jterrazz-repo-structure`** skill, whose canonical page is `jterrazz-studio` `docs/concepts/repo-structure.md`:
+A new project starts with the corpus + injection layout, not just code. Do not author layout advice here; follow the **`jterrazz-repo-structure`** skill, whose canonical page is `jterrazz-studio` `docs/concepts/repo-structure.md`:
 
-- `README.md` — the vitrine (what it is, install, a pointer into `docs/`), not a manual.
-- `AGENTS.md` — the agent brief (mental model + routing table into `docs/`); `CLAUDE.md` is a **symlink** to it (`ln -s AGENTS.md CLAUDE.md`).
-- `docs/` — the manual cut by mood: `start/`, `guides/`, `concepts/`, `reference/`, `decisions/`; `concepts/architecture.md`, `guides/develop.md` and `guides/test.md` from day one.
+- `README.md`: the vitrine (what it is, install, a pointer into `docs/`), not a manual.
+- `AGENTS.md`: the agent brief (mental model + routing table into `docs/`); `CLAUDE.md` is a **symlink** to it (`ln -s AGENTS.md CLAUDE.md`).
+- `docs/`: the manual, cut by mood into `start/`, `guides/`, `concepts/`, `reference/` and `decisions/`, with `concepts/architecture.md`, `guides/develop.md` and `guides/test.md` from day one.
 
 ## Never
 
 - Never use pnpm or yarn
 - Never skip the Makefile
-- Never put business logic in `src/index.ts` — a library's only exports, an application's only composes and serves
-- Never author repo-layout advice in a skill — route to `jterrazz-repo-structure`
+- Never put business logic in `src/index.ts`: a library's only exports, an application's only composes and serves
+- Never author repo-layout advice in a skill; route to `jterrazz-repo-structure`
