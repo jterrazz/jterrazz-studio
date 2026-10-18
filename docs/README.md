@@ -1,6 +1,6 @@
-# j — the manual
+# The manual of j
 
-`j` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine — it installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants. This repository also authors two doctrines every `@jterrazz` repository follows, shipped to agents as skills. This page lists every page of the manual, by what the reader came to do.
+`j` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine. It installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants. This repository also authors two doctrines every `@jterrazz` repository follows, shipped to agents as skills. This page lists every page of the manual, by what the reader came to do.
 
 ## Start
 
@@ -18,11 +18,11 @@
 
 ## Concepts
 
-| Page                                         | Answers                                                                                          |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [Architecture](concepts/architecture.md)     | The binary, the four packages, why a feature is a registry entry, the one compiler               |
-| [The stack](concepts/stack.md)               | How `@jterrazz` projects compose: packages, naming, required files — shipped as `jterrazz-stack` |
-| [Repo structure](concepts/repo-structure.md) | Where knowledge lives in every `@jterrazz` repository — shipped as `jterrazz-repo-structure`     |
+| Page                                         | Answers                                                                                         |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| [Architecture](concepts/architecture.md)     | The binary, the four packages, why a feature is a registry entry, the one compiler              |
+| [The stack](concepts/stack.md)               | How `@jterrazz` projects compose: packages, naming, required files; shipped as `jterrazz-stack` |
+| [Repo structure](concepts/repo-structure.md) | Where knowledge lives in every `@jterrazz` repository; shipped as `jterrazz-repo-structure`     |
 
 ## Reference
 

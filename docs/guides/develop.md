@@ -20,7 +20,7 @@ make build                # .artifacts/go/j
 
 The path is the one the install script clones to, because the machine serves one clone: the `~/.zshrc` line sources its `zshrc.sh`, and `j` reads its dotfiles and scripts from it unless `J_REPO_PATH` names another ([Footprint](../reference/footprint.md)). A second clone elsewhere is a checkout to build, not the one the shell runs.
 
-Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j` — that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
+Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j`; that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
 
 ## The make targets
 
@@ -31,17 +31,17 @@ Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules
 | `make lint`        | Both halves: `gofmt -l` and `golangci-lint run ./src/...`, then `typescript check` |
 | `make fix`         | Every fixer: `gofmt -w ./src/`, then `typescript fix`                              |
 | `make test`        | `go test ./src/...`, then the `specs/cli` suite against a fresh test binary        |
-| `make check`       | `lint` then `test` — the gate a change passes                                      |
+| `make check`       | `lint` then `test`, the gate a change passes                                       |
 | `make skills`      | Regenerate the toolbelt skill's rosters from the registries                        |
 | `make provision`   | Build and put `j` on this machine: `~/.jterrazz/bin`, the `zshrc.sh` line          |
 | `make deprovision` | Remove the provisioned binary                                                      |
 | `make clean`       | Remove `.artifacts/`                                                               |
 
-The first six are the gestures every repository of the estate answers, so a session that never opened this one installs, proves and repairs it the same way; `make install` touches nothing outside the checkout, and putting `j` on the machine is `make provision`'s alone. `make check` is the whole gate, and it fails on the first finding of either half. The Go half runs the `golangci-lint` version the Makefile PINS — it installs that exact one when it is missing, because a linter resolved at `@latest` makes a green run a fact about the day it ran. Which linters judge the Go sources, and the four exclusions that carry a reason, are `.golangci.yml`. The TypeScript half is `typescript check` from `@jterrazz/typescript`, whose passes are the toolchain's own [Quality checks](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/quality-checks.md).
+The first six are the gestures every repository of the estate answers, so a session that never opened this one installs, proves and repairs it the same way; `make install` touches nothing outside the checkout, and putting `j` on the machine is `make provision`'s alone. `make check` is the whole gate, and it fails on the first finding of either half. The Go half runs the `golangci-lint` version the Makefile PINS: it installs that exact one when it is missing, because a linter resolved at `@latest` makes a green run a fact about the day it ran. Which linters judge the Go sources, and the four exclusions that carry a reason, are `.golangci.yml`. The TypeScript half is `typescript check` from `@jterrazz/typescript`, whose passes are the toolchain's own [Quality checks](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/quality-checks.md).
 
 ## Where a change goes
 
-Most changes are a registry entry, not new code — that is the shape [Architecture](../concepts/architecture.md) describes. The file to open:
+Most changes are a registry entry, not new code: that is the shape [Architecture](../concepts/architecture.md) describes. The file to open:
 
 | Change                               | File                                                                              |
 | ------------------------------------ | --------------------------------------------------------------------------------- |
@@ -67,6 +67,6 @@ Five things land in the same commit as the change that makes them true:
 
 ## Related
 
-- [Architecture](../concepts/architecture.md) — the shape a change lands in.
-- [Test](test.md) — the two suites, and the document form of a spec.
-- [Release](release.md) — installing, and the tagged release.
+- [Architecture](../concepts/architecture.md): the shape a change lands in.
+- [Test](test.md): the two suites, and the document form of a spec.
+- [Release](release.md): installing, and the tagged release.

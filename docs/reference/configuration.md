@@ -2,9 +2,9 @@
 
 `j config` is an interactive TUI for configuring the local machine, organised into 3 tabs (`←/→` to cycle, `1..3` to jump directly):
 
-- **Configuration** — installable items grouped by category. Sections are collapsible; items show their current state.
-- **Skills** — install / update / remove AI agent skills (requires the `skills` CLI on PATH — see [Tools and skills](tools-and-skills.md)). Each row is one of three states: `✓` installed & current, `⬆` update available, or `✗` not installed. Install state comes straight from the filesystem (`~/.agents/skills/`); currency is checked afterwards by comparing the `skillFolderHash` recorded in `~/.agents/.skill-lock.json` — the git tree SHA of the skill's folder when it was installed — against that folder's current tree SHA on GitHub. That is deliberately the same oracle the `skills` CLI uses to decide what to update, so a row marked `⬆` is always one `skills update` will actually act on. The check never blocks startup, shares one GitHub request per source repo, and a muted "checking for updates…" footer hint shows while it's in flight; anything inconclusive (offline, rate-limited, deleted upstream) stays `✓` rather than inventing staleness. Press `i` to install a missing skill or update an outdated one; up-to-date skills no-op on `i`.
-- **Remote** — read-only summary of the Tailscale endpoint; press `i` to open a form that rewrites `~/.jterrazz/config.json`.
+- **Configuration**: installable items grouped by category. Sections are collapsible; items show their current state.
+- **Skills**: install / update / remove AI agent skills (requires the `skills` CLI on PATH; see [Tools and skills](tools-and-skills.md)). Each row is one of three states: `✓` installed & current, `⬆` update available, or `✗` not installed. Install state comes straight from the filesystem (`~/.agents/skills/`); currency is checked afterwards by comparing the `skillFolderHash` recorded in `~/.agents/.skill-lock.json` (the git tree SHA of the skill's folder when it was installed) against that folder's current tree SHA on GitHub. That is deliberately the same oracle the `skills` CLI uses to decide what to update, so a row marked `⬆` is always one `skills update` will actually act on. The check never blocks startup, shares one GitHub request per source repo, and a muted "checking for updates..." footer hint shows while it's in flight; anything inconclusive (offline, rate-limited, deleted upstream) stays `✓` rather than inventing staleness. Press `i` to install a missing skill or update an outdated one; up-to-date skills no-op on `i`.
+- **Remote**: read-only summary of the Tailscale endpoint; press `i` to open a form that rewrites `~/.jterrazz/config.json`.
 
 ```text
  j config                                                self: mac-mini · server
@@ -31,15 +31,15 @@
 
 ## Categories
 
-The Configuration tab groups items by category (Server only appears when the current machine is registered as `server` — see [Machines](machines.md)):
+The Configuration tab groups items by category (Server only appears when the current machine is registered as `server`; see [Machines](machines.md)):
 
-- **Terminal** — ghostty, tmux, hushlogin
-- **Security** — GPG commit signing, SSH keygen, GitHub CLI auth, encrypted DNS (Quad9), Spotlight exclusion
-- **Editor** — Zed config
-- **System** — JAVA_HOME, nvm, dock reset/spacer
-- **Server** — autologin, power policy, lock-after-login, sshd
+- **Terminal**: ghostty, tmux, hushlogin
+- **Security**: GPG commit signing, SSH keygen, GitHub CLI auth, encrypted DNS (Quad9), Spotlight exclusion
+- **Editor**: Zed config
+- **System**: JAVA_HOME, nvm, dock reset/spacer
+- **Server**: autologin, power policy, lock-after-login, sshd
 
-Items that need extra inputs (e.g. autologin's password) open a modal form before installing — built on [Charm's huh](https://github.com/charmbracelet/huh). Set `AGENT_PASSWORD` in your environment to pre-fill the autologin password field.
+Items that need extra inputs (e.g. autologin's password) open a modal form before installing, built on [Charm's huh](https://github.com/charmbracelet/huh). Set `AGENT_PASSWORD` in your environment to pre-fill the autologin password field.
 
 ## Keys
 
@@ -55,5 +55,5 @@ Items that need extra inputs (e.g. autologin's password) open a modal form befor
 
 ## Related
 
-- [Tools and skills](tools-and-skills.md) — the Skills tab and the underlying registries.
-- [Machines](machines.md) — how the machine role gates which items appear.
+- [Tools and skills](tools-and-skills.md): the Skills tab and the underlying registries.
+- [Machines](machines.md): how the machine role gates which items appear.

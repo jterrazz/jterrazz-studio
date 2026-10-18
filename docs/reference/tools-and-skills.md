@@ -4,16 +4,16 @@
 
 ## The tools registry
 
-The catalogue is grouped in families — package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
+The catalogue is grouped in families: package managers, runtimes, shell & terminal, CLI tools, git, editors & IDEs, containers & VMs, deploy, AI agents/tooling/apps, browsers, communication, productivity, media, remote access, security, and system utilities. Each tool declares its install method (brew, cask, npm, bun, manual), dependencies, version detection, and any post-install script. Both install and uninstall dispatch per method straight from the registry (brew formula/cask, npm, bun, uv), so a tool is one entry away from being toggleable in the `j install` TUI without bespoke command code. `j install`, `j upgrade`, and `j clean` (see [Commands](commands.md)) all act on this catalogue, and the Applications tab of `j status` renders it with live versions.
 
 ## The skills registry
 
 The curated Claude Code / agent skills live in `src/internal/config/skills.go`, split into two lists:
 
-- **StudioSkills** — the `@jterrazz` skills, the foundation of every project (toolbelt, stack, new-project, repo-structure, reach + its seo/geo/structured-data/content-reach domain skills, infra, typescript, broadcast, test, workflows).
-- **CommunitySkills** — third-party skills worth having.
+- **StudioSkills**: the `@jterrazz` skills, the foundation of every project (toolbelt, stack, new-project, repo-structure, reach + its seo/geo/structured-data/content-reach domain skills, infra, typescript, broadcast, test, workflows).
+- **CommunitySkills**: third-party skills worth having.
 
-Each entry is a `{ repo, skill }` pair; `StudioRepos` / `CommunityRepos` carry the human-readable repo descriptions shown in the UI. `skills.go` is the single source of truth — adding an entry there is all it takes (plus a `make skills` to refresh the projected roster below); there is no lockfile.
+Each entry is a `{ repo, skill }` pair; `StudioRepos` / `CommunityRepos` carry the human-readable repo descriptions shown in the UI. `skills.go` is the single source of truth: adding an entry there is all it takes (plus a `make skills` to refresh the projected roster below); there is no lockfile.
 
 The `j config` **Skills** tab installs, lists, and removes these by shelling out to the standalone **`skills`** CLI (it must be on `PATH`):
 
@@ -27,19 +27,19 @@ See `src/internal/domain/skill/` for the integration.
 
 ### What this registry curates, and what it does not
 
-A skill belongs on this list when nothing derives it. Third-party skills are the operator's taste — nothing in the estate implies that a machine wants `anthropics/skills` or a Remotion pack — so a curated list is the only place that answer can come from.
+A skill belongs on this list when nothing derives it. Third-party skills are the operator's taste (nothing in the estate implies that a machine wants `anthropics/skills` or a Remotion pack), so a curated list is the only place that answer can come from.
 
 The `@jterrazz` skills are the opposite. Every repository the estate declares either carries a `skills/` folder or does not, and those folders are the answer; `terra doctor` reads them off the synced clones and names the missing install as the repair. `StudioSkills` is the copy that derivation retires, and until it is deleted this registry is not the authority for that half of the roster.
 
-> **Note:** the toolchain skill set follows the `@jterrazz/typescript@6` consolidation — `@jterrazz/codestyle` (lint/format) was absorbed into `@jterrazz/typescript`, so a single `jterrazz-typescript` skill now covers build, lint, format, and docs, alongside `jterrazz-repo-structure` for repo doctrine.
+> **Note:** the toolchain skill set follows the `@jterrazz/typescript@6` consolidation: `@jterrazz/codestyle` (lint/format) was absorbed into `@jterrazz/typescript`, so a single `jterrazz-typescript` skill now covers build, lint, format, and docs, alongside `jterrazz-repo-structure` for repo doctrine.
 
-## The toolbelt skill — a committed projection
+## The toolbelt skill, a committed projection
 
-The registries are also projected into an agent-facing skill: [`skills/jterrazz-toolbelt/`](../../skills/jterrazz-toolbelt/SKILL.md) carries the full tool roster and the modern-replacement table, so any agent starting work on a jterrazz machine knows what is available. (The curated skills list is deliberately not projected — an installed skill is already injected into the agent.) The sections between its `GENERATED` markers are compiled from `src/internal/config/` by **`make skills`** (`src/cmd/skillsgen/`) — never edited by hand — and a Go sync test run by `make test` fails when the registry and the skill drift. Change a registry, run `make skills`, commit both in the same change.
+The registries are also projected into an agent-facing skill: [`skills/jterrazz-toolbelt/`](../../skills/jterrazz-toolbelt/SKILL.md) carries the full tool roster and the modern-replacement table, so any agent starting work on a jterrazz machine knows what is available. (The curated skills list is deliberately not projected: an installed skill is already injected into the agent.) The sections between its `GENERATED` markers are compiled from `src/internal/config/` by **`make skills`** (`src/cmd/skillsgen/`), never edited by hand, and a Go sync test run by `make test` fails when the registry and the skill drift. Change a registry, run `make skills`, commit both in the same change.
 
 This is the repo's one compiler in the sense of the repo-structure doctrine: the registry is the source layer, the skill roster is its committed, diffable projection.
 
 ## Related
 
-- [Commands](commands.md) — `j install` / `j upgrade` / `j clean`.
-- [Configuration](configuration.md) — the Skills tab.
+- [Commands](commands.md): `j install` / `j upgrade` / `j clean`.
+- [Configuration](configuration.md): the Skills tab.

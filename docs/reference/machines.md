@@ -1,10 +1,10 @@
 # Machines
 
-`j machine` manages a small registry of the machines you own — typically a client box (your laptop) and one or more servers — and runs status checks, remote actions, and server-only configuration.
+`j machine` manages a small registry of the machines you own (typically a client box, your laptop, and one or more servers) and runs status checks, remote actions, and server-only configuration.
 
 ## The registry & config model
 
-Every machine has an alias, a role (`client` or `server`), and an optional SSH endpoint. The registry lives in `~/.jterrazz/config.json` and is the **single source of truth** — adding a machine also writes a managed `Host` block in `~/.ssh/config`.
+Every machine has an alias, a role (`client` or `server`), and an optional SSH endpoint. The registry lives in `~/.jterrazz/config.json` and is the **single source of truth**: adding a machine also writes a managed `Host` block in `~/.ssh/config`.
 
 ```jsonc
 {
@@ -38,8 +38,8 @@ j machine unlock <alias>      # Pre-boot SSH session to enter the FileVault pass
 
 `status` runs locally and adapts to the role:
 
-- **client** — Machine state only: FileVault, SSH (port 22).
-- **server** — Machine state + Services: OpenClaw runtime, OpenClaw config, channel health (Slack/Telegram/BlueBubbles), OrbStack.
+- **client**: Machine state only: FileVault, SSH (port 22).
+- **server**: Machine state + Services: OpenClaw runtime, OpenClaw config, channel health (Slack/Telegram/BlueBubbles), OrbStack.
 
 `probe`/`restart`/`unlock` resolve the SSH endpoint from the registry. They refuse to act on the alias marked as self.
 
@@ -55,5 +55,5 @@ Supports `auto`/`userspace` mode and `oauth`/`authkey` authentication. Daemon st
 
 ## Related
 
-- [Release](../guides/release.md) — the `~/.jterrazz/` footprint and how `j` gets installed.
-- [Configuration](configuration.md) — role-gated `j config` items.
+- [Release](../guides/release.md): the `~/.jterrazz/` footprint and how `j` gets installed.
+- [Configuration](configuration.md): role-gated `j config` items.
