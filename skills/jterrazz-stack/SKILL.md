@@ -1,6 +1,6 @@
 ---
 name: jterrazz-stack
-description: Overview of the @jterrazz ecosystem: shared npm packages, project naming ({product}-{role}, package-*), required files, CI/CD workflows, testing and architecture conventions. Use when working on any jterrazz project, choosing a package, scaffolding decisions, or understanding how the stack composes.
+description: "Overview of the @jterrazz ecosystem: shared npm packages, project naming ({product}-{role}, package-*), required files, CI/CD workflows, testing and architecture conventions. Use when working on any jterrazz project, choosing a package, scaffolding decisions, or understanding how the stack composes."
 ---
 
 # @jterrazz Stack

@@ -1,6 +1,6 @@
 ---
 name: jterrazz-new-project
-description: Scaffolds a new @jterrazz project with all conventions: jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch.
+description: "Scaffolds a new @jterrazz project with all conventions: jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch."
 ---
 
 # Create a new @jterrazz project

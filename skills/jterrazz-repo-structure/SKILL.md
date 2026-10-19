@@ -1,6 +1,6 @@
 ---
 name: jterrazz-repo-structure
-description: Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs: where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations.
+description: "Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs: where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations."
 ---
 
 # Repo structure
