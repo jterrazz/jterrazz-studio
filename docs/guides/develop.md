@@ -4,7 +4,7 @@ How to work on `j` itself: build it, run it from the checkout, and know which fi
 
 | Section             | Answers                                     |
 | ------------------- | ------------------------------------------- |
-| Working from source | The clone, Go 1.24+, and the loop           |
+| Working from source | The clone, Go 1.26+, and the loop           |
 | The make targets    | Every gesture the Makefile offers           |
 | Where a change goes | Which file to open for which kind of change |
 | What a change owes  | What must land in the same commit           |
@@ -20,7 +20,7 @@ make build                # .artifacts/go/j
 
 The path is the one the install script clones to, because the machine serves one clone: the `~/.zshrc` line sources its `zshrc.sh`, and `j` reads its dotfiles and scripts from it unless `J_REPO_PATH` names another ([Footprint](../reference/footprint.md)). A second clone elsewhere is a checkout to build, not the one the shell runs.
 
-Go 1.24+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j`; that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
+Go 1.26+ and npm are the two requirements: `make install` fetches the Go modules and the npm half the specs and the toolchain run on ([Test](test.md)). `make provision` puts the build on the machine as the real `j`; that gesture, and everything else about a machine that has `j` on it, is [Release](release.md)'s.
 
 ## The make targets
 

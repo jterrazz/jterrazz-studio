@@ -17,7 +17,7 @@ git tag v1.0.0
 git push --tags
 ```
 
-`.github/workflows/release.yaml` fires on `push: tags: v*` and calls the shared `jterrazz-actions` `release-go.yaml` workflow with the binary name `j`, the build path `./src/cmd/j`, Go 1.24, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
+`.github/workflows/release.yaml` fires on `push: tags: v*` and calls the shared `jterrazz-actions` `release-go.yaml` workflow with the binary name `j`, the build path `./src/cmd/j`, Go 1.26, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
 
 Each target is published as an asset named `j-<os>-<arch>`, which is the name the install script asks for. A release that renames those assets breaks every machine's install path.
 
