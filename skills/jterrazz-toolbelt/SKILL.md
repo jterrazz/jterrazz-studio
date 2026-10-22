@@ -1,6 +1,6 @@
 ---
 name: jterrazz-toolbelt
-description: "The exact tool roster provisioned on a jterrazz machine: modern CLI replacements (fd, ripgrep, tgrep, eza, bat, sd, dust, zoxide, difftastic), AI tooling (rtk, qmd, ollama, skills), dev apps and services (gh, lazygit, docker/orbstack, linear, notion). Activates at the start of shell work, when searching or listing files, processing text, diffing, or checking whether a tool or capability is available on this machine."
+description: 'The exact tool roster provisioned on a jterrazz machine: modern CLI replacements (fd, ripgrep, tgrep, eza, bat, sd, dust, zoxide, difftastic), AI tooling (rtk, qmd, ollama, skills), dev apps and services (gh, lazygit, docker/orbstack, linear, notion). Activates at the start of shell work, when searching or listing files, processing text, diffing, or checking whether a tool or capability is available on this machine.'
 ---
 
 # Machine toolbelt
