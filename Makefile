@@ -52,7 +52,7 @@ fix: node_modules/.install ## Every fixer: gofmt over Go, then typescript fix
 
 test: node_modules/.install ## The Go module tests, then the CLI specs against a fresh build of j
 	@go test ./src/...
-	@J_FORCE_REBUILD=1 npm test
+	@J_FORCE_REBUILD=1 npx typescript test
 
 check: lint test ## Every gate a change passes
 
