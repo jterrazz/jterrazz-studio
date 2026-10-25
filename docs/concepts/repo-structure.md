@@ -13,13 +13,13 @@ An outside corpus holds two things about a repository and no more: a pointer to 
 ## The three roles
 
 1. **The corpus**: `README.md` plus `docs/`, cut into the five sections below. This is where knowledge is _authored_: prose a human writes and maintains.
-2. **The injection layers**: `AGENTS.md` (agent brief, with `CLAUDE.md` as a symlink) and the `skills/` entries. They **route**, they never author. A skill points at a page; it does not restate what the page says.
+2. **The injection layers**: `CLAUDE.md` (the agent brief, and no `AGENTS.md` beside it) and the `skills/` entries. They **route**, they never author. A skill points at a page; it does not restate what the page says.
 3. **The compiler**: a repo-specific command that projects a source layer into the corpus. In `package-typescript`, the rule rows project into the tables of its reference pages; in `jterrazz-studio`, `make skills` projects the install registry into the toolbelt skill rosters. A repo with nothing to project simply has no compiler.
 
 ## Three golden rules
 
 - **A piece of knowledge is written once.** It lives on one page. Everything else links to it. No paragraph is duplicated between the README, a skill, and a page.
-- **AGENTS.md and skills route without retelling.** They are maps, not territory: a mental model plus a routing table into `docs/`. When they start explaining, the knowledge has leaked out of the corpus.
+- **CLAUDE.md and skills route without retelling.** They are maps, not territory: a mental model plus a routing table into `docs/`. When they start explaining, the knowledge has leaked out of the corpus.
 - **The compiler projects; it never authors.** Generated text is a projection of a source layer, held between `GENERATED` markers or stamped as generated. You change the source and regenerate; you never edit a projection.
 
 ## Committed projections vs presentations
@@ -75,14 +75,13 @@ This page owns the shape. Where a checker holds part of it mechanically, the rul
 
 ## Canonical layout of the root
 
-| Path        | Role                                                                                 |
-| ----------- | ------------------------------------------------------------------------------------ |
-| `README.md` | The front door: what, why, a 30-second example, a pointer into `docs/`.              |
-| `AGENTS.md` | The agent brief: mental model + routing table into `docs/`. Routes, does not retell. |
-| `CLAUDE.md` | A symlink to `AGENTS.md`.                                                            |
-| `TODO.md`   | The working backlog, when one is kept.                                               |
-| `docs/`     | The corpus, in the shape above.                                                      |
-| `skills/`   | Injection layer for agents: one skill per capability, routes into `docs/`.           |
+| Path        | Role                                                                                                           |
+| ----------- | -------------------------------------------------------------------------------------------------------------- |
+| `README.md` | The front door: what, why, a 30-second example, a pointer into `docs/`.                                        |
+| `CLAUDE.md` | The agent brief: mental model + routing table into `docs/`. Routes, does not retell. No `AGENTS.md` beside it. |
+| `TODO.md`   | The working backlog, when one is kept.                                                                         |
+| `docs/`     | The corpus, in the shape above.                                                                                |
+| `skills/`   | Injection layer for agents: one skill per capability, routes into `docs/`.                                     |
 
 The list is exhaustive for the knowledge at the root: a file that is not on it does not belong there, and a repository carries no `CHANGELOG.md` and no `CONTRIBUTING.md`.
 

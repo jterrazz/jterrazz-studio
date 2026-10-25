@@ -45,7 +45,7 @@ The repository holds the catalogue: what `j` knows how to install and configure.
 
 ## The compiler
 
-This repo is an application in the sense of the [repo-structure doctrine](repo-structure.md): it authors a corpus, routes to it from `AGENTS.md` and `skills/`, and generates no API reference. It does hold one source layer worth projecting, the tool registry, and `make skills` (`src/cmd/skillsgen/`) renders it between the `GENERATED` markers of `skills/jterrazz-toolbelt/SKILL.md`. The projection is committed and a Go test fails when it drifts; see [Tools and skills](../reference/tools-and-skills.md).
+This repo is an application in the sense of the [repo-structure doctrine](repo-structure.md): it authors a corpus, routes to it from `CLAUDE.md` and `skills/`, and generates no API reference. It does hold one source layer worth projecting, the tool registry, and `make skills` (`src/cmd/skillsgen/`) renders it between the `GENERATED` markers of `skills/jterrazz-toolbelt/SKILL.md`. The projection is committed and a Go test fails when it drifts; see [Tools and skills](../reference/tools-and-skills.md).
 
 ## Related
 

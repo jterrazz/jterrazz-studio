@@ -88,7 +88,7 @@ jobs:
 A new project starts with the corpus + injection layout, not just code. Do not author layout advice here; follow the **`jterrazz-repo-structure`** skill, whose canonical page is `jterrazz-studio` `docs/concepts/repo-structure.md`:
 
 - `README.md`: the vitrine (what it is, install, a pointer into `docs/`), not a manual.
-- `AGENTS.md`: the agent brief (mental model + routing table into `docs/`); `CLAUDE.md` is a **symlink** to it (`ln -s AGENTS.md CLAUDE.md`).
+- `CLAUDE.md`: the agent brief (mental model + routing table into `docs/`), a regular file; no `AGENTS.md` (the toolchain's `docs/no-agents-brief` refuses one).
 - `docs/`: the manual, cut by mood into `start/`, `guides/`, `concepts/`, `reference/` and `decisions/`, with `concepts/architecture.md`, `guides/develop.md` and `guides/test.md` from day one.
 
 ## Never

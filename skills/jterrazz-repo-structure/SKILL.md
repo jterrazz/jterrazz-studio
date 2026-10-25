@@ -1,6 +1,6 @@
 ---
 name: jterrazz-repo-structure
-description: "Use when organizing or restructuring a repository's documentation, skills, AGENTS.md/CLAUDE.md, README, or generated docs: where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations."
+description: "Use when organizing or restructuring a repository's documentation, skills, CLAUDE.md, README, or generated docs: where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations."
 ---
 
 # Repo structure
@@ -12,7 +12,7 @@ The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical
 A repo is three distinct roles, and conflating them is the failure mode this skill guards against:
 
 1. **The corpus**: `README.md` + `docs/`. Where knowledge is _authored_.
-2. **The injection layers**: `AGENTS.md`/`CLAUDE.md` (agent brief), `skills/` entries. They **route**, they never author.
+2. **The injection layers**: `CLAUDE.md` (agent brief), `skills/` entries. They **route**, they never author.
 3. **The compiler**: a repo-specific projector, when there is a source layer worth projecting (rule rows into the generated tables of `package-typescript`'s reference, `make skills` into the toolbelt rosters in jterrazz-studio). No source layer, no compiler.
 
 The corpus belongs to the repository: anything a change in this repo would make false (its architecture, its conventions, its runbook, its quirks, the decisions it alone took) is authored in its `docs/`. An outside corpus (the OS wiki) keeps only a pointer to the repo and the contracts between repos. A decision this repo alone took goes to `docs/decisions/NNN-title.md`; one that spans several repos is recorded by the corpus that spans them and linked from here.
@@ -20,7 +20,7 @@ The corpus belongs to the repository: anything a change in this repo would make 
 Three golden rules, compressed:
 
 - **Written once**: a piece of knowledge lives on one page; everything else links to it. No duplication between README, a skill, and a page.
-- **Route, don't retell**: AGENTS.md/CLAUDE.md and skills are maps: a mental model + a routing table into `docs/`. When they start explaining, knowledge has leaked out of the corpus.
+- **Route, don't retell**: CLAUDE.md and skills are maps: a mental model + a routing table into `docs/`. When they start explaining, knowledge has leaked out of the corpus.
 - **The compiler projects, never authors**: generated text sits between `GENERATED` markers or is stamped as generated. Change the source and regenerate; never hand-edit a projection.
 
 Projection vs presentation: the line is which layers a derived file spans. A **projection crosses a layer** (source into docs): it is **committed** and sync-checked. A **presentation re-packages within the docs layer** (an `llms.txt` concatenation, a rendered site): never committed, built in CI only if a delivery target exists.
@@ -57,8 +57,8 @@ How `@jterrazz` projects compose (packages, naming, CI) is a separate capability
 
 ## Always
 
-- Never restate a page's content in a skill or in AGENTS.md/CLAUDE.md; link to it instead.
+- Never restate a page's content in a skill or in CLAUDE.md; link to it instead.
 - Never hand-edit a projection; regenerate it (`TEST_UPDATE=1`, `make skills`).
 - Regenerate a projection in the same change that touches its source, so the sync check stays green.
 - One skill per capability, split by genuinely distinct trigger conditions, not one skill restating two pages.
-- Move or rename a page together with every inbound link in the same change: the map, the cross-links, `AGENTS.md`, the skills, the `read:` of every finding.
+- Move or rename a page together with every inbound link in the same change: the map, the cross-links, `CLAUDE.md`, the skills, the `read:` of every finding.

@@ -29,7 +29,7 @@ j run         # git + docker shortcuts
 
 The corpus lives in [`docs/`](docs/README.md); start at its map, which lists every page.
 
-For agents: start at [`AGENTS.md`](AGENTS.md). The [`skills/`](skills/) directory ships the shared skills: `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project` and `jterrazz-repo-structure`. The reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
+For agents: start at [`CLAUDE.md`](CLAUDE.md). The [`skills/`](skills/) directory ships the shared skills: `jterrazz-toolbelt` (the machine's tool roster, generated from the install registry), `jterrazz-stack`, `jterrazz-new-project` and `jterrazz-repo-structure`. The reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
 
 ## License
 
