@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
 )
 
 // CheckResult is the unified result type for all check operations

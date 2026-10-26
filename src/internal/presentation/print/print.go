@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 func Line(s string)                    { fmt.Println(s) }

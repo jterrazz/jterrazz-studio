@@ -5,8 +5,8 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "j",
-	Short: "jterrazz unified command system",
+	Use:   "workstation",
+	Short: "studio-workstation unified command system",
 	Long:  "A unified CLI tool for development workflow automation.",
 }
 

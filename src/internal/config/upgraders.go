@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	output "github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	output "github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 // PackageManager represents an upgradable package manager
@@ -127,8 +127,8 @@ func UpgradePackageByName(name string) error {
 			fmt.Printf("  %s %s upgraded\n", output.Green("✓"), name)
 			return nil
 		case InstallNvm, InstallXcode, InstallManual, InstallMAS:
-			// invariant: no package manager of j's owns these (nvm Node, Xcode, manual, App Store);
-			// the brew fallback below is the only path j still offers.
+			// invariant: no package manager of workstation's owns these (nvm Node, Xcode, manual, App Store);
+			// the brew fallback below is the only path workstation still offers.
 		}
 	}
 

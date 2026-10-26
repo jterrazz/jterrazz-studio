@@ -6,8 +6,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 const (
@@ -23,7 +23,7 @@ func (m Model) View() string {
 		return m.renderModal()
 	}
 	var b strings.Builder
-	b.WriteString(m.renderHeader("j config"))
+	b.WriteString(m.renderHeader("workstation config"))
 	b.WriteString(m.tabs.Render(m.contentWidth()))
 	b.WriteString("\n\n")
 	b.WriteString(m.renderTabBody())

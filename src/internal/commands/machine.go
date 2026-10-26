@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +50,7 @@ var machineUnlockCmd = &cobra.Command{
 	Use:   "unlock <alias>",
 	Short: "Unlock a FileVault-protected server Mac over preboot SSH",
 	Long: `Open an interactive SSH session in pre-boot mode to enter the FileVault
-unlock password. The endpoint comes from the registry (see j machine list).
+unlock password. The endpoint comes from the registry (see workstation machine list).
 
 Pre-boot SSH advertises a different host key than the running OS and only
 accepts password auth: no authorized_keys exist before FileVault unlock.`,
@@ -86,7 +86,7 @@ func resolveRemoteSSH(alias string) string {
 	}
 	m, ok := config.GetMachine(alias)
 	if !ok {
-		failOn(fmt.Errorf("machine %q not found in registry (see `j machine list`)", alias))
+		failOn(fmt.Errorf("machine %q not found in registry (see `workstation machine list`)", alias))
 	}
 	if m.SSH == "" {
 		failOn(fmt.Errorf("machine %q has no ssh endpoint configured", alias))
@@ -104,7 +104,7 @@ func machineSelfRole() config.Role {
 func runMachineStatus() {
 	role := machineSelfRole()
 
-	print.Header("j machine status", machineContext())
+	print.Header("workstation machine status", machineContext())
 
 	print.Category("Machine")
 	for _, check := range machineStateChecks() {

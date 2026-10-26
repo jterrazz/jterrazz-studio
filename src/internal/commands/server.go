@@ -1,6 +1,6 @@
 package commands
 
-import "github.com/jterrazz/jterrazz-studio/src/internal/config"
+import "github.com/jterrazz/studio-workstation/src/internal/config"
 
 func init() {
 	config.RegisterServerActions(config.ServerActions{

@@ -15,14 +15,14 @@ runs:
           terminal (scripts, CI, piped output) or when --list is passed.
 
           Examples:
-            j install                 Open the interactive install TUI
-            j install --list          Print the plain-text tool catalog instead
-            j install homebrew        Install Homebrew
-            j install nvm             Install NVM
-            j install go python node  Install specific tools
+            workstation install                 Open the interactive install TUI
+            workstation install --list          Print the plain-text tool catalog instead
+            workstation install homebrew        Install Homebrew
+            workstation install nvm             Install NVM
+            workstation install go python node  Install specific tools
 
           Usage:
-            j install [tool...] [flags]
+            workstation install [tool...] [flags]
 
           Flags:
             -h, --help   help for install

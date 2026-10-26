@@ -3,10 +3,10 @@ package configview
 import (
 	"sort"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
-// Section is one category of scripts under a collapsible header of the j config TUI.
+// Section is one category of scripts under a collapsible header of the workstation config TUI.
 type Section struct {
 	Category  config.ScriptCategory
 	Scripts   []*config.Script

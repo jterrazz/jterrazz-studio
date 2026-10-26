@@ -4,9 +4,9 @@ runs:
     - command: machine remove testbox
       exit: 1
       stderr: |
-          Error: refusing to remove "testbox" while it is set as self; use `j machine init` to point self elsewhere first
+          Error: refusing to remove "testbox" while it is set as self; use `workstation machine init` to point self elsewhere first
       files:
-          .jterrazz/config.json:
+          .studio/config.json:
               equals: |
                   {
                       "self": "testbox",

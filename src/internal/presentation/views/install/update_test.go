@@ -3,8 +3,8 @@ package installview
 import (
 	"testing"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
 )
 
 func makeSection(page int, cat config.ToolCategory, names ...string) Section {

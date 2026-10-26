@@ -5,7 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 // SpinnerFPS is the animation speed for all spinners.

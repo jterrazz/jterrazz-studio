@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/skill"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/skill"
 )
 
 type skillEntry struct {

@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 const (
@@ -85,7 +85,7 @@ func installAutologin(values config.InputValues) error {
 	print.Category("After")
 	dumpAutologinState()
 	print.Empty()
-	print.Dim("Verify end-to-end: `sudo fdesetup authrestart -delayminutes 0` (or `j machine restart` from the MacBook).")
+	print.Dim("Verify end-to-end: `sudo fdesetup authrestart -delayminutes 0` (or `workstation machine restart` from the MacBook).")
 	return nil
 }
 

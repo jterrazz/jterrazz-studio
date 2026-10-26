@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
 )
 
 var boxCharsRegex = regexp.MustCompile(`[│├└┌◇]`)

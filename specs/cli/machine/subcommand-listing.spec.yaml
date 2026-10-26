@@ -6,11 +6,11 @@ runs:
           Manage and inspect this machine and its services
 
           Usage:
-            j machine [command]
+            workstation machine [command]
 
           Available Commands:
             add         Add a machine to the registry
-            init        Register this machine in ~/.jterrazz/config.json (interactive)
+            init        Register this machine in ~/.studio/config.json (interactive)
             list        List registered machines
             probe       Probe a remote machine (ping, ssh, gateway ports, console owner)
             remove      Remove a machine from the registry
@@ -21,4 +21,4 @@ runs:
           Flags:
             -h, --help   help for machine
 
-          Use "j machine [command] --help" for more information about a command.
+          Use "workstation machine [command] --help" for more information about a command.

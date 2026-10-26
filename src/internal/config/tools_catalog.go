@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
 )
 
 func checkApp(appName string) func() CheckResult {

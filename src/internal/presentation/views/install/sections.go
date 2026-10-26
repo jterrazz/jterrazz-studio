@@ -1,10 +1,10 @@
 package installview
 
 import (
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
-// PageLabels lists the j install pages in display order; an index here is Model.tabs.Active and pageFamilies'.
+// PageLabels lists the workstation install pages in display order; an index here is Model.tabs.Active and pageFamilies'.
 var PageLabels = []string{"Dev", "Infra", "AI", "Apps"}
 
 // invariant: every config.ToolCategory appears in exactly one page's list

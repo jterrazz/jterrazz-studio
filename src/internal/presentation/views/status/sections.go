@@ -7,15 +7,15 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/status"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/status"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 const minColumnWidth = 44
 
-// TabLabels lists the j status tabs in display order; an index here is Model.activeTab.
+// TabLabels lists the workstation status tabs in display order; an index here is Model.activeTab.
 var TabLabels = []string{"System", "Workspace", "Applications", "Configuration"}
 
 func (m Model) renderContent() string {

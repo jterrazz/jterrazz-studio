@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 const (
@@ -21,7 +21,7 @@ func (m Model) View() string {
 		return m.renderModal()
 	}
 	var b strings.Builder
-	b.WriteString(m.renderHeader("j install"))
+	b.WriteString(m.renderHeader("workstation install"))
 	b.WriteString(m.tabs.Render(m.contentWidth()))
 	b.WriteString("\n\n")
 	b.WriteString(m.renderBody())
@@ -35,7 +35,7 @@ func (m Model) View() string {
 
 func (m Model) renderModal() string {
 	var b strings.Builder
-	b.WriteString(m.renderHeader("j install"))
+	b.WriteString(m.renderHeader("workstation install"))
 	if m.formHelp != "" {
 		b.WriteString(detailTextStyle.Render(" " + wrapText(m.formHelp, m.contentWidth()-2)))
 		b.WriteString("\n\n")

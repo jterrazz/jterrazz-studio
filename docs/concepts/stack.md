@@ -15,7 +15,7 @@ How every `@jterrazz` project composes: the shared packages, the naming scheme, 
 | `@jterrazz/manifest`     | A site's machine-facing presence declared once: metadata, JSON-LD, sitemap, its audit | `package-manifest/docs/`     |
 | `@jterrazz/attestation`  | Article attestation: an EIP-712 signature anchored to Bitcoin                         | `package-attestation/docs/`  |
 
-Shared CI/CD lives in `jterrazz/jterrazz-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/jterrazz-infrastructure` (K3s, Helm, Traefik).
+Shared CI/CD lives in `jterrazz/studio-actions` (validate, release-npm, release-docker, release-go); infrastructure in `jterrazz/studio-infrastructure` (K3s, Helm, Traefik).
 
 ## Project types and naming
 
@@ -26,21 +26,21 @@ package-{name}               # shared libraries, published as @jterrazz/*
 
 Roles: `-api`, `-web`, `-mobile`, `-broadcast`, `-blueprint`, `-landing`.
 
-A project declares what it is once, in `jterrazz.config.ts`: its `kind` (`library`, `api`, `cli`, `website`, `mobile` or `workspace`) and its `platform`, from which the toolchain derives the rest. The two lists, and what each kind and platform imply, are `@jterrazz/typescript`'s [Configuration](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/configuration.md).
+A project declares what it is once, in `studio.config.ts`: its `kind` (`library`, `api`, `cli`, `website`, `mobile` or `workspace`) and its `platform`, from which the toolchain derives the rest. The two lists, and what each kind and platform imply, are `@jterrazz/typescript`'s [Configuration](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/configuration.md).
 
 ## Required files
 
 Every project carries:
 
-- `jterrazz.config.ts`: the kind, the platform, the presets it is held to, and every exception with its reason.
+- `studio.config.ts`: the kind, the platform, the presets it is held to, and every exception with its reason.
 - The editor files the toolchain derives and `typescript fix` writes (`tsconfig.json`, `oxlint.config.ts`, `oxfmt.config.ts`, and `vitest.config.ts` from `@jterrazz/test`'s preset), each one line. No other tool keeps a config at the root.
 - A `Makefile` answering the six gestures (`install`, `build`, `lint`, `fix`, `test`, `check`), with `check` the whole gate.
 - `.github/workflows/validate.yaml` calling the shared workflow, which runs `make build`, `make lint`, `make test`, then `make mutation` where the Makefile has one.
 - The root files mandated by the [repo-structure doctrine](repo-structure.md): the README front door, `CLAUDE.md`, a `docs/` manual cut by mood.
 
-How each is written is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md); scaffolding one from nothing is the `jterrazz-new-project` skill.
+How each is written is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md); scaffolding one from nothing is the `studio-new-project` skill.
 
-A repository whose product is not TypeScript carries them all the same, for the half that is: `j` is a Go binary whose end-to-end harness under `specs/` declares itself a `cli` on `node` held to `@jterrazz/test`'s preset. Its own language answers to its own linter (`.golangci.yml`, at the version the Makefile pins), and each gesture runs both halves.
+A repository whose product is not TypeScript carries them all the same, for the half that is: `workstation` is a Go binary whose end-to-end harness under `specs/` declares itself a `cli` on `node` held to `@jterrazz/test`'s preset. Its own language answers to its own linter (`.golangci.yml`, at the version the Makefile pins), and each gesture runs both halves.
 
 ## Testing
 

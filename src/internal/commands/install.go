@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	xterm "github.com/charmbracelet/x/term"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
-	installview "github.com/jterrazz/jterrazz-studio/src/internal/presentation/views/install"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
+	installview "github.com/jterrazz/studio-workstation/src/internal/presentation/views/install"
 	"github.com/spf13/cobra"
 )
 
@@ -30,11 +30,11 @@ Falls back to the classic plain-text catalog listing when stdout isn't a
 terminal (scripts, CI, piped output) or when --list is passed.
 
 Examples:
-  j install                 Open the interactive install TUI
-  j install --list          Print the plain-text tool catalog instead
-  j install homebrew        Install Homebrew
-  j install nvm             Install NVM
-  j install go python node  Install specific tools`,
+  workstation install                 Open the interactive install TUI
+  workstation install --list          Print the plain-text tool catalog instead
+  workstation install homebrew        Install Homebrew
+  workstation install nvm             Install NVM
+  workstation install go python node  Install specific tools`,
 	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		all := make([]string, 0, len(config.Tools))
 		for _, t := range config.Tools {
@@ -66,7 +66,7 @@ func init() {
 }
 
 func listAvailableTools() {
-	print.Header("j install", machineContext())
+	print.Header("workstation install", machineContext())
 
 	results := make(map[string]config.CheckResult, len(config.Tools))
 	var mu sync.Mutex
@@ -112,7 +112,7 @@ func listAvailableTools() {
 	}
 
 	print.Empty()
-	print.Usage("Usage: j install <tool> [tool...]")
+	print.Usage("Usage: workstation install <tool> [tool...]")
 }
 
 func installToolByName(name string) {
@@ -139,7 +139,7 @@ func installToolByName(name string) {
 		}
 		depResult := depTool.Check()
 		if !depResult.Installed {
-			print.Error(depName + " required for " + t.Name + ". Run: j install " + depName)
+			print.Error(depName + " required for " + t.Name + ". Run: workstation install " + depName)
 			return
 		}
 	}

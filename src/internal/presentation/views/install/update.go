@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
 type keymap struct {

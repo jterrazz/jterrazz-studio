@@ -17,7 +17,7 @@ import (
 	"time"
 )
 
-// RemoteDaemon names the tailscaled a call talks to: j's userspace one, or the system one j never starts.
+// RemoteDaemon names the tailscaled a call talks to: workstation's userspace one, or the system one workstation never starts.
 type RemoteDaemon string
 
 const (
@@ -29,20 +29,20 @@ const (
 func (d RemoteDaemon) Describe() string {
 	switch d {
 	case RemoteDaemonUserspace:
-		return "userspace (managed by j)"
+		return "userspace (managed by workstation)"
 	case RemoteDaemonSystem:
 		return "system (Tailscale.app)"
 	}
 	return string(d)
 }
 
-// RemoteMode is the persisted policy choosing which daemons j operates on.
+// RemoteMode is the persisted policy choosing which daemons workstation operates on.
 type RemoteMode string
 
 const (
-	// RemoteModeAuto connects through j's userspace daemon; status and disconnect also cover the system daemon.
+	// RemoteModeAuto connects through workstation's userspace daemon; status and disconnect also cover the system daemon.
 	RemoteModeAuto RemoteMode = "auto"
-	// RemoteModeUserspace keeps j to its own userspace daemon; the system daemon is never touched.
+	// RemoteModeUserspace keeps workstation to its own userspace daemon; the system daemon is never touched.
 	RemoteModeUserspace RemoteMode = "userspace"
 )
 
@@ -67,7 +67,7 @@ type RemoteSettings struct {
 	Hostname   string           `json:"hostname,omitempty"`
 }
 
-// JRCConfig is the user runtime config persisted in ~/.jterrazz/config.json.
+// JRCConfig is the user runtime config persisted in ~/.studio/config.json.
 type JRCConfig struct {
 	Remote    RemoteSettings     `json:"remote"`
 	UserEmail string             `json:"user_email,omitempty"`
@@ -135,16 +135,16 @@ func normalizeRemoteSettings(s RemoteSettings) RemoteSettings {
 	return s
 }
 
-func jterrazDir() string {
-	return filepath.Join(os.Getenv("HOME"), ".jterrazz")
+func studioDir() string {
+	return filepath.Join(os.Getenv("HOME"), ".studio")
 }
 
 func jrcPath() string {
-	return filepath.Join(jterrazDir(), "config.json")
+	return filepath.Join(studioDir(), "config.json")
 }
 
 func userspaceDir() string {
-	return filepath.Join(jterrazDir(), "tailscale")
+	return filepath.Join(studioDir(), "tailscale")
 }
 
 func userspaceSocketPath() string {
@@ -167,7 +167,7 @@ func keepAwakePIDPath() string {
 	return filepath.Join(userspaceDir(), "caffeinate.pid")
 }
 
-// LoadJRC loads ~/.jterrazz/config.json. Missing file returns defaults.
+// LoadJRC loads ~/.studio/config.json. Missing file returns defaults.
 func LoadJRC() (JRCConfig, error) {
 	cfg := JRCConfig{Remote: defaultRemoteSettings()}
 
@@ -186,7 +186,7 @@ func LoadJRC() (JRCConfig, error) {
 	return cfg, nil
 }
 
-// SaveJRC writes ~/.jterrazz/config.json with strict file permissions.
+// SaveJRC writes ~/.studio/config.json with strict file permissions.
 func SaveJRC(cfg JRCConfig) error {
 	cfg.Remote = normalizeRemoteSettings(cfg.Remote)
 	if err := ValidateRemoteSettings(cfg.Remote); err != nil {
@@ -268,7 +268,7 @@ func ValidateRemoteSettings(s RemoteSettings) error {
 	return nil
 }
 
-// outside: j's userspace daemon listens on its own socket; the system daemon is whatever
+// outside: workstation's userspace daemon listens on its own socket; the system daemon is whatever
 // the bare tailscale CLI finds.
 func tailscaleArgs(daemon RemoteDaemon, args ...string) []string {
 	if daemon == RemoteDaemonUserspace {
@@ -606,7 +606,7 @@ func detectActiveDaemon() RemoteDaemon {
 	return RemoteDaemonSystem
 }
 
-// RemoteUp connects through j's userspace daemon in both modes and returns the daemon used.
+// RemoteUp connects through workstation's userspace daemon in both modes and returns the daemon used.
 func RemoteUp(settings RemoteSettings) (RemoteDaemon, error) {
 	settings = normalizeRemoteSettings(settings)
 	if err := ValidateRemoteSettings(settings); err != nil {
@@ -624,7 +624,7 @@ type RemoteDownResult struct {
 	Stopped []RemoteDaemon
 }
 
-// RemoteDown stops j's daemon and, in auto mode, the system one; nothing running is not an error.
+// RemoteDown stops workstation's daemon and, in auto mode, the system one; nothing running is not an error.
 func RemoteDown(settings RemoteSettings) (RemoteDownResult, error) {
 	settings = normalizeRemoteSettings(settings)
 	var result RemoteDownResult

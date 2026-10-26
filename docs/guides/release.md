@@ -1,6 +1,6 @@
 # Release
 
-This repository ships one artefact, the `j` binary, and it reaches a machine two ways: a tagged GitHub release, or a build from a checkout.
+This repository ships one artefact, the `workstation` binary, and it reaches a machine two ways: a tagged GitHub release, or a build from a checkout.
 
 | Section                | Answers                               |
 | ---------------------- | ------------------------------------- |
@@ -17,9 +17,9 @@ git tag v1.0.0
 git push --tags
 ```
 
-`.github/workflows/release.yaml` fires on `push: tags: v*` and calls the shared `jterrazz-actions` `release-go.yaml` workflow with the binary name `j`, the build path `./src/cmd/j`, Go 1.26, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
+`.github/workflows/release.yaml` fires on `push: tags: v*` and calls the shared `studio-actions` `release-go.yaml` workflow with the binary name `workstation`, the build path `./src/cmd/workstation`, Go 1.26, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
 
-Each target is published as an asset named `j-<os>-<arch>`, which is the name the install script asks for. A release that renames those assets breaks every machine's install path.
+Each target is published as an asset named `workstation-<os>-<arch>`, which is the name the install script asks for. A release that renames those assets breaks every machine's install path.
 
 ## How a machine takes it
 
@@ -28,15 +28,15 @@ A machine takes the release through the one-line install of [Getting started](..
 ## From a checkout
 
 ```sh
-git clone https://github.com/jterrazz/jterrazz-studio.git ~/Developer/jterrazz-studio
-cd ~/Developer/jterrazz-studio
+git clone https://github.com/jterrazz/studio-workstation.git ~/Developer/studio-workstation
+cd ~/Developer/studio-workstation
 make provision
 source ~/.zshrc
 ```
 
-`make provision` builds and copies the binary to `~/.jterrazz/bin/j`, appends the `zshrc.sh` source line if it is missing, and migrates what an older layout left behind: `~/.config/jterrazz/jrc.json` becomes `~/.jterrazz/config.json`, and the Tailscale state directory moves with it, both only when the new location is empty. It also removes a stale `/usr/local/bin/j` from the install that predates `~/.jterrazz/bin`, and says what to run with `sudo` when it cannot.
+`make provision` builds and copies the binary to `~/.studio/bin/workstation` and appends the `zshrc.sh` source line if it is missing.
 
-`make deprovision` removes the binary from both locations and touches nothing else; the user data survives.
+`make deprovision` removes the binary and touches nothing else; the user data survives.
 
 ## Related
 

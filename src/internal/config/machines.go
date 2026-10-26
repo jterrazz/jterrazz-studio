@@ -120,7 +120,7 @@ func RemoveMachine(alias string) error {
 		return err
 	}
 	if cfg.Self == alias {
-		return fmt.Errorf("refusing to remove %q while it is set as self; use `j machine init` to point self elsewhere first", alias)
+		return fmt.Errorf("refusing to remove %q while it is set as self; use `workstation machine init` to point self elsewhere first", alias)
 	}
 	if _, exists := cfg.Machines[alias]; !exists {
 		return nil

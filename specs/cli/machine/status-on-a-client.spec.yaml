@@ -4,7 +4,7 @@ runs:
       exit: 0
       stdout: |4+
           
-           j machine status                                                (unregistered)
+           workstation machine status                                      (unregistered)
            ───────────────────────────────────────────────────────────────────────────────
 
           Machine

@@ -1,4 +1,4 @@
-module github.com/jterrazz/jterrazz-studio
+module github.com/jterrazz/studio-workstation
 
 go 1.26.0
 

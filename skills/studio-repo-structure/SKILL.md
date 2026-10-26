@@ -1,11 +1,11 @@
 ---
-name: jterrazz-repo-structure
+name: studio-repo-structure
 description: "Use when organizing or restructuring a repository's documentation, skills, CLAUDE.md, README, or generated docs: where knowledge lives, the Diátaxis shape every docs/ takes (start, guides, concepts, reference, decisions), what gets committed, corpus vs injection layers vs compiler, projections vs presentations."
 ---
 
 # Repo structure
 
-The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `jterrazz-studio` `docs/concepts/repo-structure.md`.
+The doctrine every `@jterrazz` repo follows for where knowledge lives. Canonical home: `studio-workstation` `docs/concepts/repo-structure.md`.
 
 ## Mental model
 
@@ -13,7 +13,7 @@ A repo is three distinct roles, and conflating them is the failure mode this ski
 
 1. **The corpus**: `README.md` + `docs/`. Where knowledge is _authored_.
 2. **The injection layers**: `CLAUDE.md` (agent brief), `skills/` entries. They **route**, they never author.
-3. **The compiler**: a repo-specific projector, when there is a source layer worth projecting (rule rows into the generated tables of `package-typescript`'s reference, `make skills` into the toolbelt rosters in jterrazz-studio). No source layer, no compiler.
+3. **The compiler**: a repo-specific projector, when there is a source layer worth projecting (rule rows into the generated tables of `package-typescript`'s reference, `make skills` into the toolbelt rosters in studio-workstation). No source layer, no compiler.
 
 The corpus belongs to the repository: anything a change in this repo would make false (its architecture, its conventions, its runbook, its quirks, the decisions it alone took) is authored in its `docs/`. An outside corpus (the OS wiki) keeps only a pointer to the repo and the contracts between repos. A decision this repo alone took goes to `docs/decisions/NNN-title.md`; one that spans several repos is recorded by the corpus that spans them and linked from here.
 
@@ -48,12 +48,12 @@ A page growing a second mood splits: the option table to `reference/`, the why t
 
 | Task                                                            | Read                                                                                                                                                                            |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The doctrine itself (three roles, golden rules, root layout)    | `jterrazz-studio` `docs/concepts/repo-structure.md`                                                                                                                             |
-| The manual's shape: the sections, the required pages, naming    | `jterrazz-studio` `docs/concepts/repo-structure.md`                                                                                                                             |
+| The doctrine itself (three roles, golden rules, root layout)    | `studio-workstation` `docs/concepts/repo-structure.md`                                                                                                                          |
+| The manual's shape: the sections, the required pages, naming    | `studio-workstation` `docs/concepts/repo-structure.md`                                                                                                                          |
 | The rule ids the gate prints for that shape                     | `package-typescript`'s [Quality checks](https://github.com/jterrazz/package-typescript/blob/main/docs/reference/quality-checks.md#the-docs-layout-pass), the Docs (layout) pass |
-| The studio's own compiler (`make skills`, the toolbelt rosters) | `jterrazz-studio` `docs/reference/tools-and-skills.md`                                                                                                                          |
+| The studio's own compiler (`make skills`, the toolbelt rosters) | `studio-workstation` `docs/reference/tools-and-skills.md`                                                                                                                       |
 
-How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `jterrazz-stack` skill.
+How `@jterrazz` projects compose (packages, naming, CI) is a separate capability: see the `studio-stack` skill.
 
 ## Always
 

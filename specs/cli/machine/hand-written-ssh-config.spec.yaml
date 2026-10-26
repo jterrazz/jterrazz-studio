@@ -20,7 +20,7 @@ runs:
                     ServerAliveInterval 30
                     ServerAliveCountMax 3
                   # <<< jterrazz machine worker <<<
-          .jterrazz/config.json:
+          .studio/config.json:
               equals: |
                   {
                     "remote": {
@@ -48,7 +48,7 @@ runs:
                     ServerAliveInterval 30
                     ServerAliveCountMax 3
                   # <<< jterrazz machine worker <<<
-          .jterrazz/config.json:
+          .studio/config.json:
               equals: |
                   {
                     "remote": {

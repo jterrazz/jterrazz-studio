@@ -3,7 +3,7 @@ package components
 import (
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 // Muted renders text in muted style

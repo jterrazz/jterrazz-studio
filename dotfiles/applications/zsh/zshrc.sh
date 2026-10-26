@@ -38,7 +38,7 @@ export FZF_DEFAULT_OPTS="\
 
 export BAT_THEME="Catppuccin Macchiato"
 
-export PATH="$HOME/.jterrazz/bin:$PATH"
+export PATH="$HOME/.studio/bin:$PATH"
 
 export PATH="$HOME/.bun/bin:$PATH"
 
@@ -53,8 +53,8 @@ if [[ -o interactive && "$PWD" == "$HOME" && -d "$HOME/Developer" ]]; then
     cd "$HOME/Developer"
 fi
 
-if command -v j &> /dev/null; then
-    eval "$(j completion zsh)"
+if command -v workstation &> /dev/null; then
+    eval "$(workstation completion zsh)"
 fi
 
 jj() {

@@ -1,7 +1,7 @@
 package commands
 
 import (
-	statusview "github.com/jterrazz/jterrazz-studio/src/internal/presentation/views/status"
+	statusview "github.com/jterrazz/studio-workstation/src/internal/presentation/views/status"
 	"github.com/spf13/cobra"
 )
 

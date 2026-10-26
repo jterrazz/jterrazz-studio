@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 

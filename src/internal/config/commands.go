@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// RunCommand represents a group of related subcommands under `j run`
+// RunCommand represents a group of related subcommands under `workstation run`
 type RunCommand struct {
 	Name        string
 	Description string
@@ -21,7 +21,7 @@ type RunSubcommand struct {
 	RunFn       func(args []string) error
 }
 
-// RunCommands is the list of all `j run` command groups
+// RunCommands is the list of all `workstation run` command groups
 var RunCommands = []RunCommand{
 	{
 		Name:        "docker",

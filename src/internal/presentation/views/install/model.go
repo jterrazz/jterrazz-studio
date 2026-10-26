@@ -1,5 +1,5 @@
-// Package installview implements the `j install` full-screen TUI. It mirrors
-// the architecture of the j config TUI (src/internal/presentation/views/config)
+// Package installview implements the `workstation install` full-screen TUI. It mirrors
+// the architecture of the workstation config TUI (src/internal/presentation/views/config)
 // closely (same checkCache + parallel refresh, same tea.Exec-wrapped action
 // pattern, same huh modal machinery), adapted to browse config.Tools instead
 // of config.Scripts, and grouped into four pages (Dev/Infra/AI/Apps) instead
@@ -14,11 +14,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
 )
 
-// Model is the bubbletea model backing `j install`.
+// Model is the bubbletea model backing `workstation install`.
 type Model struct {
 	tabs components.Tabs
 

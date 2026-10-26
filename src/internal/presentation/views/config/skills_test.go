@@ -3,7 +3,7 @@ package configview
 import (
 	"testing"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/skill"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/skill"
 )
 
 func modelWithSkills(sections []skillSection, states map[string]skillState) Model {

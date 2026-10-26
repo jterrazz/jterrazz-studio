@@ -39,11 +39,11 @@ func TestReadLockFromParsesFixture(t *testing.T) {
 	fixture := `{
   "version": 3,
   "skills": {
-    "jterrazz-stack": {
-      "source": "jterrazz/jterrazz-studio",
+    "studio-stack": {
+      "source": "jterrazz/studio-workstation",
       "sourceType": "github",
-      "sourceUrl": "https://github.com/jterrazz/jterrazz-studio.git",
-      "skillPath": "skills/jterrazz-stack/SKILL.md",
+      "sourceUrl": "https://github.com/jterrazz/studio-workstation.git",
+      "skillPath": "skills/studio-stack/SKILL.md",
       "skillFolderHash": "abc123",
       "installedAt": "2026-03-27T18:46:44.709Z",
       "updatedAt": "2026-07-19T12:40:35.009Z"
@@ -57,14 +57,14 @@ func TestReadLockFromParsesFixture(t *testing.T) {
 	}
 
 	got := readLockFrom(path)
-	entry, ok := got["jterrazz-stack"]
+	entry, ok := got["studio-stack"]
 	if !ok {
-		t.Fatalf("got %v, missing jterrazz-stack", got)
+		t.Fatalf("got %v, missing studio-stack", got)
 	}
 	want := LockEntry{
-		Source:     "jterrazz/jterrazz-studio",
+		Source:     "jterrazz/studio-workstation",
 		SourceType: "github",
-		SkillPath:  "skills/jterrazz-stack/SKILL.md",
+		SkillPath:  "skills/studio-stack/SKILL.md",
 		FolderHash: "abc123",
 	}
 	if entry != want {

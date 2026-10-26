@@ -5,7 +5,7 @@ runs:
       exit: 0
       stdout: |4+
           
-           j machine status                                              testbox  server 
+           workstation machine status                                    testbox  server 
            ───────────────────────────────────────────────────────────────────────────────
 
           Machine

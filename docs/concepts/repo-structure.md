@@ -8,13 +8,13 @@ This is the doctrine every `@jterrazz` repo follows, whatever the language. It i
 
 A repository's own knowledge lives in its `docs/`. Anything a change in this repository would make false (its architecture, its layers, its conventions, its runbook, its quirks, the decisions it alone took) is authored here and nowhere else.
 
-An outside corpus holds two things about a repository and no more: a pointer to it, and the contracts it has with other repositories. The OS wiki (`jterrazz-os`, `home/<brand>/wiki/`) is the outside corpus in practice: it carries one row per repository and the agreements that span several of them. When a sentence there could be falsified by one repository alone, it is in the wrong place.
+An outside corpus holds two things about a repository and no more: a pointer to it, and the contracts it has with other repositories. The OS wiki (`studio-os`, `home/<brand>/wiki/`) is the outside corpus in practice: it carries one row per repository and the agreements that span several of them. When a sentence there could be falsified by one repository alone, it is in the wrong place.
 
 ## The three roles
 
 1. **The corpus**: `README.md` plus `docs/`, cut into the five sections below. This is where knowledge is _authored_: prose a human writes and maintains.
 2. **The injection layers**: `CLAUDE.md` (the agent brief, and no `AGENTS.md` beside it) and the `skills/` entries. They **route**, they never author. A skill points at a page; it does not restate what the page says.
-3. **The compiler**: a repo-specific command that projects a source layer into the corpus. In `package-typescript`, the rule rows project into the tables of its reference pages; in `jterrazz-studio`, `make skills` projects the install registry into the toolbelt skill rosters. A repo with nothing to project simply has no compiler.
+3. **The compiler**: a repo-specific command that projects a source layer into the corpus. In `package-typescript`, the rule rows project into the tables of its reference pages; in `studio-workstation`, `make skills` projects the install registry into the toolbelt skill rosters. A repo with nothing to project simply has no compiler.
 
 ## Three golden rules
 

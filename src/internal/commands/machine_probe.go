@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +27,7 @@ var machineProbeCmd = &cobra.Command{
 	Long: strings.TrimSpace(`Quick health probe of a remote machine, looked up via the registry.
 
 Checks: ICMP reachability, SSH (BatchMode), the OpenClaw and Hermes gateway ports,
-and the console owner reported by stat -f %Su /dev/console. Useful right after ` + "`j machine restart`" + `
+and the console owner reported by stat -f %Su /dev/console. Useful right after ` + "`workstation machine restart`" + `
 to confirm auto-login succeeded and lock-after-login fired.`),
 	Args: cobra.ExactArgs(1),
 	Run:  func(_ *cobra.Command, args []string) { runMachineProbe(args[0]) },
@@ -51,7 +51,7 @@ func runMachineProbe(alias string) {
 		}
 	}
 
-	print.Header("j machine probe "+alias, "→ "+targetContext(alias))
+	print.Header("workstation machine probe "+alias, "→ "+targetContext(alias))
 
 	if exec.Command("ping", "-c", "1", "-W", "1000", ip).Run() == nil {
 		print.Row(true, "ping", ip)
@@ -67,7 +67,7 @@ func runMachineProbe(alias string) {
 	if sshErr == nil {
 		print.Row(true, "ssh", "BatchMode auth ok")
 	} else {
-		print.Row(false, "ssh", "auth failed (or pre-boot: try `j machine unlock "+alias+"`)")
+		print.Row(false, "ssh", "auth failed (or pre-boot: try `workstation machine unlock "+alias+"`)")
 	}
 
 	if dialPort(ip, machineProbeGatewayPort, 2*time.Second) {

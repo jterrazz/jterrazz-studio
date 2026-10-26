@@ -4,7 +4,7 @@ runs:
       exit: 0
       stdout: |4
           
-           j install                                                       (unregistered)
+           workstation install                                             (unregistered)
            ───────────────────────────────────────────────────────────────────────────────
 
           Package Managers
@@ -117,4 +117,4 @@ runs:
            {{string}} snippety       mas
            {{string}} speedtest      mas
 
-          Usage: j install <tool> [tool...]
+          Usage: workstation install <tool> [tool...]

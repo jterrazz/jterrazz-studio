@@ -3,7 +3,7 @@ package configview
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
 func (m Model) modalActive() bool {

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
 )
 
 // ResourceCheck represents a system resource check (network, disk, cache)

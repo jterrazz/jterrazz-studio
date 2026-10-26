@@ -6,16 +6,16 @@ runs:
           Clean system caches and resources.
 
           Examples:
-            j clean --all              Clean everything
-            j clean brew               Clean Homebrew cache
-            j clean docker             Clean Docker resources
-            j clean multipass          Clean Multipass instances
-            j clean trash              Empty trash
-            j clean brew docker        Clean specific items
-            j clean                    List available clean items
+            workstation clean --all              Clean everything
+            workstation clean brew               Clean Homebrew cache
+            workstation clean docker             Clean Docker resources
+            workstation clean multipass          Clean Multipass instances
+            workstation clean trash              Empty trash
+            workstation clean brew docker        Clean specific items
+            workstation clean                    List available clean items
 
           Usage:
-            j clean [item...] [flags]
+            workstation clean [item...] [flags]
 
           Flags:
             -a, --all    Clean everything

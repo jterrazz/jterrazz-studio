@@ -1,6 +1,6 @@
 # Testing
 
-Two suites prove a change: Go unit tests over the packages, and end-to-end specs that drive the real `j` binary and state what it printed.
+Two suites prove a change: Go unit tests over the packages, and end-to-end specs that drive the real `workstation` binary and state what it printed.
 
 | Section                  | Answers                                               |
 | ------------------------ | ----------------------------------------------------- |
@@ -16,11 +16,11 @@ make test      # go test ./src/..., then typescript test: the specs against a fr
 npm test       # the specs alone
 ```
 
-The Go module tests come first: `*_test.go` files next to the code they judge, kept for what no session of the binary reaches honestly: the parsers (an ssh endpoint, a tool's version, the `skills` CLI's listing, the remote settings), the skill lock and its upstream check against a stubbed GitHub, the kcpassword cipher, and the TUI models, whose keys only a terminal sends. What a command does to the machine (the registry, the managed `~/.ssh/config` blocks) is specified from the binary, by the documents below. One of them is a sync test over the projection: `src/cmd/skillsgen/main_test.go` fails when `skills/jterrazz-toolbelt/SKILL.md` no longer matches the registry, which is why a registry change and its `make skills` land together.
+The Go module tests come first: `*_test.go` files next to the code they judge, kept for what no session of the binary reaches honestly: the parsers (an ssh endpoint, a tool's version, the `skills` CLI's listing, the remote settings), the skill lock and its upstream check against a stubbed GitHub, the kcpassword cipher, and the TUI models, whose keys only a terminal sends. What a command does to the machine (the registry, the managed `~/.ssh/config` blocks) is specified from the binary, by the documents below. One of them is a sync test over the projection: `src/cmd/skillsgen/main_test.go` fails when `skills/studio-toolbelt/SKILL.md` no longer matches the registry, which is why a registry change and its `make skills` land together.
 
-Then `make test` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/j-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `J_FORCE_REBUILD=1` is set (what `make test` does), or when any `src/**/*.go` is newer than the binary. It is an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
+Then `make test` runs the CLI specs under `specs/cli/` on Vitest, through `@jterrazz/test`. There is exactly one runner: `specs/cli/cli.specification.ts` builds `.artifacts/go/workstation-test` before any spec runs, so the whole suite shares one compilation, and every spec drives that binary. It rebuilds when the binary is missing, when `WORKSTATION_FORCE_REBUILD=1` is set (what `make test` does), or when any `src/**/*.go` is newer than the binary. It is an mtime check, so editing the CLI and re-running the suite always exercises the change instead of a stale build.
 
-`vitest.config.ts` is the one line `@jterrazz/test` derives from `jterrazz.config.ts`: its `cli` project collects `specs/cli/`, and every `*.spec.yaml` there becomes a one-test module driving that runner. The runner also gives every run a `HOME` of its own (the spec's working directory), so `j` never reads the developer's `~/.jterrazz/` registry.
+`vitest.config.ts` is the one line `@jterrazz/test` derives from `studio.config.ts`: its `cli` project collects `specs/cli/`, and every `*.spec.yaml` there becomes a one-test module driving that runner. The runner also gives every run a `HOME` of its own (the spec's working directory), so `workstation` never reads the developer's `~/.studio/` registry.
 
 ## A scenario is a document
 
@@ -36,7 +36,7 @@ runs:
           Show comprehensive system status
 
           Usage:
-            j status [flags]
+            workstation status [flags]
 ```
 
 A document may stand on ground of its own: `fixture: ./__fixtures__/server-registry/` spreads `specs/cli/machine/__fixtures__/server-registry/` into the working directory, which is the run's `HOME`, so the binary reads the registry inside it. That is how the server-role rows are exercised deterministically on a client laptop. Ground sits in a special folder spelt with double underscores; a subject folder never starts with one.
@@ -45,7 +45,7 @@ A document may stand on ground of its own: `fixture: ./__fixtures__/server-regis
 
 ## What the host decides
 
-Some of what `j` prints comes from the HOST, not from the binary: the `✓`/`✗` install-state column of the catalog, and the machine-status verdicts (FileVault, sshd, running services, OrbStack). A document still states the whole stream; the cell the host decides is the token `{{string}}` (`{{string}} FileVault {{string}}`), so each row's label and its place are asserted and the machine's answer is not. What the binary decides on its own stays literal: the catalog's families and methods, the config paths under `{{workdir}}`, the rows a server role adds.
+Some of what `workstation` prints comes from the HOST, not from the binary: the `✓`/`✗` install-state column of the catalog, and the machine-status verdicts (FileVault, sshd, running services, OrbStack). A document still states the whole stream; the cell the host decides is the token `{{string}}` (`{{string}} FileVault {{string}}`), so each row's label and its place are asserted and the machine's answer is not. What the binary decides on its own stays literal: the catalog's families and methods, the config paths under `{{workdir}}`, the rows a server role adds.
 
 `TEST_UPDATE=1` keeps a token wherever it still matches, but writes a NEW row with the host's literal glyph: after adding a tool, replace its `✓` or `✗` with `{{string}}` before committing, or the document holds this machine's answer.
 
@@ -53,7 +53,7 @@ The full grammar is `@jterrazz/test`'s [Spec documents](https://github.com/jterr
 
 ## What CI runs
 
-`.github/workflows/validate.yaml` calls the shared `jterrazz-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](../concepts/stack.md)'s. Locally the same gate is `make build` then `make check`.
+`.github/workflows/validate.yaml` calls the shared `studio-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](../concepts/stack.md)'s. Locally the same gate is `make build` then `make check`.
 
 The npm half is linted by the same toolchain as every other repository: `npm run lint` is `typescript check`, and `make lint` runs it after the Go half ([Develop](develop.md)).
 

@@ -1,4 +1,4 @@
-// Package status loads what `j status` reports (the machine's own facts and
+// Package status loads what `workstation status` reports (the machine's own facts and
 // every registry probe) concurrently, and hands the rows to the view.
 package status
 
@@ -10,8 +10,8 @@ import (
 	"sync"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
 )
 
 // ItemKind represents the type of status item

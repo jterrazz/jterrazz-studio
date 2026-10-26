@@ -6,7 +6,7 @@ runs:
           A unified CLI tool for development workflow automation.
 
           Usage:
-            j [command]
+            workstation [command]
 
           Available Commands:
             clean       Clean system caches, Docker, Multipass, and trash
@@ -19,16 +19,16 @@ runs:
             upgrade     Upgrade system packages
 
           Flags:
-            -h, --help   help for j
+            -h, --help   help for workstation
 
-          Use "j [command] --help" for more information about a command.
+          Use "workstation [command] --help" for more information about a command.
     - command: --help
       exit: 0
       stdout: |
           A unified CLI tool for development workflow automation.
 
           Usage:
-            j [command]
+            workstation [command]
 
           Available Commands:
             clean       Clean system caches, Docker, Multipass, and trash
@@ -41,6 +41,6 @@ runs:
             upgrade     Upgrade system packages
 
           Flags:
-            -h, --help   help for j
+            -h, --help   help for workstation
 
-          Use "j [command] --help" for more information about a command.
+          Use "workstation [command] --help" for more information about a command.

@@ -14,21 +14,21 @@ type Skill struct {
 
 // StudioSkills are @jterrazz skills, the foundation of every project
 var StudioSkills = []Skill{
-	{"jterrazz/jterrazz-studio", "jterrazz-toolbelt"},
-	{"jterrazz/jterrazz-studio", "jterrazz-stack"},
-	{"jterrazz/jterrazz-studio", "jterrazz-new-project"},
-	{"jterrazz/jterrazz-studio", "jterrazz-repo-structure"},
-	{"jterrazz/package-reach", "jterrazz-reach"},
-	{"jterrazz/package-reach", "jterrazz-seo"},
-	{"jterrazz/package-reach", "jterrazz-geo"},
-	{"jterrazz/package-reach", "jterrazz-structured-data"},
-	{"jterrazz/package-reach", "jterrazz-content-reach"},
-	{"jterrazz/jterrazz-infrastructure", "jterrazz-infra"},
-	{"jterrazz/package-typescript", "jterrazz-typescript"},
-	{"jterrazz/package-attestation", "jterrazz-attestation"},
-	{"jterrazz/package-broadcast", "jterrazz-broadcast"},
-	{"jterrazz/package-test", "jterrazz-test"},
-	{"jterrazz/jterrazz-actions", "jterrazz-workflows"},
+	{"jterrazz/studio-workstation", "studio-toolbelt"},
+	{"jterrazz/studio-workstation", "studio-stack"},
+	{"jterrazz/studio-workstation", "studio-new-project"},
+	{"jterrazz/studio-workstation", "studio-repo-structure"},
+	{"jterrazz/package-reach", "studio-reach"},
+	{"jterrazz/package-reach", "studio-seo"},
+	{"jterrazz/package-reach", "studio-geo"},
+	{"jterrazz/package-reach", "studio-structured-data"},
+	{"jterrazz/package-reach", "studio-content-reach"},
+	{"jterrazz/studio-infrastructure", "studio-infrastructure"},
+	{"jterrazz/package-typescript", "studio-typescript"},
+	{"jterrazz/package-attestation", "studio-attestation"},
+	{"jterrazz/package-broadcast", "studio-broadcast"},
+	{"jterrazz/package-test", "studio-test"},
+	{"jterrazz/studio-actions", "studio-workflows"},
 }
 
 // CommunitySkills are third-party skills worth having
@@ -57,9 +57,9 @@ var FavoriteSkills = append(StudioSkills, CommunitySkills...)
 
 // StudioRepos are @jterrazz skill repositories
 var StudioRepos = []SkillRepo{
-	{"jterrazz/jterrazz-studio", "The studio: machine CLI, stack conventions, repo doctrine"},
-	{"jterrazz/jterrazz-infrastructure", "Infrastructure and deployment (K3s, Helm, Traefik)"},
-	{"jterrazz/jterrazz-actions", "Shared CI/CD workflows (validate, release)"},
+	{"jterrazz/studio-workstation", "The studio: machine CLI, stack conventions, repo doctrine"},
+	{"jterrazz/studio-infrastructure", "Infrastructure and deployment (K3s, Helm, Traefik)"},
+	{"jterrazz/studio-actions", "Shared CI/CD workflows (validate, release)"},
 	{"jterrazz/package-typescript", "TypeScript toolchain: build, lint, format, docs"},
 	{"jterrazz/package-attestation", "Article attestation with EIP-712 and OpenTimestamps"},
 	{"jterrazz/package-broadcast", "Multi-channel announcements (App Store, push)"},

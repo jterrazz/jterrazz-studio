@@ -6,7 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
 func (m Model) renderRemoteBody() string {
@@ -60,7 +60,7 @@ func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 	fields := []huh.Field{
 		huh.NewSelect[string]().
 			Title("Mode").
-			Description("auto = also covers the system Tailscale app; userspace = j's own daemon only").
+			Description("auto = also covers the system Tailscale app; userspace = workstation's own daemon only").
 			Options(
 				huh.NewOption(string(config.RemoteModeAuto), string(config.RemoteModeAuto)),
 				huh.NewOption(string(config.RemoteModeUserspace), string(config.RemoteModeUserspace)),
@@ -87,7 +87,7 @@ func (m Model) remoteStartConfigure() (tea.Model, tea.Cmd) {
 
 	m.buildFormModal(
 		"reconfigure remote",
-		"Tailscale endpoint config, written to ~/.jterrazz/config.json on submit.",
+		"Tailscale endpoint config, written to ~/.studio/config.json on submit.",
 		fields,
 		func() tea.Cmd {
 			next := config.RemoteSettings{

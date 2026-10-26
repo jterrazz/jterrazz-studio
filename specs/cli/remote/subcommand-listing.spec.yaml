@@ -5,11 +5,11 @@ runs:
       stdout: |
           Connect / disconnect / inspect the Tailscale endpoint for remote
           access. To configure the endpoint itself (mode, auth, hostname, secret),
-          use `j config` and switch to the Remote tab.
+          use `workstation config` and switch to the Remote tab.
 
           Usage:
-            j remote [flags]
-            j remote [command]
+            workstation remote [flags]
+            workstation remote [command]
 
           Available Commands:
             down        Disconnect remote access
@@ -19,4 +19,4 @@ runs:
           Flags:
             -h, --help   help for remote
 
-          Use "j remote [command] --help" for more information about a command.
+          Use "workstation remote [command] --help" for more information about a command.

@@ -1,6 +1,6 @@
 package components
 
-import "github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+import "github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 
 // BadgeOK renders a success checkmark badge
 func BadgeOK() string {

@@ -1,6 +1,6 @@
-# The manual of j
+# The manual of workstation
 
-`j` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine. It installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants. This repository also authors two doctrines every `@jterrazz` repository follows, shipped to agents as skills. This page lists every page of the manual, by what the reader came to do.
+`workstation` is the workstation product: one Go CLI that bootstraps and manages a macOS development machine. It installs from a registry-driven tool catalogue, configures the machine and its dotfiles, keeps a registry of machines reachable over the tailnet, and curates the agent skills an operator wants. This repository also authors two doctrines every `@jterrazz` repository follows, shipped to agents as skills. This page lists every page of the manual, by what the reader came to do.
 
 ## Start
 
@@ -18,22 +18,22 @@
 
 ## Concepts
 
-| Page                                         | Answers                                                                                         |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| [Architecture](concepts/architecture.md)     | The binary, the four packages, why a feature is a registry entry, the one compiler              |
-| [The stack](concepts/stack.md)               | How `@jterrazz` projects compose: packages, naming, required files; shipped as `jterrazz-stack` |
-| [Repo structure](concepts/repo-structure.md) | Where knowledge lives in every `@jterrazz` repository; shipped as `jterrazz-repo-structure`     |
+| Page                                         | Answers                                                                                       |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| [Architecture](concepts/architecture.md)     | The binary, the four packages, why a feature is a registry entry, the one compiler            |
+| [The stack](concepts/stack.md)               | How `@jterrazz` projects compose: packages, naming, required files; shipped as `studio-stack` |
+| [Repo structure](concepts/repo-structure.md) | Where knowledge lives in every `@jterrazz` repository; shipped as `studio-repo-structure`     |
 
 ## Reference
 
-| Page                                              | Answers                                                                   |
-| ------------------------------------------------- | ------------------------------------------------------------------------- |
-| [Commands](reference/commands.md)                 | `status`, `install`, `upgrade`, `clean`, `run`, and the shell shortcuts   |
-| [Machines](reference/machines.md)                 | The machine registry, the `config.json` model, roles, remote access       |
-| [Configuration](reference/configuration.md)       | The `j config` TUI: its tabs, items, categories, and what each one writes |
-| [Tools and skills](reference/tools-and-skills.md) | The tool and skill registries, the `skills` CLI, the toolbelt projection  |
-| [Dotfiles](reference/dotfiles.md)                 | The versioned application configs under `dotfiles/applications/`          |
-| [Footprint](reference/footprint.md)               | Everything `j` writes on a machine                                        |
+| Page                                              | Answers                                                                             |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| [Commands](reference/commands.md)                 | `status`, `install`, `upgrade`, `clean`, `run`, and the shell shortcuts             |
+| [Machines](reference/machines.md)                 | The machine registry, the `config.json` model, roles, remote access                 |
+| [Configuration](reference/configuration.md)       | The `workstation config` TUI: its tabs, items, categories, and what each one writes |
+| [Tools and skills](reference/tools-and-skills.md) | The tool and skill registries, the `skills` CLI, the toolbelt projection            |
+| [Dotfiles](reference/dotfiles.md)                 | The versioned application configs under `dotfiles/applications/`                    |
+| [Footprint](reference/footprint.md)               | Everything `workstation` writes on a machine                                        |
 
 ## Decisions
 

@@ -5,16 +5,16 @@ import { resolve } from 'node:path';
 import { afterAll } from 'vitest';
 
 const REPO_ROOT = resolve(import.meta.dirname, '../..');
-const J_BIN = resolve(REPO_ROOT, '.artifacts/go/j-test');
+const WORKSTATION_BIN = resolve(REPO_ROOT, '.artifacts/go/workstation-test');
 const GO_SRC = resolve(REPO_ROOT, 'src');
 
 // hazard: a stale binary silently tests old behaviour, so the suite rebuilds when
 // any `src/**/*.go` is newer than the binary, so an edit to the CLI is what a rerun exercises.
 function binaryIsStale(): boolean {
-    if (!existsSync(J_BIN)) {
+    if (!existsSync(WORKSTATION_BIN)) {
         return true;
     }
-    const binModifiedMs = statSync(J_BIN).mtimeMs;
+    const binModifiedMs = statSync(WORKSTATION_BIN).mtimeMs;
     for (const entry of readdirSync(GO_SRC, { recursive: true, withFileTypes: true })) {
         if (!entry.isFile() || !entry.name.endsWith('.go')) {
             continue;
@@ -26,16 +26,16 @@ function binaryIsStale(): boolean {
     return false;
 }
 
-if (process.env.J_FORCE_REBUILD === '1' || binaryIsStale()) {
-    execSync(`go build -o ${J_BIN} ./src/cmd/j`, {
+if (process.env.WORKSTATION_FORCE_REBUILD === '1' || binaryIsStale()) {
+    execSync(`go build -o ${WORKSTATION_BIN} ./src/cmd/workstation`, {
         cwd: REPO_ROOT,
         stdio: 'inherit',
     });
 }
 
-// invariant: `j` reads its machine registry from `~/.jterrazz/`, so every run
+// invariant: `workstation` reads its machine registry from `~/.studio/`, so every run
 // gets a HOME of its own and never the developer's.
-export const { cleanup, cli } = await specification.cli(J_BIN, {
+export const { cleanup, cli } = await specification.cli(WORKSTATION_BIN, {
     defaults: { HOME: '$WORKDIR' },
 });
 

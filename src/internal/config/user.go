@@ -1,6 +1,6 @@
 package config
 
-// value: defaults; ~/.jterrazz/config.json overrides them.
+// value: defaults; ~/.studio/config.json overrides them.
 const (
 	defaultUserEmail = "admin@jterrazz.com"
 	defaultUserName  = "Jean-Baptiste Terrazzoni"

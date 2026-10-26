@@ -3,7 +3,7 @@ package components
 import (
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 // Tabs is the one-line tab strip every tabbed TUI shares, the active label in the primary accent.

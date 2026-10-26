@@ -8,11 +8,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
 )
 
-// TabLabels lists the j config tabs in display order; an index here is Model.tabs.Active.
+// TabLabels lists the workstation config tabs in display order; an index here is Model.tabs.Active.
 var TabLabels = []string{"Configuration", "Skills", "Remote"}
 
 const (
@@ -21,7 +21,7 @@ const (
 	tabRemote        = 2
 )
 
-// Model is the Bubble Tea model behind j config: the Configuration, Skills and Remote tabs.
+// Model is the Bubble Tea model behind workstation config: the Configuration, Skills and Remote tabs.
 type Model struct {
 	tabs components.Tabs
 

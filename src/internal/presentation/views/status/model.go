@@ -11,11 +11,11 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/status"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/theme"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/status"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/theme"
 )
 
 // ProcessRefreshMsg triggers a refresh of process data
@@ -350,7 +350,7 @@ func (m Model) View() string {
 
 	var b strings.Builder
 
-	b.WriteString(print.RenderHeader("j status", selfHeaderContext(), m.width))
+	b.WriteString(print.RenderHeader("workstation status", selfHeaderContext(), m.width))
 
 	b.WriteString(m.renderTabBar(m.width))
 	b.WriteString("\n\n")

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
@@ -35,12 +35,12 @@ func init() {
 func runMachineRestart(alias string) {
 	target := resolveRemoteSSH(alias)
 
-	print.Header("j machine restart "+alias, "→ "+targetContext(alias))
+	print.Header("workstation machine restart "+alias, "→ "+targetContext(alias))
 	print.Dim(" Will issue: sudo fdesetup authrestart -delayminutes 0")
 	print.Empty()
 
 	if !machineRestartConfirmed {
-		failOn(fmt.Errorf("refusing to reboot without --yes; re-run with `j machine restart %s --yes`", alias))
+		failOn(fmt.Errorf("refusing to reboot without --yes; re-run with `workstation machine restart %s --yes`", alias))
 	}
 
 	cmd := exec.Command("ssh", target, "sudo fdesetup authrestart -delayminutes 0")
@@ -61,7 +61,7 @@ func runMachineRestart(alias string) {
 		print.Success("SSH ready after restart")
 		return
 	}
-	failOn(fmt.Errorf("SSH did not come back within budget; check `j machine probe %s`", alias))
+	failOn(fmt.Errorf("SSH did not come back within budget; check `workstation machine probe %s`", alias))
 }
 
 func resolveSSHHostname(target string) string {

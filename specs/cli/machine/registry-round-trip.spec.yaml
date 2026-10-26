@@ -65,7 +65,7 @@ runs:
       exit: 0
       stdout: |4
           
-           j machine list                                                  (unregistered)
+           workstation machine list                                        (unregistered)
            ───────────────────────────────────────────────────────────────────────────────
 
             ALIAS           ROLE       ENDPOINT                         SELF
@@ -77,7 +77,7 @@ runs:
       stdout: |
           ✓ Removed machine "mac-mini"
       files:
-          .jterrazz/config.json:
+          .studio/config.json:
               equals: |
                   {
                     "remote": {

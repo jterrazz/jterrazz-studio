@@ -1,4 +1,4 @@
-// Command skillsgen projects the tool registry into skills/jterrazz-toolbelt/SKILL.md,
+// Command skillsgen projects the tool registry into skills/studio-toolbelt/SKILL.md,
 // between its generated markers.
 package main
 
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
 const (
@@ -19,7 +19,7 @@ const (
 	preferStartMarker = "<!-- GENERATED:prefer by `make skills` from src/internal/config: DO NOT EDIT between markers -->"
 	preferEndMarker   = "<!-- /GENERATED:prefer -->"
 
-	defaultRelPath = "skills/jterrazz-toolbelt/SKILL.md"
+	defaultRelPath = "skills/studio-toolbelt/SKILL.md"
 )
 
 func main() {

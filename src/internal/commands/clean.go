@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
@@ -15,13 +15,13 @@ var cleanCmd = &cobra.Command{
 	Long: `Clean system caches and resources.
 
 Examples:
-  j clean --all              Clean everything
-  j clean brew               Clean Homebrew cache
-  j clean docker             Clean Docker resources
-  j clean multipass          Clean Multipass instances
-  j clean trash              Empty trash
-  j clean brew docker        Clean specific items
-  j clean                    List available clean items`,
+  workstation clean --all              Clean everything
+  workstation clean brew               Clean Homebrew cache
+  workstation clean docker             Clean Docker resources
+  workstation clean multipass          Clean Multipass instances
+  workstation clean trash              Empty trash
+  workstation clean brew docker        Clean specific items
+  workstation clean                    List available clean items`,
 	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		all := make([]string, 0, len(config.Cleanables))
 		for _, c := range config.Cleanables {
@@ -63,7 +63,7 @@ func init() {
 }
 
 func listCleanItems() {
-	print.Header("j clean", machineContext())
+	print.Header("workstation clean", machineContext())
 
 	for _, c := range config.Cleanables {
 		available := c.RequiresCmd == "" || config.CommandExists(c.RequiresCmd)
@@ -72,8 +72,8 @@ func listCleanItems() {
 
 	print.Empty()
 	print.Usage(
-		"Usage: j clean <item> [item...]",
-		"       j clean --all",
+		"Usage: workstation clean <item> [item...]",
+		"       workstation clean --all",
 	)
 }
 

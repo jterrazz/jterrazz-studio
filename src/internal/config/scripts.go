@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
-	out "github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
+	out "github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 const dnsProfileIdentifier = "com.jterrazz.dns.quad9"
@@ -32,7 +32,7 @@ type Script struct {
 	Description string
 	Category    ScriptCategory
 
-	// Help is the long-form description shown in the j config detail panel.
+	// Help is the long-form description shown in the workstation config detail panel.
 	Help string
 
 	// Role, when set, limits the script to machines registered with that role.
@@ -85,7 +85,7 @@ const (
 	InputConfirm
 )
 
-// ScriptInput is one value the j config modal collects before an InstallFn runs.
+// ScriptInput is one value the workstation config modal collects before an InstallFn runs.
 type ScriptInput struct {
 	Name     string
 	Label    string
@@ -685,7 +685,7 @@ func runSpotlightExclude() error {
 	fmt.Println("Steps:")
 	fmt.Println("  1. System Settings opens at Spotlight > Search Privacy")
 	fmt.Println("  2. Click + and pick ~/Developer (or drag the folder onto the list)")
-	fmt.Println("  3. Re-run `j status` to confirm")
+	fmt.Println("  3. Re-run `workstation status` to confirm")
 	fmt.Println()
 
 	if err := exec.Command("open", "x-apple.systempreferences:com.apple.Spotlight-Settings.extension").Run(); err != nil {
@@ -724,7 +724,7 @@ func runJavaHome() error {
 
 	javaHome := "/opt/homebrew/opt/openjdk"
 	if _, err := os.Stat(javaHome + "/bin/java"); err != nil {
-		return errors.New("OpenJDK not installed. Run: j install openjdk")
+		return errors.New("OpenJDK not installed. Run: workstation install openjdk")
 	}
 
 	zshrcPath := os.Getenv("HOME") + "/.zshrc"
@@ -738,7 +738,7 @@ func runJavaHome() error {
 	if err != nil {
 		return fmt.Errorf("failed to open ~/.zshrc: %w", err)
 	}
-	javaConfig := fmt.Sprintf("\n# Java (managed by j)\nexport JAVA_HOME=%q\nexport PATH=\"$JAVA_HOME/bin:$PATH\"\n", javaHome)
+	javaConfig := fmt.Sprintf("\n# Java (managed by workstation)\nexport JAVA_HOME=%q\nexport PATH=\"$JAVA_HOME/bin:$PATH\"\n", javaHome)
 	if _, err := f.WriteString(javaConfig); err != nil {
 		_ = f.Close()
 		return fmt.Errorf("failed to write to ~/.zshrc: %w", err)
@@ -757,7 +757,7 @@ func runNvmSetup() error {
 
 	nvmSh := "/opt/homebrew/opt/nvm/nvm.sh"
 	if _, err := os.Stat(nvmSh); err != nil {
-		return fmt.Errorf("nvm not installed via brew (expected %s). Run: j install nvm", nvmSh)
+		return fmt.Errorf("nvm not installed via brew (expected %s). Run: workstation install nvm", nvmSh)
 	}
 
 	nvmDir := os.Getenv("HOME") + "/.nvm"
@@ -803,7 +803,7 @@ func IsDNSProfileInstalled() bool {
 }
 
 func dnsProfilePath() string {
-	return filepath.Join(os.Getenv("HOME"), ".jterrazz", "dns", "quad9-dns.mobileconfig")
+	return filepath.Join(os.Getenv("HOME"), ".studio", "dns", "quad9-dns.mobileconfig")
 }
 
 func runDNSEncrypt() error {
@@ -905,14 +905,12 @@ func GetRepoConfigPath(relativePath string) (string, error) {
 func repoRootCandidates() []string {
 	home := os.Getenv("HOME")
 	var roots []string
-	if env := os.Getenv("J_REPO_PATH"); env != "" {
+	if env := os.Getenv("WORKSTATION_REPO_PATH"); env != "" {
 		roots = append(roots, env)
 	}
 	roots = append(roots,
-		home+"/Developer/jterrazz-studio",
-		home+"/Developer/jterrazz/jterrazz-studio",
-		home+"/Developer/jterrazz-cli",
-		home+"/Developer/jterrazz/jterrazz-cli",
+		home+"/Developer/studio-workstation",
+		home+"/Developer/studio/studio-workstation",
 	)
 	return roots
 }
@@ -944,7 +942,7 @@ func GetScriptByName(name string) *Script {
 	return nil
 }
 
-// RunScript toggles one script the way j config does, Inputs ignored, and returns the verb it attempted.
+// RunScript toggles one script the way workstation config does, Inputs ignored, and returns the verb it attempted.
 func RunScript(name string) (verb string, err error) {
 	script := GetScriptByName(name)
 	if script == nil {

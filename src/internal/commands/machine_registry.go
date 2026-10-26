@@ -7,18 +7,18 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
 var machineInitCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Register this machine in ~/.jterrazz/config.json (interactive)",
+	Short: "Register this machine in ~/.studio/config.json (interactive)",
 	Long: strings.TrimSpace(`Interactive bootstrap of the machine registry.
 
 Prompts for an alias (default = hostname) and a role (client or server),
-adds the entry to ~/.jterrazz/config.json, and marks it as self. Run this
+adds the entry to ~/.studio/config.json, and marks it as self. Run this
 once per machine you own.`),
 	Run: func(_ *cobra.Command, _ []string) { runMachineInit() },
 }
@@ -62,11 +62,11 @@ func init() {
 }
 
 func runMachineInit() {
-	print.Header("j machine init", machineContext())
+	print.Header("workstation machine init", machineContext())
 
 	if alias, m, ok := config.SelfMachine(); ok {
 		print.Warning(fmt.Sprintf("This machine is already registered as %q (role=%s)", alias, m.Role))
-		print.Dim("Edit ~/.jterrazz/config.json directly, or remove + re-init to change.")
+		print.Dim("Edit ~/.studio/config.json directly, or remove + re-init to change.")
 		os.Exit(1)
 	}
 
@@ -99,9 +99,9 @@ func runMachineList() {
 	machines := config.ListMachines()
 	selfAlias, _, _ := config.SelfMachine()
 
-	print.Header("j machine list", machineContext())
+	print.Header("workstation machine list", machineContext())
 	if len(machines) == 0 {
-		print.Dim("No machines registered. Run `j machine init` for this machine, or `j machine add <alias>` for a remote.")
+		print.Dim("No machines registered. Run `workstation machine init` for this machine, or `workstation machine add <alias>` for a remote.")
 		return
 	}
 

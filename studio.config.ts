@@ -17,8 +17,9 @@ export default defineConfig({
         },
         roots: {
             dotfiles:
-                'the application configs `j config` installs onto a machine, versioned with the CLI that writes them',
-            scripts: 'the curl-piped installer a fresh machine runs before `j` exists on it',
+                'the application configs `workstation config` installs onto a machine, versioned with the CLI that writes them',
+            scripts:
+                'the curl-piped installer a fresh machine runs before `workstation` exists on it',
         },
     },
 });

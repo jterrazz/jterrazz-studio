@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 )
 
 func requireDarwin() error {

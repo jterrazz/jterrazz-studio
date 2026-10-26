@@ -1,7 +1,7 @@
 package status
 
 import (
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/components"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/components"
 )
 
 func (m Model) loadingIndicator() string {

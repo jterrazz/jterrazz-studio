@@ -1,11 +1,11 @@
 ---
-name: jterrazz-new-project
-description: "Scaffolds a new @jterrazz project with all conventions: jterrazz.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch."
+name: studio-new-project
+description: "Scaffolds a new @jterrazz project with all conventions: studio.config.ts, package.json, the derived editor files, the Makefile's six gestures, CI workflows. Use when creating a new app or library from scratch."
 ---
 
 # Create a new @jterrazz project
 
-A project is born declared: one `jterrazz.config.ts`, the derived editor files, a Makefile answering the six gestures. How each is written (the steps, the files whole, the first `make check`) is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md), and where a test lives is `@jterrazz/test`'s [Set up a project](https://github.com/jterrazz/package-test/blob/main/docs/start/set-up-a-project.md). Follow them; this skill holds only what the estate adds.
+A project is born declared: one `studio.config.ts`, the derived editor files, a Makefile answering the six gestures. How each is written (the steps, the files whole, the first `make check`) is `@jterrazz/typescript`'s [Getting started](https://github.com/jterrazz/package-typescript/blob/main/docs/start/getting-started.md), and where a test lives is `@jterrazz/test`'s [Set up a project](https://github.com/jterrazz/package-test/blob/main/docs/start/set-up-a-project.md). Follow them; this skill holds only what the estate adds.
 
 ## For a new library (package-{name})
 
@@ -29,13 +29,13 @@ The identity `package.json` carries beside what Getting started writes:
 }
 ```
 
-`jterrazz.config.ts` declares `kind: 'library'`, the platform it runs on, and `presets: [test()]`.
+`studio.config.ts` declares `kind: 'library'`, the platform it runs on, and `presets: [test()]`.
 
 ## For a new application ({product}-{role})
 
-`"private": true`, no `exports` or `publishConfig`; `jterrazz.config.ts` declares the application's kind (`api`, `cli`, `website` or `mobile`) and its platform.
+`"private": true`, no `exports` or `publishConfig`; `studio.config.ts` declares the application's kind (`api`, `cli`, `website` or `mobile`) and its platform.
 
-**The composition root.** An application is hexagonal (`typescript: { architecture: { hexagonal: true } }` in `jterrazz.config.ts`) and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
+**The composition root.** An application is hexagonal (`typescript: { architecture: { hexagonal: true } }` in `studio.config.ts`) and is built in one place, `src/composition/compose.ts`: `compose(config, overrides?: Partial<Ports>)` calls the constructors and returns the typed graph with its `[Symbol.asyncDispose]`. No DI container library. Only the entry and the spec runners import it:
 
 ```ts
 // src/index.ts
@@ -60,7 +60,7 @@ on:
         branches: [main]
 jobs:
     validate:
-        uses: jterrazz/jterrazz-actions/.github/workflows/validate.yaml@main
+        uses: jterrazz/studio-actions/.github/workflows/validate.yaml@main
         with:
             node-version: '24'
 ```
@@ -77,7 +77,7 @@ permissions:
     id-token: write
 jobs:
     publish:
-        uses: jterrazz/jterrazz-actions/.github/workflows/release-npm.yaml@main
+        uses: jterrazz/studio-actions/.github/workflows/release-npm.yaml@main
         with:
             node-version: '24'
         secrets: inherit
@@ -85,7 +85,7 @@ jobs:
 
 ## Repo structure, born structured
 
-A new project starts with the corpus + injection layout, not just code. Do not author layout advice here; follow the **`jterrazz-repo-structure`** skill, whose canonical page is `jterrazz-studio` `docs/concepts/repo-structure.md`:
+A new project starts with the corpus + injection layout, not just code. Do not author layout advice here; follow the **`studio-repo-structure`** skill, whose canonical page is `studio-workstation` `docs/concepts/repo-structure.md`:
 
 - `README.md`: the vitrine (what it is, install, a pointer into `docs/`), not a manual.
 - `CLAUDE.md`: the agent brief (mental model + routing table into `docs/`), a regular file; no `AGENTS.md` (the toolchain's `docs/no-agents-brief` refuses one).
@@ -96,4 +96,4 @@ A new project starts with the corpus + injection layout, not just code. Do not a
 - Never use pnpm or yarn
 - Never skip the Makefile
 - Never put business logic in `src/index.ts`: a library's only exports, an application's only composes and serves
-- Never author repo-layout advice in a skill; route to `jterrazz-repo-structure`
+- Never author repo-layout advice in a skill; route to `studio-repo-structure`

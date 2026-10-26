@@ -6,16 +6,16 @@ runs:
           Upgrade system packages.
 
           Examples:
-            j upgrade --all             Upgrade all package managers
-            j upgrade --brew            Upgrade Homebrew packages only
-            j upgrade --npm             Upgrade npm global packages only
-            j upgrade --bun             Upgrade bun global packages only
-            j upgrade node              Upgrade specific brew package
-            j upgrade claude opencode   Upgrade specific packages
-            j upgrade                   List available options
+            workstation upgrade --all             Upgrade all package managers
+            workstation upgrade --brew            Upgrade Homebrew packages only
+            workstation upgrade --npm             Upgrade npm global packages only
+            workstation upgrade --bun             Upgrade bun global packages only
+            workstation upgrade node              Upgrade specific brew package
+            workstation upgrade claude opencode   Upgrade specific packages
+            workstation upgrade                   List available options
 
           Usage:
-            j upgrade [package...] [flags]
+            workstation upgrade [package...] [flags]
 
           Flags:
             -a, --all    Upgrade all package managers

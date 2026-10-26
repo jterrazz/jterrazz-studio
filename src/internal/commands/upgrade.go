@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
-	"github.com/jterrazz/jterrazz-studio/src/internal/domain/tool"
-	"github.com/jterrazz/jterrazz-studio/src/internal/presentation/print"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/domain/tool"
+	"github.com/jterrazz/studio-workstation/src/internal/presentation/print"
 	"github.com/spf13/cobra"
 )
 
@@ -15,13 +15,13 @@ var upgradeCmd = &cobra.Command{
 	Long: `Upgrade system packages.
 
 Examples:
-  j upgrade --all             Upgrade all package managers
-  j upgrade --brew            Upgrade Homebrew packages only
-  j upgrade --npm             Upgrade npm global packages only
-  j upgrade --bun             Upgrade bun global packages only
-  j upgrade node              Upgrade specific brew package
-  j upgrade claude opencode   Upgrade specific packages
-  j upgrade                   List available options`,
+  workstation upgrade --all             Upgrade all package managers
+  workstation upgrade --brew            Upgrade Homebrew packages only
+  workstation upgrade --npm             Upgrade npm global packages only
+  workstation upgrade --bun             Upgrade bun global packages only
+  workstation upgrade node              Upgrade specific brew package
+  workstation upgrade claude opencode   Upgrade specific packages
+  workstation upgrade                   List available options`,
 	ValidArgsFunction: func(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
 		var all []string
 		for _, pkg := range config.Tools {
@@ -80,7 +80,7 @@ func init() {
 }
 
 func listUpgradeOptions() {
-	print.Header("j upgrade", machineContext())
+	print.Header("workstation upgrade", machineContext())
 
 	for _, pm := range config.PackageManagers {
 		available := config.CommandExists(pm.RequiresCmd)
@@ -89,8 +89,8 @@ func listUpgradeOptions() {
 
 	print.Empty()
 	print.Usage(
-		"Usage: j upgrade <package> [package...]",
-		"       j upgrade --brew --bun",
-		"       j upgrade --all",
+		"Usage: workstation upgrade <package> [package...]",
+		"       workstation upgrade --brew --bun",
+		"       workstation upgrade --all",
 	)
 }

@@ -3,7 +3,7 @@ package installview
 import (
 	"testing"
 
-	"github.com/jterrazz/jterrazz-studio/src/internal/config"
+	"github.com/jterrazz/studio-workstation/src/internal/config"
 )
 
 func checkInstalled(b bool) func() config.CheckResult {
