@@ -12,7 +12,7 @@ Two suites prove a change: Go unit tests over the packages, and end-to-end specs
 ## The two suites
 
 ```sh
-make test      # go test ./src/..., then typescript test: the specs against a fresh build of j, none on a proven tree
+make test      # go test ./src/..., then typescript test: the specs against a fresh build of workstation, none on a proven tree
 npm test       # the specs alone
 ```
 

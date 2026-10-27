@@ -29,7 +29,7 @@ See `src/internal/domain/skill/` for the integration.
 
 A skill belongs on this list when nothing derives it. Third-party skills are the operator's taste (nothing in the estate implies that a machine wants `anthropics/skills` or a Remotion pack), so a curated list is the only place that answer can come from.
 
-The `@jterrazz` skills are the opposite. Every repository the estate declares either carries a `skills/` folder or does not, and those folders are the answer; `terra doctor` reads them off the synced clones and names the missing install as the repair. `StudioSkills` is the copy that derivation retires, and until it is deleted this registry is not the authority for that half of the roster.
+The `@jterrazz` skills are the opposite. Every repository the estate declares either carries a `skills/` folder or does not, and those folders are the answer; `studio doctor` reads them off the synced clones and names the missing install as the repair. `StudioSkills` is the copy that derivation retires, and until it is deleted this registry is not the authority for that half of the roster.
 
 > **Note:** the toolchain skill set follows the `@jterrazz/typescript@6` consolidation: `@jterrazz/codestyle` (lint/format) was absorbed into `@jterrazz/typescript`, so a single `studio-typescript` skill now covers build, lint, format, and docs, alongside `studio-repo-structure` for repo doctrine.
 
