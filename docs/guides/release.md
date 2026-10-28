@@ -17,7 +17,7 @@ git tag v1.0.0
 git push --tags
 ```
 
-`.github/workflows/release.yaml` fires on `push: tags: v*` and calls the shared `studio-actions` `release-go.yaml` workflow with the binary name `workstation`, the build path `./src/cmd/workstation`, Go 1.26, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
+`.github/workflows/publish.yaml` fires on `push: tags: v*` and calls the shared `studio-actions` `publish-go.yaml` workflow with the binary name `workstation`, the build path `./src/cmd/workstation`, Go 1.26, and four targets: `darwin/arm64`, `darwin/amd64`, `linux/arm64`, `linux/amd64`. Nothing publishes on a merge to `main`: a merge only runs the validate workflow ([Test](test.md)).
 
 Each target is published as an asset named `workstation-<os>-<arch>`, which is the name the install script asks for. A release that renames those assets breaks every machine's install path.
 

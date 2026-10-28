@@ -1,0 +1,12 @@
+name: Check
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    check:
+        name: Check
+        uses: jterrazz/studio-actions/.github/workflows/check.yaml@main

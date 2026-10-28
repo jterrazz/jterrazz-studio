@@ -49,20 +49,19 @@ The law and its why are `@jterrazz/typescript`'s [The composition root](https://
 
 ## CI workflows
 
-**.github/workflows/validate.yaml:**
+**.github/workflows/check.yaml:**
 
 ```yaml
-name: Validate
+name: Check
 on:
     push:
         branches: [main]
     pull_request:
         branches: [main]
 jobs:
-    validate:
-        uses: jterrazz/studio-actions/.github/workflows/validate.yaml@main
-        with:
-            node-version: '24'
+    check:
+        name: Check
+        uses: jterrazz/studio-actions/.github/workflows/check.yaml@main
 ```
 
 For libraries, also add **.github/workflows/publish.yaml:**
@@ -77,11 +76,11 @@ permissions:
     id-token: write
 jobs:
     publish:
-        uses: jterrazz/studio-actions/.github/workflows/release-npm.yaml@main
-        with:
-            node-version: '24'
-        secrets: inherit
+        name: Publish
+        uses: jterrazz/studio-actions/.github/workflows/publish-npm.yaml@main
 ```
+
+npm's trusted publishing is configured on npmjs.com against that file name, `publish.yaml`.
 
 ## Repo structure, born structured
 

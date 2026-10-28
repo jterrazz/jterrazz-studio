@@ -53,7 +53,7 @@ The full grammar is `@jterrazz/test`'s [Spec documents](https://github.com/jterr
 
 ## What CI runs
 
-`.github/workflows/validate.yaml` calls the shared `studio-actions` validate workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](../concepts/stack.md)'s. Locally the same gate is `make build` then `make check`.
+`.github/workflows/check.yaml` calls the shared `studio-actions` check workflow on every push and every pull request to `main`; what that workflow runs against a repository's `make` targets is [The stack](../concepts/stack.md)'s. Locally the same gate is `make build` then `make check`.
 
 The npm half is linted by the same toolchain as every other repository: `npm run lint` is `typescript check`, and `make lint` runs it after the Go half ([Develop](develop.md)).
 

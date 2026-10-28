@@ -1,4 +1,5 @@
-name: Release
+name: Publish
+run-name: Publish ${{ github.ref_name }}
 
 on:
     push:
@@ -9,8 +10,9 @@ permissions:
     contents: write
 
 jobs:
-    release:
-        uses: jterrazz/studio-actions/.github/workflows/release-go.yaml@main
+    publish:
+        name: Publish
+        uses: jterrazz/studio-actions/.github/workflows/publish-go.yaml@main
         with:
             binary-name: workstation
             build-path: ./src/cmd/workstation
