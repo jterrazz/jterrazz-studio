@@ -29,7 +29,7 @@ workstation run         # git + docker shortcuts
 
 The corpus lives in [`docs/`](docs/README.md); start at its map, which lists every page.
 
-For agents: start at [`CLAUDE.md`](CLAUDE.md). The [`skills/`](skills/) directory ships the shared skills: `studio-toolbelt` (the machine's tool roster, generated from the install registry), `studio-stack`, `studio-new-project` and `studio-repo-structure`. The reach domain skills now ship with [`package-reach`](https://github.com/jterrazz/package-reach).
+For agents: start at [`CLAUDE.md`](CLAUDE.md). The [`skills/`](skills/) directory ships the shared skills: `studio-toolbelt` (the machine's tool roster, generated from the install registry), `studio-stack`, `studio-new-project` and `studio-repo-structure`. The manifest and SEO domain skills ship with [`package-manifest`](https://github.com/jterrazz/package-manifest).
 
 ## License
 
